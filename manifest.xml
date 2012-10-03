@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ApplicationManifest xmlns="http://schemas.google.com/ApplicationManifest/2009">
+
+  <!-- Support info to show in the marketplace & control panel -->
+  <Support>
+    <!-- URL for application setup as an optional redirect during the install -->
+    <!--
+    <Link rel="setup" href="http://feth.com/google/setup.php?domain=${DOMAIN_NAME}" />
+    -->
+    <!-- URL for application configuration, accessed from the app settings
+     page in the control panel -->
+      <!--
+    <Link rel="manage" href="http://feth.com/google/admin.php?domain=${DOMAIN_NAME}" />
+    -->
+    <!-- URL explaining how customers get support. -->
+    <!--
+    <Link rel="support" href="http://feth.com/google/support.php" />
+    -->
+
+    <!-- URL that is displayed to admins during the deletion process,
+     to specify policies such as data retention, how to claim accounts, etc. -->
+     <!--
+    <Link rel="deletion-policy" href="http://feth.com/google/deletion-policy.php" />
+    -->
+  </Support>
+
+  <!-- Name and description pulled from message bundles -->
+  <Name>MailButler</Name>
+  <Description>A mail butler serving you</Description>
+
+  <!-- Show this link in Google's universal navigation for all users -->
+  <Extension id="navLink" type="link">
+    <Name>MailButler</Name>
+    <Url>http://www.feth.com/?from=google&amp;domain=${DOMAIN_NAME}</Url>
+  </Extension>
+
+  <!-- Declare our OpenID realm so our app is white listed -->
+  <Extension id="realm" type="openIdRealm">
+    <Url>http://feth.com</Url>
+  </Extension>
+
+<!-- EXTRACTOR -->
+
+<Extension id="IdExtractor" type="contextExtractor">
+  <Name>ID extractor</Name>
+  <Url>google.com:MessageIDExtractor</Url>
+  <!-- Uncomment this Param to apply a filter to the extractor's
+  default output. The example regexp below makes the match case sensitive.
+  <Param name="hello" value="H[a-z]* W[a-z]*"/> -->
+  <Triggers ref="butlerGadget"/>
+  <Scope ref="emailId"/>
+  <Container name="mail"/>
+</Extension>
+
+<!-- GADGET -->
+
+<Extension id="butlerGadget" type="gadget">
+  <Name>Mail Butler contextual gadget</Name>
+  <Url>https://docs.google.com/uc?export=download&amp;id=0B7_WOlcymli9NkxPY2FXU1ZPSTQ</Url>
+  <Container name="mail"/>
+  <!-- Uncomment this to enable Caja. -->
+  <!-- <Param name="caja" value="enabled"/> -->
+</Extension>
+
+<!-- SCOPE -->
+
+<Scope id="emailId">
+  <Url>tag:google.com,2010:auth/contextual/extractor/MESSAGE_ID</Url>
+  <Reason>This application needs the message ID to be able to yoyo it back.</Reason>
+</Scope>
+
+</ApplicationManifest>
