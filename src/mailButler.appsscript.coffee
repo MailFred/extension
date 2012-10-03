@@ -1,8 +1,6 @@
 class MailButler
 
   constructor: (@prefix) ->
-    if ScriptApp.getScriptTriggers().length is 0
-      ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
 
   @LABEL_BASE: "MailButler"
   @LABEL_OUTBOX: MailButler.LABEL_BASE + "/" + "Outbox"
@@ -30,6 +28,12 @@ class MailButler
       re.push ')'
 
     ContentService.createTextOutput(ret.join '').setMimeType ContentService.MimeType.JSON
+
+  @setup: ->
+    if ScriptApp.getScriptTriggers().length is 0
+      Logger.log "Installing trigger"
+      ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
+    return
 
   @processButlerMails: (d) ->
     Logger.log "Checking for scheduled mails on %s", d
@@ -69,9 +73,9 @@ class MailButler
       # refresh its state
       message.refresh()
 
-      if hasLabel @LABEL_OUTBOX, message
+      if @hasLabel @LABEL_OUTBOX, message
         # Has the outbox label
-        Logger.log "Processing %s", message.getSubject()
+        Logger.log "Start processing message with ID '%s'", props.messageId
         
         # remove the outbox label from the message
         @removeLabel @LABEL_OUTBOX, message
@@ -115,6 +119,8 @@ class MailButler
         # does not have the outbox label
         Logger.log "Label '%s' has been removed from the mail, not processing it", butlerOutboxLabel
     
+      Logger.log "Finished processing message with ID '%s'", props.messageId
+
     # delete the scheduled butler mail, because we couldn't find the real message
     @deleteButlerMail props.messageId # pass "" + x in case props.messageId is undefined (should not happen)
     return
@@ -136,7 +142,7 @@ class MailButler
 
   # Removes a label from a message (thread)
   @removeLabel: (name, message) ->
-    @getLabel(name, false)?.removeFromThread message.getThread()  if label
+    @getLabel(name, false)?.removeFromThread message.getThread()
     return
 
   @normalize: (messageId, noPrefix) ->
@@ -197,10 +203,16 @@ class MailButler
     return
 
 doGet = (request) ->
+  MailButler.setup()
   butler = new MailButler request.parameter.prefix
   butler.schedule request.parameter
 
-process = (e) ->
+# This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
+`function process() {
+  _process.apply(this, arguments);
+}`
+
+_process = (e) ->
   
   # Get a lock for the current user
   lock = LockService.getPrivateLock()
@@ -224,7 +236,16 @@ process = (e) ->
   lock.releaseLock()
   return
 
-testProcessForm = ->
+#`function onInstall() {
+#  MailButler.setup();
+#}`
+
+
+`function revoke() {
+  ScriptApp.invalidateAuth();
+}`
+
+_test = ->
   processForm
     msgId: "13a1a6948cb7471f"
     when: "delta:"+ (2 * 1000 * 60)
@@ -233,24 +254,29 @@ testProcessForm = ->
     noanswer: true
   return
 
-deleteProps = ->
-  UserProperties.deleteAllProperties()
-  return
+# This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
+`function test() {
+  _test.apply(this, arguments);
+}`
 
-testLastMessageDate = ->
-  message = GmailApp.getMessageById("13a1a6948cb7471f")
-  thread = GmailApp.getThreadById(message.getThread().getId())
-  Logger.log thread.getLastMessageDate().toUTCString()
-  Logger.log thread.getMessageCount()
-  msgs = thread.getMessages()
-  for msg in msgs
-    Logger.log msg.getDate().toUTCString()
-  return
+#deleteProps = ->
+#  UserProperties.deleteAllProperties()
+#  return
 
-testProps = ->
-  Logger.log UserProperties.getProperties()
-  return
+#testLastMessageDate = ->
+#  message = GmailApp.getMessageById("13a1a6948cb7471f")
+#  thread = GmailApp.getThreadById(message.getThread().getId())
+#  Logger.log thread.getLastMessageDate().toUTCString()
+#  Logger.log thread.getMessageCount()
+#  msgs = thread.getMessages()
+#  for msg in msgs
+#    Logger.log msg.getDate().toUTCString()
+#  return
 
-getTriggers = ->
-  Logger.log "triggers: %s", ScriptApp.getScriptTriggers()
-  return
+#testProps = ->
+#  Logger.log UserProperties.getProperties()
+#  return
+
+#getTriggers = ->
+#  Logger.log "triggers: %s", ScriptApp.getScriptTriggers()
+#  return
