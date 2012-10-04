@@ -1,4 +1,5 @@
 (($) ->
+
 	log = (args...) ->
     	console.log.apply console, args if console?.log and mb.debug is true
 
@@ -31,6 +32,9 @@
 		getIconURL: ->
 			chrome.extension.getURL 'images/tie32x15.png'
 
+		getLoaderURL: ->
+			chrome.extension.getURL 'images/loader.gif'
+
 		injectCompose: ->
 			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
 				($ ".#{MailButler.MB_CLASS_NAV}", @).length is 0
@@ -60,12 +64,23 @@
 					cls.push MailButler.MB_CLASS_NAV
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
-			button = $("<a><img src='#{icon}'></a>")
+			img = $ "<img src='#{icon}'>"
+			button = $ "<a>"
+			button.append img
 			div.append button
-			button.on 'click', @onSchedule
+			button.on 'click', () =>
+				loading = =>
+					img.attr 'src', @getLoaderURL()
+					return
+				reset = =>
+					img.attr 'src', @getIconURL()
+					return
+
+				@onSchedule loading, reset
+				return
 			div
 
-		onSchedule: =>
+		onSchedule: (loadingIcon, resetIcon) =>
 			address = window.location.href
 
 			catPos = address.lastIndexOf '#'
@@ -89,6 +104,8 @@
 				#jQuery.getJSON @url, data, @onScheduleSuccess
 				log 'scheduling mail...'
 
+				loadingIcon()
+
 				#u = @url + "?" + ($.param data)
 				#log 'URL is: ', u
 				#@injectScript u
@@ -107,14 +124,17 @@
 					url: 			@getServiceURL()
 					dataType: 		'json'
 					data:			data
-					success:		@onScheduleSuccess
+					success:		(data, textStatus, jqXHR) =>
+										@onScheduleSuccess data
 					error:			(jqXHR, textStatus, errorThrown) =>
 										log arguments
 										@onScheduleError data, textStatus
+					complete:		(jqXHR, textStatus) ->
+										resetIcon()
 			return
 
 
-		onScheduleSuccess: (data, textStatus, jqXHR) =>
+		onScheduleSuccess: (data) =>
 			log arguments
 			if data.error
 				# TODO handle this
@@ -142,7 +162,7 @@
 			return
 
 		onMessage: (request, sender, sendResponse) =>
-			#log request
+			# log request
 			switch request.type
 				when "fragment"
 					@injectButtons()

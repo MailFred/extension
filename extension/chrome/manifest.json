@@ -30,7 +30,8 @@
     "https://www.google.com/*"
   ],
   "web_accessible_resources": [
-    "images/tie32x15.png"
+    "images/tie32x15.png",
+    "images/loader.gif"
   ],
   "background": {
     "scripts": [
