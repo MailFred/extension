@@ -4,16 +4,19 @@
   "manifest_version": 2,
   "description": "I am here to serve",
   "icons": {
-    "16": "images/tie16x16.png",
-    "32": "images/tie32x32.png",
-    "48": "images/tie48x48.png",
-    "128": "images/tie128x128.png"
+    "16":   "images/tie16x16.png",
+    "32":   "images/tie32x32.png",
+    "48":   "images/tie48x48.png",
+    "128":  "images/tie128x128.png"
   },
   "content_scripts": [
       {
         "matches": ["*://mail.google.com/*"],
-        "css": ["styles.css"],
-        "js": ["jquery-1.8.2.min.js","bookmarklet.js"],
+        "css": ["css/styles.css"],
+        "js": [
+          "js/lib/jquery-1.8.2.min.js",
+          "js/lib/content.js"
+        ],
         "permissions": [
           "*://mail.google.com/*"
         ]
@@ -21,13 +24,18 @@
   ],
   "permissions": [
     "webNavigation",
-    "tabs"
+    "tabs",
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*",
+    "https://www.google.com/*"
   ],
   "web_accessible_resources": [
     "images/tie32x15.png"
   ],
   "background": {
-    "scripts": ["eventPage.js"],
+    "scripts": [
+      "js/lib/background.js"
+    ],
     "persistent": false
   }
 }

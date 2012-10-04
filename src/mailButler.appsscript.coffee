@@ -9,23 +9,30 @@ class MailButler
 
   prefix: null
 
-  schedule: (params) ->
+  scheduleJson: (params) ->
     try
       @addButlerMail params
       @result null, true
     catch e
       @result e
 
+  scheduleSetup: (params) ->
+    try
+      @addButlerMail params
+      true
+    catch e
+      e
+
   result: (err, result) ->
     ret = []
     if @prefix
-      ret.push prefix
+      ret.push @prefix
       ret.push '('
 
     ret.push Utilities.jsonStringify if err then error: err else success: result
 
     if @prefix
-      re.push ')'
+      ret.push ')'
 
     ContentService.createTextOutput(ret.join '').setMimeType ContentService.MimeType.JSON
 
@@ -205,8 +212,22 @@ class MailButler
 
 doGet = (request) ->
   MailButler.setup()
-  butler = new MailButler request.parameter.prefix
-  butler.schedule request.parameter
+  
+  butler = new MailButler request.parameter.callback
+
+  switch request.parameter.action
+    when 'schedule'
+      out = butler.scheduleJson request.parameter
+    when 'setup'
+      success = butler.scheduleSetup request.parameter
+      out = ContentService.createTextOutput 'Setup complete!'
+      if success is true
+        out.append "\nYour email has been scheduled, you can close this window now!"
+      else
+        out.append "\nBut something went wrong: #{success}"
+    else
+      out = ContentService.createTextOutput 'Service status: OK'
+  out
 
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
 `function process() {
@@ -224,12 +245,13 @@ _process = (e) ->
     
     # Get the time this scheduled execution started
     d = new Date()
-    d.setUTCDate e["day-of-month"]
-    d.setUTCFullYear e.year
-    d.setUTCMonth e.month
-    d.setUTCHours e.hour
-    d.setUTCMinutes e.minute
-    d.setUTCSeconds e.second
+    if e
+      d.setUTCDate e["day-of-month"]
+      d.setUTCFullYear e.year
+      d.setUTCMonth e.month
+      d.setUTCHours e.hour
+      d.setUTCMinutes e.minute
+      d.setUTCSeconds e.second
 
     MailButler.processButlerMails d
   
