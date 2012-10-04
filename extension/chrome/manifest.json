@@ -3,18 +3,31 @@
   "version": "1.0.0",
   "manifest_version": 2,
   "description": "I am here to serve",
-  "browser_action": {
-    "default_icon": "images/32x32.png"
+  "icons": {
+    "16": "images/tie16x16.png",
+    "32": "images/tie32x32.png",
+    "48": "images/tie48x48.png",
+    "128": "images/tie128x128.png"
   },
   "content_scripts": [
       {
         "matches": ["*://mail.google.com/*"],
         "css": ["styles.css"],
         "js": ["jquery-1.8.2.min.js","bookmarklet.js"],
-        "run_at": "document_end"
+        "permissions": [
+          "*://mail.google.com/*"
+        ]
       }
-    ],
+  ],
+  "permissions": [
+    "webNavigation",
+    "tabs"
+  ],
   "web_accessible_resources": [
-    "images/32x32.png"
-  ]
+    "images/tie32x15.png"
+  ],
+  "background": {
+    "scripts": ["eventPage.js"],
+    "persistent": false
+  }
 }

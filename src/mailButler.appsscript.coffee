@@ -61,11 +61,12 @@ class MailButler
   @processButlerMail: (props) ->
     Logger.log "Process mail with props: %s", props
 
-    message = GmailApp.getMessageById props.messageId if props.messageId
+    messageId = props.messageId
+    message = GmailApp.getMessageById messageId if messageId
 
     unless message
       # Message does not exist or is invalid
-      Logger.log "Message with ID '%s' does not exist or is invalid", props.messageId
+      Logger.log "Message with ID '%s' does not exist or is invalid", messageId
 
     else
       # Message does exist
@@ -75,7 +76,7 @@ class MailButler
 
       if @hasLabel @LABEL_OUTBOX, message
         # Has the outbox label
-        Logger.log "Start processing message with ID '%s'", props.messageId
+        Logger.log "Start processing message with ID '%s'", messageId
         
         # remove the outbox label from the message
         @removeLabel @LABEL_OUTBOX, message
@@ -117,12 +118,12 @@ class MailButler
 
       else
         # does not have the outbox label
-        Logger.log "Label '%s' has been removed from the mail, not processing it", butlerOutboxLabel
+        Logger.log "Label '%s' has been removed from the mail, not processing it", @LABEL_OUTBOX
     
-      Logger.log "Finished processing message with ID '%s'", props.messageId
+      Logger.log "Finished processing message with ID '%s'", messageId
 
     # delete the scheduled butler mail, because we couldn't find the real message
-    @deleteButlerMail props.messageId # pass "" + x in case props.messageId is undefined (should not happen)
+    @deleteButlerMail messageId # pass "" + x in case messageId is undefined (should not happen)
     return
 
   # Get a label or create it
@@ -246,12 +247,13 @@ _process = (e) ->
 }`
 
 _test = ->
-  processForm
-    msgId: "13a1a6948cb7471f"
-    when: "delta:"+ (2 * 1000 * 60)
-    inbox: true
-    unread: true
-    noanswer: true
+  doGet
+    parameter:
+      msgId: "13a1a6948cb7471f"
+      when: "delta:"+ (2 * 1000 * 60)
+      inbox: true
+      unread: true
+      noanswer: true
   return
 
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments

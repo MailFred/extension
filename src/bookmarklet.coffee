@@ -1,30 +1,61 @@
 
 class MailButler
+	@MB_CLASS: 'mailbutler'
+	@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
+
+	@TYPE_THREAD: 'thread'
+
 	constructor: ->
-		# @injectScript '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'
-		@injectButton()
-	injectScript: (url) ->
-		(document.body.appendChild document.createElement 'script').src = url
-		return
+		chrome.extension.onMessage.addListener @onMessage
+
 	getIconURL: ->
-		chrome.extension.getURL 'images/32x32.png'
+		chrome.extension.getURL 'images/tie32x15.png'
+
 	getNavigation: ->
 		$ '.iH > div'
 
-	injectButton: ->
-		icon = @getIconURL()
-		#console.log icon
-		#icon = ""
-		button = $("<a><img src='#{icon}'></a>").wrap('<div>')
-		console.log button
+	injectCompose: ->
+		$ ".dW.E[role=navigation]"
+
+	injectThread: ->
+		return if @isThreadInjected()
 		nav = @getNavigation()
-		console.log nav
-		button.appendTo $ document.querySelector '.iH > div'
-		#$('body')
+		return unless nav
+
+		# console.log div
+		nav.append @composeButton MailButler.TYPE_THREAD
 		return
 
+	composeButton: (type) ->
+		icon = @getIconURL()
 
-$ () ->
-	# alert 'works'
-	mb = new MailButler
-	console.debug mb
+		cls = [MailButler.MB_CLASS]
+
+		switch type
+			when MailButler.TYPE_THREAD
+				cls.push MailButler.MB_CLASS_THREAD
+
+		div = $ "<div class='G-Ni J-J5-Ji #{cls.join ''}'>"
+		button = $("<a><img src='#{icon}'></a>")
+		div.append button
+		div
+
+	isThreadInjected: ->
+		($ '.'+MailButler.MB_CLASS_THREAD).length > 0
+
+	injectButtons: ->
+		@injectThread()
+		@injectCompose()
+		return
+
+	onMessage: (request, sender, sendResponse) =>
+		#console.log request
+		switch request.type
+			when "fragment"
+				@injectButtons()
+			when "loaded"
+				@injectButtons()
+		return
+		
+
+mb = new MailButler

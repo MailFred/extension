@@ -3,3 +3,4 @@ lib
 styles.css
 loader.js
 bookmarklet.js
+eventPage.js
