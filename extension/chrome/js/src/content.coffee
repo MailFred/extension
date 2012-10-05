@@ -85,6 +85,10 @@
 
 			popup = null
 			close = null
+			item.on 'mousedown', (e) ->
+				e.preventDefault()
+				return
+				
 			item.on 'click', (e) ->
 				e.stopPropagation()
 				t = $ @
