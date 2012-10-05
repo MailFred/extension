@@ -135,25 +135,19 @@
 
 
 		onScheduleSuccess: (data) =>
-			log arguments
-			if data.error
-				# TODO handle this
-				alert data.error
-			else
-				alert 'scheduled!'
+			chrome.extension.sendMessage data, (response) ->
 			return
 
 		onScheduleError: (params, status) =>
 			log arguments
 			if status is 'parsererror'
 				params.action = 'setup'
-				delete params.callback
+				delete params.callback if params.callback
 
 				query = $.param params
 				window.open "#{@url}?#{query}", 'mailbutler', 'width=500,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
-				# TODO handle this
-				alert status
+				chrome.extension.sendMessage {error: status}, (response) ->
 			return
 
 		injectButtons: ->
