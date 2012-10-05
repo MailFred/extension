@@ -29,32 +29,28 @@
 		getServiceURL: ->
 			if @debug then @dUrl else @pUrl
 
-		getIconURL: ->
-			chrome.extension.getURL 'images/tie32x15.png'
-
-		getLoaderURL: ->
-			chrome.extension.getURL 'images/loader.gif'
-
 		injectCompose: ->
 			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
 				($ ".#{MailButler.MB_CLASS_NAV}", @).length is 0
 
-			# log 'navs', navs
-			#return unless navs.length > 0
-			#_.each navs, @injectNav
-			navs.append @composeButton MailButler.TYPE_NAV
+			if navs.length > 0
+				navs.append @composeButton MailButler.TYPE_NAV
 			return
 
 		injectThread: ->
-			thread = ($ '.iH > div').filter (index) ->
+			threads = ($ '.iH > div').filter (index) ->
 				($ ".#{MailButler.MB_CLASS_THREAD}", @).length is 0
-			# log 'thread', thread
-			thread.append @composeButton MailButler.TYPE_THREAD
+			
+			if threads.length > 0
+				threads.append @composeButton MailButler.TYPE_THREAD
+			return
+
+		copyAttrs: (attrs, source, target) ->
+			for attr in attrs
+				target.attr attr, (source.attr attr)
 			return
 
 		composeButton: (type) ->
-			icon = @getIconURL()
-
 			cls = [MailButler.MB_CLASS]
 
 			switch type
@@ -64,6 +60,106 @@
 					cls.push MailButler.MB_CLASS_NAV
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
+
+			orig = $ ".T-I.J-J5-Ji.T-I-Js-IF.ar7.ns.T-I-ax7.L3"
+			item = orig.first().clone()
+
+			div.append item
+
+			item.attr
+				id: 				null
+				title: 				null
+				'data-tooltip': 	'MailButler'
+				'aria-label': 		'MailButler'
+				'aria-expanded': 	'false'
+				'aria-haspopup': 	'true'
+
+			item.css '-webkit-user-select', 'none'
+
+
+			item.hover ((e) ->
+				$(@).addClass 'T-I-JW'
+				return), ((e) ->
+				$(@).removeClass 'T-I-JW'
+				return)
+
+			popup = null
+			close = null
+			item.on 'click', (e) ->
+				e.stopPropagation()
+				t = $ @
+
+				if !popup
+					popup = $ """
+								<div class="J-M agd jQjAxd" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
+									<div class="SK AX" style="-webkit-user-select: none;">
+										<div class="asc" style="-webkit-user-select: none;">
+											Label as:
+										</div>
+										<div class="J-M-JJ asg" style="-webkit-user-select: none;">
+											<div style="-webkit-user-select: none; visibility: visible;"></div><input type="text" maxlength="225" ignoreesc="true" style="" tabindex="0">
+											<div class="A0" style="-webkit-user-select: none;"></div>
+										</div>
+										<div class="J-M-Jz aXjCH" style="-webkit-user-select: none; min-width: 135px;">
+											<div class="J-LC J-Ks-KO J-LC-JR-Jp" aria-checked="true" role="menuitem" style="-webkit-user-select: none;" id=":tz__" title="MailButler">
+												<div class="J-LC-Jz" style="-webkit-user-select: none;">
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>MailButler
+												</div>
+											</div>
+											<div class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" id=":sx__" title="[Imap]/Drafts">
+												<div class="J-LC-Jz" style="-webkit-user-select: none;">
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>[Imap]/Drafts
+												</div>
+											</div>
+											<div style="-webkit-user-select: none;"></div>
+										</div>
+										<div class="J-Kh" style="-webkit-user-select: none;" role="separator" id=":uf__"></div>
+										<div class="J-JK" style="display: none; -webkit-user-select: none;" role="menuitem" id=":ug__">
+											<div class="J-JK-Jz" style="-webkit-user-select: none;">
+												Apply
+											</div>
+										</div>
+										<div class="J-JK" act="14" role="menuitem" style="-webkit-user-select: none;" id=":uh__">
+											<div class="J-JK-Jz" style="-webkit-user-select: none;">
+												Create new
+											</div>
+										</div>
+										<div class="J-JK" act="78" role="menuitem" style="-webkit-user-select: none;" id=":ui__">
+											<div class="J-JK-Jz" style="-webkit-user-select: none;">
+												Manage labels
+											</div>
+										</div>
+									</div>
+								</div>
+								"""
+
+
+					t.parent().parent().append popup
+
+					close = ->
+						$('body').off 'click', close
+						t.removeClass 'T-I-Kq'
+						t.attr 'aria-expanded', 'false'
+						popup.hide()
+						t.blur()
+
+				if popup.is ':visible'
+					close()
+				else		
+					$('body').on 'click', close
+					t.addClass 'T-I-Kq'
+					t.attr 'aria-expanded', 'true'
+
+					popup.css
+						left: 	t.parent().position().left
+						top:	t.outerHeight()
+
+					popup.show()
+
+				return
+
+
+			###
 			img = $ "<img src='#{icon}'>"
 			button = $ "<a>"
 			button.append img
@@ -78,6 +174,7 @@
 
 				@onSchedule loading, reset
 				return
+			###
 			div
 
 		onSchedule: (loadingIcon, resetIcon) =>
@@ -104,7 +201,7 @@
 				#jQuery.getJSON @url, data, @onScheduleSuccess
 				log 'scheduling mail...'
 
-				loadingIcon()
+				loadingIcon?()
 
 				#u = @url + "?" + ($.param data)
 				#log 'URL is: ', u
@@ -130,7 +227,7 @@
 										log arguments
 										@onScheduleError data, textStatus
 					complete:		(jqXHR, textStatus) ->
-										resetIcon()
+										resetIcon?()
 			return
 
 
