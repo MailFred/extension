@@ -5,13 +5,19 @@
 		pointer-events: none;
 	}
 	.asa {
-		
 		.ase {
 			background: url(chrome-extension://__MSG_@@extension_id__/images/tie21x21black.png);
+			
 		}
 	}
 
-	.loader {
-		background: url(chrome-extension://__MSG_@@extension_id__/images/loader.gif);
+	&.loader {
+		.asa {
+			.ase {
+				background: url(chrome-extension://__MSG_@@extension_id__/images/loader.gif);
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+		}
 	}
 }

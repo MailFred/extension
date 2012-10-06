@@ -1,4 +1,4 @@
-(($) ->
+(($, window) ->
 
 	log = (args...) ->
     	console.log.apply console, args if console?.log and mb.debug is true
@@ -50,7 +50,7 @@
 				target.attr attr, (source.attr attr)
 			return
 
-		composeButton: (type) ->
+		composeButton: (type) =>
 			cls = [MailButler.MB_CLASS]
 
 			switch type
@@ -78,59 +78,96 @@
 
 
 			item.hover ((e) ->
-				$(@).addClass 'T-I-JW'
-				return), ((e) ->
-				$(@).removeClass 'T-I-JW'
-				return)
+							$(@).addClass 'T-I-JW'
+							return),
+						((e) ->
+							$(@).removeClass 'T-I-JW'
+							return)
 
 			popup = null
 			close = null
+			self  = @
+
+			# Don't focus the item when clicking on it
 			item.on 'mousedown', (e) ->
 				e.preventDefault()
 				return
-				
+
 			item.on 'click', (e) ->
 				e.stopPropagation()
 				t = $ @
 
 				if !popup
+
+					menu = """
+					<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant=""><div class="J-N J-Ks J-Ks-KO" role="menuitemcheckbox" style="-webkit-user-select: none; " aria-checked="true" id=":sg"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Tiny</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":sh"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Small</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":si"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Medium</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":sj"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Large</div></div></div></div>
+						"""
+
 					popup = $ """
-								<div class="J-M agd jQjAxd" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
+								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
 									<div class="SK AX" style="-webkit-user-select: none;">
-										<div class="asc" style="-webkit-user-select: none;">
-											Label as:
+
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">When?</div>
+
+										<div class="J-N J-Ks-KO J-Ks" role="menuitem" style="-webkit-user-select: none; ">
+											<div class="J-N-Jz">
+												<div class="J-N-Jo"></div>
+												At a predefined time
+												<span class="J-Ph-hFsbo"></span>
+											</div>
 										</div>
-										<div class="J-M-JJ asg" style="-webkit-user-select: none;">
-											<div style="-webkit-user-select: none; visibility: visible;"></div><input type="text" maxlength="225" ignoreesc="true" style="" tabindex="0">
-											<div class="A0" style="-webkit-user-select: none;"></div>
+										<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; ">
+											<div class="J-N-Jz">
+												<div class="J-N-Jo"></div>
+												<div>Specify time</div>
+											</div>
 										</div>
-										<div class="J-M-Jz aXjCH" style="-webkit-user-select: none; min-width: 135px;">
-											<div class="J-LC J-Ks-KO J-LC-JR-Jp" aria-checked="true" role="menuitem" style="-webkit-user-select: none;" id=":tz__" title="MailButler">
+
+										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">What to do?</div>
+
+										<div style="-webkit-user-select: none;">
+											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Mark as unread">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>MailButler
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Mark as unread
 												</div>
 											</div>
-											<div class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" id=":sx__" title="[Imap]/Drafts">
+
+											<div act="star" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Star it">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>[Imap]/Drafts
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Star it
 												</div>
 											</div>
+
+											<div act="inbox" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Move to inbox">
+												<div class="J-LC-Jz" style="-webkit-user-select: none;">
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Move to inbox
+												</div>
+											</div>
+
 											<div style="-webkit-user-select: none;"></div>
 										</div>
-										<div class="J-Kh" style="-webkit-user-select: none;" role="separator" id=":uf__"></div>
-										<div class="J-JK" style="display: none; -webkit-user-select: none;" role="menuitem" id=":ug__">
-											<div class="J-JK-Jz" style="-webkit-user-select: none;">
-												Apply
+
+										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+
+										<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Only if noone answered">
+											<div class="J-LC-Jz" style="-webkit-user-select: none;">
+												<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>&hellip; but only if noone answered
 											</div>
 										</div>
-										<div class="J-JK" act="14" role="menuitem" style="-webkit-user-select: none;" id=":uh__">
-											<div class="J-JK-Jz" style="-webkit-user-select: none;">
-												Create new
-											</div>
+
+										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
+											<div class="J-Kh" style="-webkit-user-select: none; "></div>
+											<div class="asd ja" style="-webkit-user-select: none; ">Specify a time and action to schedule the email</div>
 										</div>
-										<div class="J-JK" act="78" role="menuitem" style="-webkit-user-select: none;" id=":ui__">
-											<div class="J-JK-Jz" style="-webkit-user-select: none;">
-												Manage labels
+										<div act="submit" style="display: none;">
+											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+
+											<div act="schedule" class="J-JK" role="menuitem" style="-webkit-user-select: none;">
+												<div class="J-JK-Jz" style="-webkit-user-select: none;">
+													Schedule!
+												</div>
 											</div>
 										</div>
 									</div>
@@ -140,103 +177,159 @@
 
 					t.parent().parent().append popup
 
+					# Hovering
+					for cls in ['J-N','J-LC','J-JK']
+						hoverClass = cls+'-JT'
+						popup.find('.'+cls).hover 	((e) ->
+														$(@).addClass hoverClass
+														return),
+													((e) ->
+														$(@).removeClass hoverClass
+														return)
+
+
+					props =
+						noanswer: 	false
+						unread:		false
+						star:		false
+						inbox:		false
+
+					submit = popup.find "[act='submit']"
+					error = popup.find "[act='error']"
+
+					# This shows the error message or the submit button
+					vToggle = ->
+						valid = !!(props.unread or props.star or props.inbox)
+						submit.toggle valid
+						error.toggle !valid
+						return
+
+					# Toggling checkboxes
+					popup.find('.J-LC').on 'click', (e) ->
+						e = $ @
+						e.toggleClass 'J-LC-JR-Jp'
+						checked = e.hasClass 'J-LC-JR-Jp'
+						e.attr 'aria-checked', if checked then 'true' else 'false'
+						props[e.attr 'act'] = checked
+						vToggle()
+						return
+
+					# Clicks on popup do not close it
+					popup.on 'click', (e) ->
+						e.stopPropagation()
+
+					# Close the popup
 					close = ->
+						# Disable the body listener
 						$('body').off 'click', close
+
+						# Remove the pushed state from the menu button
 						t.removeClass 'T-I-Kq'
 						t.attr 'aria-expanded', 'false'
+
+						# hide the popup
 						popup.hide()
-						t.blur()
+
+					popup.find("[act='schedule']").on 'click', (e) ->
+						cls = 'loader'
+						loading = =>
+							div.addClass cls
+							return
+						reset = =>
+							div.removeClass cls
+							return
+
+						self.onSchedule props, loading, reset
+						close()
+						return
 
 				if popup.is ':visible'
+					# Popup is visible, so close it
 					close()
-				else		
+				else
+					# As long as the popup is open, clicks anywhere else should close it
 					$('body').on 'click', close
+
+					# Add the pushed state to the button
 					t.addClass 'T-I-Kq'
 					t.attr 'aria-expanded', 'true'
 
+					# Set the position of the popup menu right beneath the menu button (lower left corner)
 					popup.css
 						left: 	t.parent().position().left
 						top:	t.outerHeight()
 
+					# and show it :-)
 					popup.show()
 
 				return
 
-
-			###
-			img = $ "<img src='#{icon}'>"
-			button = $ "<a>"
-			button.append img
-			div.append button
-			button.on 'click', () =>
-				loading = =>
-					img.attr 'src', @getLoaderURL()
-					return
-				reset = =>
-					img.attr 'src', @getIconURL()
-					return
-
-				@onSchedule loading, reset
-				return
-			###
 			div
 
-		onSchedule: (loadingIcon, resetIcon) =>
+		getMessageId: ->
 			address = window.location.href
 
 			catPos = address.lastIndexOf '#'
 			slashPos = address.lastIndexOf '/'
 			if catPos > slashPos
-				alert 'Not within a message!'
-				return
+				throw 'Not within a message!'
 			else
-				messageId = address.substr (1 + slashPos)
-				
-				data = 
-					action:		'schedule'
-					messageId: 	messageId
-					when:		"delta:"+60000
-					unread:		true
-					star:		false
-					noanswer:	false
-					inbox:		true
-					#callback:	'alert'
+				address.substr (1 + slashPos)
 
-				#jQuery.getJSON @url, data, @onScheduleSuccess
-				log 'scheduling mail...'
+		onSchedule: (props, loadingIcon, resetIcon) =>
+			try
+				messageId = @getMessageId()
+			catch e
+				chrome.extension.sendMessage
+					error: e.toString()
+				return
+			
+			
+			data = 
+				action:		'schedule'
+				messageId: 	messageId
+				when:		"delta:"+60000
+				unread:		!!props.unread
+				star:		!!props.star
+				noanswer:	!!props.noanswer
+				inbox:		!!props.inbox
+				#callback:	'alert'
 
-				loadingIcon?()
+			#jQuery.getJSON @url, data, @onScheduleSuccess
+			log 'scheduling mail...'
 
-				#u = @url + "?" + ($.param data)
-				#log 'URL is: ', u
-				#@injectScript u
+			loadingIcon?()
 
-				#chrome.extension.sendMessage {data: data, url: @url}, (response) ->
-				#  log "res", response
-				#  return
+			#u = @url + "?" + ($.param data)
+			#log 'URL is: ', u
+			#@injectScript u
 
-				#xhr = new XMLHttpRequest
-				#xhr.onreadystatechange = -> log arguments
-				#xhr.open "GET", (@url + "?" + ($.param data)), true
-				#xhr.send()
-				#return
-				
-				$.ajax
-					url: 			@getServiceURL()
-					dataType: 		'json'
-					data:			data
-					success:		(data, textStatus, jqXHR) =>
-										@onScheduleSuccess data
-					error:			(jqXHR, textStatus, errorThrown) =>
-										log arguments
-										@onScheduleError data, textStatus
-					complete:		(jqXHR, textStatus) ->
-										resetIcon?()
+			#chrome.extension.sendMessage {data: data, url: @url}, (response) ->
+			#  log "res", response
+			#  return
+
+			#xhr = new XMLHttpRequest
+			#xhr.onreadystatechange = -> log arguments
+			#xhr.open "GET", (@url + "?" + ($.param data)), true
+			#xhr.send()
+			#return
+			
+			$.ajax
+				url: 			@getServiceURL()
+				dataType: 		'json'
+				data:			data
+				success:		(data, textStatus, jqXHR) =>
+									@onScheduleSuccess data
+				error:			(jqXHR, textStatus, errorThrown) =>
+									log arguments
+									@onScheduleError data, textStatus
+				complete:		(jqXHR, textStatus) ->
+									resetIcon?()
 			return
 
 
 		onScheduleSuccess: (data) =>
-			chrome.extension.sendMessage data, (response) ->
+			chrome.extension.sendMessage data
 			return
 
 		onScheduleError: (params, status) =>
@@ -246,9 +339,10 @@
 				delete params.callback if params.callback
 
 				query = $.param params
-				window.open "#{@url}?#{query}", 'mailbutler', 'width=500,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=500,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
-				chrome.extension.sendMessage {error: status}, (response) ->
+				chrome.extension.sendMessage 
+					error: status
 			return
 
 		injectButtons: ->
@@ -266,4 +360,4 @@
 			return		
 
 	mb = new MailButler
-)(jQuery)
+) jQuery, window

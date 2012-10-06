@@ -1,0 +1,13 @@
+<project name="MailButler" default="dist" basedir=".">
+    <description>
+        Packages the mailbutler browser extensions
+    </description>
+
+    <target name="chrome">
+    	<delete file="chrome.zip" failonerror="false"/>
+    	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="**/*.less,**/*.coffee,**/Cakefile,**/*.svg"/>
+    </target>
+
+    <target name="dist" depends="chrome">
+    </target>
+</project>
