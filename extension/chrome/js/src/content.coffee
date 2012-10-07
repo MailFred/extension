@@ -85,6 +85,7 @@
 							return)
 
 			popup = null
+			menu  = null
 			close = null
 			self  = @
 
@@ -99,27 +100,62 @@
 
 				if !popup
 
-					menu = """
-					<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant=""><div class="J-N J-Ks J-Ks-KO" role="menuitemcheckbox" style="-webkit-user-select: none; " aria-checked="true" id=":sg"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Tiny</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":sh"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Small</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":si"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Medium</div></div></div><div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " id=":sj"><div class="J-N-Jz" style="-webkit-user-select: none; "><div class="J-N-Jo" style="-webkit-user-select: none; "></div><div style="-webkit-user-select: none; ">Large</div></div></div></div>
-						"""
+					# Toggling checkboxes
+					boxToggle = (target, onChange) ->
+						target.on 'click', (e) ->
+							e = $ @
+							e.toggleClass 'J-LC-JR-Jp'
+							checked = e.hasClass 'J-LC-JR-Jp'
+							e.attr 'aria-checked', if checked then 'true' else 'false'
+							props[e.attr 'act'] = checked
+							onChange? checked
+							return
+						return
 
-					popup = $ """
+					menu = 	$ """
+							<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
+							</div>
+							"""
+
+					menu.on 'mouseover', (e) -> e.stopPropagation()
+
+					addMenuElement = (text, checked, onChange) ->
+						element = $ """	
+									<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " aria-checked="true">
+										<div class="J-N-Jz" style="-webkit-user-select: none; ">
+											<div class="J-N-Jo" style="-webkit-user-select: none; "></div>
+											<div style="-webkit-user-select: none; ">#{text}</div>
+										</div>
+									</div>
+									"""
+
+						element.attr 'aria-checked', if checked then 'true' else 'false'
+						element.toggleClass 'J-Ks-KO', checked
+
+						addHovering element
+						boxToggle element, onChange
+						menu.append element
+						return
+
+
+					popup = $ 	"""
 								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
 									<div class="SK AX" style="-webkit-user-select: none;">
 
 										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">When?</div>
-
-										<div class="J-N J-Ks-KO J-Ks" role="menuitem" style="-webkit-user-select: none; ">
-											<div class="J-N-Jz">
-												<div class="J-N-Jo"></div>
-												At a predefined time
-												<span class="J-Ph-hFsbo"></span>
+										<div>
+											<div class="J-N J-Ks-KO J-Ks" role="menuitem" style="-webkit-user-select: none; ">
+												<div class="J-N-Jz">
+													<div class="J-N-Jo"></div>
+													At a predefined time
+													<span class="J-Ph-hFsbo"></span>
+												</div>
 											</div>
-										</div>
-										<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; ">
-											<div class="J-N-Jz">
-												<div class="J-N-Jo"></div>
-												<div>Specify time</div>
+											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; ">
+												<div class="J-N-Jz">
+													<div class="J-N-Jo"></div>
+													<div>Specify time</div>
+												</div>
 											</div>
 										</div>
 
@@ -178,14 +214,32 @@
 					t.parent().parent().append popup
 
 					# Hovering
-					for cls in ['J-N','J-LC','J-JK']
-						hoverClass = cls+'-JT'
-						popup.find('.'+cls).hover 	((e) ->
-														$(@).addClass hoverClass
-														return),
-													((e) ->
-														$(@).removeClass hoverClass
-														return)
+					addHovering = (target) ->
+						for cls in ['J-N','J-LC','J-JK']
+							hoverClass = cls+'-JT'
+							target.find('.'+cls).hover 	((e) ->
+															$(@).addClass hoverClass
+															return),
+														((e) ->
+															$(@).removeClass hoverClass
+															return)
+						return
+
+					addHovering popup
+
+					# Popup menu
+					menuElement = popup.find(".J-N.J-Ks[role='menuitem']")
+					popup.parent().append menu
+					menuElement.hover 	((e) ->
+											ppos = popup.position()
+											menu.css
+												top: 	$(@).position().top + ppos.top
+												left: 	ppos.left + popup.outerWidth()
+											menu.show()
+											return),
+										((e) ->
+											menu.hide()
+											return)
 
 
 					props =
@@ -198,21 +252,16 @@
 					error = popup.find "[act='error']"
 
 					# This shows the error message or the submit button
-					vToggle = ->
+					boxToggle popup.find('.J-LC'), () ->
 						valid = !!(props.unread or props.star or props.inbox)
 						submit.toggle valid
 						error.toggle !valid
 						return
 
-					# Toggling checkboxes
-					popup.find('.J-LC').on 'click', (e) ->
-						e = $ @
-						e.toggleClass 'J-LC-JR-Jp'
-						checked = e.hasClass 'J-LC-JR-Jp'
-						e.attr 'aria-checked', if checked then 'true' else 'false'
-						props[e.attr 'act'] = checked
-						vToggle()
-						return
+					addMenuElement 'in 1 minute', true, (checked) ->
+					addMenuElement 'in 5 minutes', false, (checked) ->
+					addMenuElement 'in 2 days', false, (checked) ->
+					addMenuElement 'in 1 week', false, (checked) ->
 
 					# Clicks on popup do not close it
 					popup.on 'click', (e) ->

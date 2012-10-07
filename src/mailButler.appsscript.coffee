@@ -276,6 +276,7 @@ _test = ->
       inbox: true
       unread: true
       noanswer: true
+      action: 'schedule'
   return
 
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
