@@ -5,11 +5,21 @@
 
     <target name="chrome">
     	<delete file="chrome.zip" failonerror="false"/>
-    	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="**/*.less,**/*.coffee,**/Cakefile,**/*.svg,js/lib/underscore/**/*">
+    	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="
+    		**/*.less,
+    		**/*.coffee,
+    		**/Cakefile,
+    		**/*.svg,
+    		js/lib/underscore/**/*,
+    		js/lib/jquery/**/*
+    		">
 
     		<zipfileset dir="chrome/js/lib/underscore" prefix="/js/lib/underscore">
 				<include name="underscore-min.js"/>
+    		</zipfileset>
 
+    		<zipfileset dir="chrome/js/lib/jquery" prefix="/js/lib/jquery">
+				<include name="jquery.min.js"/>
     		</zipfileset>
     	</zip>
     </target>

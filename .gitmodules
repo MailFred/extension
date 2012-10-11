@@ -1,3 +1,6 @@
 [submodule "extension/chrome/js/lib/underscore"]
 	path = extension/chrome/js/lib/underscore
 	url = git://github.com/documentcloud/underscore.git
+[submodule "extension/chrome/js/lib/jquery"]
+	path = extension/chrome/js/lib/jquery
+	url = git://github.com/joscha/jquery-release.git
