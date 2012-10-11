@@ -13,10 +13,10 @@
 		@TYPE_NAV: 'nav'
 
 		# production URL
-		pUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
+		url: "https://script.google.com/a/macros/feth.com/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
 
 		# dev URL
-		dUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
+		# url: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
 
 		#injectScript: (url) ->
 		#	e = document.createElement 'script'
@@ -26,8 +26,7 @@
 		constructor: ->
 			chrome.extension.onMessage.addListener @onMessage
 
-		getServiceURL: ->
-			if @debug then @dUrl else @pUrl
+		getServiceURL: -> @url
 
 		injectCompose: ->
 			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
