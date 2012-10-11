@@ -1,0 +1,3 @@
+[submodule "extension/chrome/js/lib/underscore"]
+	path = extension/chrome/js/lib/underscore
+	url = git://github.com/documentcloud/underscore.git

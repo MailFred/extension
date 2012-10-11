@@ -14,6 +14,7 @@
         "matches": ["*://mail.google.com/*"],
         "css": ["css/styles.css"],
         "js": [
+          "js/lib/underscore/underscore-min.js",
           "js/lib/jquery-1.8.2.min.js",
           "js/lib/content.js"
         ],

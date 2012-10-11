@@ -5,7 +5,13 @@
 
     <target name="chrome">
     	<delete file="chrome.zip" failonerror="false"/>
-    	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="**/*.less,**/*.coffee,**/Cakefile,**/*.svg"/>
+    	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="**/*.less,**/*.coffee,**/Cakefile,**/*.svg,js/lib/underscore/**/*">
+
+    		<zipfileset dir="chrome/js/lib/underscore" prefix="/js/lib/underscore">
+				<include name="underscore-min.js"/>
+
+    		</zipfileset>
+    	</zip>
     </target>
 
     <target name="dist" depends="chrome">

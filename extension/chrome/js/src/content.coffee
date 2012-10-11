@@ -87,6 +87,7 @@
 			menu  = null
 			close = null
 			self  = @
+			inMenu = false
 
 			# Don't focus the item when clicking on it
 			item.on 'mousedown', (e) ->
@@ -110,13 +111,27 @@
 							onChange? checked
 							return
 						return
-
+					
+					
+					delay = 300
 					menu = 	$ """
 							<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
 							</div>
 							"""
 
-					menu.on 'mouseover', (e) -> e.stopPropagation()
+					hideMenu = ->
+						return if inMenu
+						menu.hide()
+						return
+
+
+					menu.hover ((e) -> 
+									inMenu = true
+									return),
+								((e) ->
+									inMenu = false
+									_.delay hideMenu, delay
+									return)
 
 					addMenuElement = (text, checked, onChange) ->
 						element = $ """	
@@ -231,13 +246,26 @@
 					popup.parent().append menu
 					menuElement.hover 	((e) ->
 											ppos = popup.position()
-											menu.css
+											css =
 												top: 	$(@).position().top + ppos.top
 												left: 	ppos.left + popup.outerWidth()
-											menu.show()
+
+											inMenu = true
+
+											x = ->
+												menu.css css
+												menu.show()
+												return
+											_.delay x, delay
+
 											return),
 										((e) ->
-											menu.hide()
+											inMenu = false
+											x = ->
+												hideMenu()
+												return
+											_.delay x, delay
+
 											return)
 
 
@@ -261,6 +289,8 @@
 					addMenuElement 'in 5 minutes', false, (checked) ->
 					addMenuElement 'in 2 days', false, (checked) ->
 					addMenuElement 'in 1 week', false, (checked) ->
+
+					addHovering menu
 
 					# Clicks on popup do not close it
 					popup.on 'click', (e) ->
