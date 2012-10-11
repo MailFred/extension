@@ -253,6 +253,7 @@
 											inMenu = true
 
 											x = ->
+												return unless inMenu
 												menu.css css
 												menu.show()
 												return
