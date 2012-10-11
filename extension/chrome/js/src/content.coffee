@@ -100,24 +100,33 @@
 
 				if !popup
 
+					toggle = (target, selectedClass, selected, exclusive) ->
+						target.toggleClass selectedClass, selected
+						target.attr 'aria-checked', if selected then 'true' else 'false'
+						if exclusive
+							toggle target.siblings(), selectedClass, false, false
+						return
+
 					# Toggling checkboxes
-					boxToggle = (target, onChange) ->
+					boxToggle = (target, selectedClass, exclusive, onChange) ->
 						target.on 'click', (e) ->
 							e = $ @
-							e.toggleClass 'J-LC-JR-Jp'
-							checked = e.hasClass 'J-LC-JR-Jp'
-							e.attr 'aria-checked', if checked then 'true' else 'false'
-							props[e.attr 'act'] = checked
-							onChange? checked
+							checked = e.hasClass selectedClass
+
+							# We can't deselect the selected item if we are in exclusive mode
+							return if exclusive and checked
+							
+							toggle e, selectedClass, !checked, exclusive
+							onChange? e, !checked
 							return
 						return
 					
 					
 					delay = 300
-					menu = 	$ """
-							<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
-							</div>
-							"""
+					menu = 	$ 	"""
+								<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
+								</div>
+								"""
 
 					hideMenu = ->
 						return if inMenu
@@ -133,7 +142,8 @@
 									_.delay hideMenu, delay
 									return)
 
-					addMenuElement = (text, checked, onChange) ->
+					addMenuElement = (text, checked, parentMenuItem, onChange) ->
+						selectedClass = 'J-Ks-KO'
 						element = $ """	
 									<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " aria-checked="true">
 										<div class="J-N-Jz" style="-webkit-user-select: none; ">
@@ -143,13 +153,16 @@
 									</div>
 									"""
 
-						element.attr 'aria-checked', if checked then 'true' else 'false'
-						element.toggleClass 'J-Ks-KO', checked
+						toggle element, selectedClass, checked, false
 
 						addHovering element
-						boxToggle element, onChange
+
+						boxToggle element, selectedClass, true, (e, checked) ->
+							toggle parentMenuItem, selectedClass, true, true
+							onChange e, checked
+							return
 						menu.append element
-						return
+						element
 
 
 					popup = $ 	"""
@@ -158,14 +171,14 @@
 
 										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">When?</div>
 										<div>
-											<div class="J-N J-Ks-KO J-Ks" role="menuitem" style="-webkit-user-select: none; ">
+											<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
 												<div class="J-N-Jz">
 													<div class="J-N-Jo"></div>
 													At a predefined time
 													<span class="J-Ph-hFsbo"></span>
 												</div>
 											</div>
-											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; ">
+											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " act="manual">
 												<div class="J-N-Jz">
 													<div class="J-N-Jo"></div>
 													<div>Specify time</div>
@@ -245,55 +258,109 @@
 					menuElement = popup.find(".J-N.J-Ks[role='menuitem']")
 					popup.parent().append menu
 					menuElement.hover 	((e) ->
-											ppos = popup.position()
-											css =
-												top: 	$(@).position().top + ppos.top
-												left: 	ppos.left + popup.outerWidth()
-
 											inMenu = true
 
-											x = ->
+											x = =>
 												return unless inMenu
-												menu.css css
+												ppos = popup.position()
+												menu.css
+													top: 	$(@).position().top + ppos.top
+													left: 	ppos.left + popup.outerWidth()
 												menu.show()
 												return
+
 											_.delay x, delay
 
 											return),
 										((e) ->
 											inMenu = false
+
 											x = ->
 												hideMenu()
 												return
+
 											_.delay x, delay
 
 											return)
 
+					_1m = 60 * 1000
+					_1h = 60 * _1m
+					_1d = 24 * _1h
+
+					_delta = (offset) ->
+						"delta:#{offset}"
 
 					props =
 						noanswer: 	false
 						unread:		false
 						star:		false
 						inbox:		false
+						#when:		_delta _1m
+
+
+					boxToggle (popup.find "[act='manual']"), 'J-Ks-KO', true, (e, checked) ->
+						if checked
+							toggle menu.children(), 'J-Ks-KO', false, false
+							props.when = 'specified:0'
+						isValid()
+						return
+
 
 					submit = popup.find "[act='submit']"
 					error = popup.find "[act='error']"
-
-					# This shows the error message or the submit button
-					boxToggle popup.find('.J-LC'), () ->
-						valid = !!(props.unread or props.star or props.inbox)
-						submit.toggle valid
+					isValid = ->
+						valid = (props.unread or props.star or props.inbox) and props.when
+						submit.toggle !!valid
 						error.toggle !valid
 						return
 
-					addMenuElement 'in 1 minute', true, (checked) ->
-					addMenuElement 'in 5 minutes', false, (checked) ->
-					addMenuElement 'in 2 days', false, (checked) ->
-					addMenuElement 'in 1 week', false, (checked) ->
+					# This shows the error message or the submit button
+					boxToggle popup.find('.J-LC'), 'J-LC-JR-Jp', false, (e, checked) ->
+						props[e.attr 'act'] = checked
+						isValid()
+						return
+
+
+					presets = popup.find "[act='presets']"
+
+					if self.debug
+						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
+							if checked
+								props.when = _delta _1m
+							isValid()
+							return
+
+					addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
+						if checked
+							props.when = _delta _1m * 5
+						isValid()
+						return
+
+					addMenuElement 'in 1 hour', false, presets, (e, checked) ->
+						if checked
+							props.when = _delta _1h
+						isValid()
+						return
+
+					addMenuElement 'in 2 days', false, presets, (e, checked) ->
+						if checked
+							props.when = _delta _1d * 2
+						isValid()
+						return
+
+					addMenuElement 'in 1 week', false, presets, (e, checked) ->
+						if checked
+							props.when = _delta _1d * 7
+						isValid()
+						return
 
 					addHovering menu
 
-					# Clicks on popup do not close it
+					# Clicks on menu do not close the popup
+					menu.on 'click', (e) ->
+						e.stopPropagation()
+
+					# Clicks on popup itself do not close it either
 					popup.on 'click', (e) ->
 						e.stopPropagation()
 
@@ -367,7 +434,7 @@
 			data = 
 				action:		'schedule'
 				messageId: 	messageId
-				when:		"delta:"+60000
+				when:		props.when
 				unread:		!!props.unread
 				star:		!!props.star
 				noanswer:	!!props.noanswer
@@ -375,7 +442,7 @@
 				#callback:	'alert'
 
 			#jQuery.getJSON @url, data, @onScheduleSuccess
-			log 'scheduling mail...'
+			log 'scheduling mail...', data
 
 			loadingIcon?()
 
