@@ -12,10 +12,16 @@
   "content_scripts": [
       {
         "matches": ["*://mail.google.com/*"],
-        "css": ["css/styles.css"],
+        "css": [
+          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.core.css",
+          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.datepicker.css",
+          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.theme.css",
+          "css/styles.css"
+        ],
         "js": [
           "js/lib/underscore/underscore-min.js",
           "js/lib/jquery/jquery.min.js",
+          "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
           "js/lib/content.js"
         ],
         "permissions": [

@@ -10,16 +10,17 @@
     		**/*.coffee,
     		**/Cakefile,
     		**/*.svg,
-    		js/lib/underscore/**/*,
-    		js/lib/jquery/**/*
+    		js/lib/**/*
     		">
 
-    		<zipfileset dir="chrome/js/lib/underscore" prefix="/js/lib/underscore">
-				<include name="underscore-min.js"/>
-    		</zipfileset>
+    		<zipfileset dir="chrome/js/lib" prefix="/js/lib">
+    			<include name="*.js"/>
+				<include name="underscore/underscore-min.js"/>
+				<include name="jquery/jquery.min.js"/>
 
-    		<zipfileset dir="chrome/js/lib/jquery" prefix="/js/lib/jquery">
-				<include name="jquery.min.js"/>
+				<include name="jquery-ui/development-bundle/themes/base/*.css"/>
+				<include name="jquery-ui/js/jquery-ui-1.8.24.custom.min.js"/>
+			
     		</zipfileset>
     	</zip>
     </target>

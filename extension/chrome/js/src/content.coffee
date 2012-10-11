@@ -8,6 +8,8 @@
 		@MB_CLASS: 'mailbutler'
 		@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
 		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
+		@MB_CLASS_POPUP: MailButler.MB_CLASS + '-popup'
+		@MB_PICKER_FILLED: MailButler.MB_CLASS + '-picker-filled'
 
 		@TYPE_THREAD: 'thread'
 		@TYPE_NAV: 'nav'
@@ -169,60 +171,70 @@
 								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
 									<div class="SK AX" style="-webkit-user-select: none;">
 
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">When?</div>
-										<div>
-											<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
-												<div class="J-N-Jz">
-													<div class="J-N-Jo"></div>
-													At a predefined time
-													<span class="J-Ph-hFsbo"></span>
-												</div>
-											</div>
-											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " act="manual">
-												<div class="J-N-Jz">
-													<div class="J-N-Jo"></div>
-													<div>Specify time</div>
-												</div>
-											</div>
-										</div>
 
-										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">What to do?</div>
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">Thy conversation shalt be</div>
 
 										<div style="-webkit-user-select: none;">
 											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Mark as unread">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Mark as unread
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>markedth unread
 												</div>
 											</div>
 
 											<div act="star" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Star it">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Star it
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_star" style="display: none">and</span> starredth
 												</div>
 											</div>
 
 											<div act="inbox" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Move to inbox">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Move to inbox
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_inbox" style="display: none">and</span> movedth to thy inbox
 												</div>
 											</div>
 
 											<div style="-webkit-user-select: none;"></div>
 										</div>
 
-										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
 
-										<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Only if noone answered">
-											<div class="J-LC-Jz" style="-webkit-user-select: none;">
-												<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>&hellip; but only if noone answered
+										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+										<!--
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">At</div>
+										-->
+
+										<div>
+											<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
+												<div class="J-N-Jz">
+													<div class="J-N-Jo"></div>
+													in &hellip;
+													<span class="J-Ph-hFsbo"></span>
+												</div>
+											</div>
+											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " act="manual">
+												<div class="J-N-Jz">
+													<div class="J-N-Jo"></div>
+													<div>on <input type="text" act="picker" /></div>
+												</div>
+											</div>
+										</div>
+
+										<div act="noanswer_section" style="display: none">
+											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+
+											<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Only if noone answered">
+												<div class="J-LC-Jz" style="-webkit-user-select: none;">
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>But only if noone answered.
+												</div>
 											</div>
 										</div>
 
 										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
 											<div class="J-Kh" style="-webkit-user-select: none; "></div>
-											<div class="asd ja" style="-webkit-user-select: none; ">Specify a time and action to schedule the email</div>
+											<div class="asd ja" style="-webkit-user-select: none; ">
+												<span act="when" style="display: none;">When shalt thy butler do this?</span>
+												<span act="what" style="display: none;">Wilt ye tell us what ye want to do with thy conversation?</span>
+												<span act="when_what">Wilt ye tell thy butler what to do and when?</span>
+											</div>
 										</div>
 										<div act="submit" style="display: none;">
 											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
@@ -237,7 +249,7 @@
 								</div>
 								"""
 
-
+					popup.addClass MailButler.MB_CLASS_POPUP
 					t.parent().parent().append popup
 
 					# Hovering
@@ -266,6 +278,8 @@
 												menu.css
 													top: 	$(@).position().top + ppos.top
 													left: 	ppos.left + popup.outerWidth()
+												datePicker.datepicker 'hide'
+												datePicker.blur()
 												menu.show()
 												return
 
@@ -297,20 +311,52 @@
 						inbox:		false
 						#when:		_delta _1m
 
+					manual 				= popup.find "[act='manual']"
+					datePicker 			= popup.find "[act='picker']"
+					submit 				= popup.find "[act='submit']"
+					error 				= popup.find "[act='error']"
+					and_star 		 	= popup.find "[act='and_star']"
+					and_inbox 		 	= popup.find "[act='and_inbox']"
+					noanswer_section 	= popup.find "[act='noanswer_section']"
+					error_when 		 	= popup.find "[act='when']"
+					error_what 		 	= popup.find "[act='what']"
+					error_when_what  	= popup.find "[act='when_what']"
 
-					boxToggle (popup.find "[act='manual']"), 'J-Ks-KO', true, (e, checked) ->
-						if checked
-							toggle menu.children(), 'J-Ks-KO', false, false
-							props.when = 'specified:0'
-						isValid()
-						return
+					datePicker.datepicker
+									minDate: '+1d'
+									onSelect: (dateText, inst) ->
+														date = datePicker.datepicker 'getDate'
+														if date
+															props.when = "specified:#{date.getTime()}"
+															toggle manual, 'J-Ks-KO', true, true
+															toggle menu.children(), 'J-Ks-KO', false, false
+															datePicker.addClass MailButler.MB_PICKER_FILLED
+														isValid()
+														return
+
+					
+					#boxToggle manual, 'J-Ks-KO', true, (e, checked) ->
+					#	if checked
+					#		toggle menu.children(), 'J-Ks-KO', false, false
+					#	return
 
 
-					submit = popup.find "[act='submit']"
-					error = popup.find "[act='error']"
 					isValid = ->
-						valid = (props.unread or props.star or props.inbox) and props.when
-						submit.toggle !!valid
+						and_star.toggle !! (props.unread)
+						and_inbox.toggle !! (props.unread or props.star)
+
+						wat = !! (props.unread or props.star or props.inbox)
+						wen  = !! props.when
+
+						valid = wat and wen
+
+						unless valid
+							error_what.toggle not wat and wen
+							error_when.toggle wat and not wen
+							error_when_what.toggle not wat and not wen
+						
+						noanswer_section.toggle valid
+						submit.toggle valid
 						error.toggle !valid
 						return
 
@@ -323,34 +369,43 @@
 
 					presets = popup.find "[act='presets']"
 
+					emptyPicker = ->
+						datePicker.val ''
+						datePicker.removeClass MailButler.MB_PICKER_FILLED
+
 					if self.debug
 						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
 							if checked
 								props.when = _delta _1m
+							emptyPicker()
 							isValid()
 							return
 
 					addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1m * 5
+							emptyPicker()
 						isValid()
 						return
 
 					addMenuElement 'in 1 hour', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1h
+							emptyPicker()
 						isValid()
 						return
 
 					addMenuElement 'in 2 days', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 2
+							emptyPicker()
 						isValid()
 						return
 
 					addMenuElement 'in 1 week', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 7
+							emptyPicker()
 						isValid()
 						return
 

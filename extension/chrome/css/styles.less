@@ -20,4 +20,30 @@
 			}
 		}
 	}
+
 }
+
+.mailbutler-popup {
+	[act='picker'] {
+		width: 70px;
+		height: 15px;
+		padding: 1px;
+		border: 1px solid lightgray;
+
+		&.mailbutler-picker-filled {
+			border: none;
+
+			&:hover {
+				padding: 0;
+				border: 2px inset;
+			}
+		}
+		
+		&:focus, &:hover {
+			padding: 0;
+			border: 2px inset;
+		}
+	}
+}
+
+// @import "../js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.base.css";
