@@ -23,27 +23,38 @@
 
 }
 
-.mailbutler-popup {
-	[act='picker'] {
-		width: 70px;
-		height: 15px;
-		padding: 1px;
-		border: 1px solid lightgray;
-
-		&.mailbutler-picker-filled {
-			border: none;
-
-			&:hover {
-				padding: 0;
-				border: 2px inset;
-			}
+.mailbutler-picker {
+	.ui-datepicker-calendar {
+		.ui-datepicker-unselectable {
+			color: #777;
 		}
-		
-		&:focus, &:hover {
-			padding: 0;
-			border: 2px inset;
+		.ui-state-default {
+			color: grey;
+		}
+		.ui-state-hover {
+			color: black;
+		}
+		.ui-state-active {
+			font-weight: bold;
+			color: black;
 		}
 	}
 }
 
-// @import "../js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.base.css";
+
+.mailbutler-popup {
+
+	[act='manual'],[act='presets'] {
+		span.selected {
+			display: none;
+		}
+		&.J-Ks-KO {
+			span.default {
+				display: none;
+			}
+			span.selected {
+				display: inline;
+			}
+		}
+	}
+}

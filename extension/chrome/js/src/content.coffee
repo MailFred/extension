@@ -9,7 +9,8 @@
 		@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
 		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
 		@MB_CLASS_POPUP: MailButler.MB_CLASS + '-popup'
-		@MB_PICKER_FILLED: MailButler.MB_CLASS + '-picker-filled'
+		@MB_CLASS_MENU: MailButler.MB_CLASS + '-menu'
+		@MB_CLASS_PICKER: MailButler.MB_CLASS + '-picker'
 
 		@TYPE_THREAD: 'thread'
 		@TYPE_NAV: 'nav'
@@ -133,6 +134,7 @@
 								</div>
 								"""
 					menu = 	$ menuBase
+					menu.addClass MailButler.MB_CLASS_MENU
 					menu.inMenu = false
 
 					# Clicks on menu do not close the popup
@@ -184,6 +186,7 @@
 
 					picker = $ menuBase
 					picker.inMenu = false
+					picker.addClass MailButler.MB_CLASS_PICKER
 
 					# Clicks on menu do not close the popup
 					picker.on 'click', (e) ->
@@ -245,14 +248,14 @@
 												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
 													<div class="J-N-Jz">
 														<div class="J-N-Jo"></div>
-														In close future
+														<span class="default">In close future</span><span class="selected"></span>
 														<span class="J-Ph-hFsbo"></span>
 													</div>
 												</div>
 												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="manual">
 													<div class="J-N-Jz">
 														<div class="J-N-Jo"></div>
-														On a specified date
+														<span class="default">On a specified date</span><span class="selected"></span>
 														<span class="J-Ph-hFsbo"></span>
 													</div>
 												</div>
@@ -337,13 +340,17 @@
 					popup.parent().append picker
 					datePicker.datepicker
 									minDate: '+1d'
+									showOtherMonths: true
+									selectOtherMonths: true
+									changeMonth: true
+									changeYear: true
 									onSelect: (dateText, inst) ->
 														date = datePicker.datepicker 'getDate'
 														if date
 															props.when = "specified:#{date.getTime()}"
 															toggle manual, 'J-Ks-KO', true, true
 															toggle menu.children(), 'J-Ks-KO', false, false
-															datePicker.addClass MailButler.MB_PICKER_FILLED
+															(manual.find '.selected').html "On #{dateText}"
 														isValid()
 														return
 					manual.hover 		((e) ->
@@ -437,43 +444,39 @@
 						isValid()
 						return
 
-					emptyPicker = ->
-						datePicker.val ''
-						datePicker.removeClass MailButler.MB_PICKER_FILLED
-
 					if self.debug
 						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
 							if checked
 								props.when = _delta _1m
-							emptyPicker()
+								(presets.find '.selected').html 'In about a minute'
 							isValid()
 							return
 
 					addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1m * 5
-							emptyPicker()
+							(presets.find '.selected').html 'In five minutes'
 						isValid()
 						return
 
 					addMenuElement 'in 1 hour', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1h
-							emptyPicker()
+							(presets.find '.selected').html 'In one hour'
 						isValid()
 						return
 
 					addMenuElement 'in 2 days', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 2
-							emptyPicker()
+							(presets.find '.selected').html 'In two days'
 						isValid()
 						return
 
 					addMenuElement 'in 1 week', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 7
-							emptyPicker()
+							(presets.find '.selected').html 'Next week'
 						isValid()
 						return
 
