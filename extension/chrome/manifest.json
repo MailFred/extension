@@ -15,7 +15,6 @@
         "css": [
           "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.core.css",
           "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.datepicker.css",
-          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.theme.css",
           "css/styles.css"
         ],
         "js": [

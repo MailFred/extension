@@ -14,6 +14,8 @@
 		@TYPE_THREAD: 'thread'
 		@TYPE_NAV: 'nav'
 
+		@ID_PREFIX: 'mailbutler-id-'
+
 		# production URL
 		url: "https://script.google.com/a/macros/feth.com/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
 
@@ -87,9 +89,10 @@
 
 			popup = null
 			menu  = null
+			picker = null
 			close = null
 			self  = @
-			inMenu = false
+			
 
 			# Don't focus the item when clicking on it
 			item.on 'mousedown', (e) ->
@@ -100,7 +103,7 @@
 				e.stopPropagation()
 				t = $ @
 
-				if !popup
+				unless popup
 
 					toggle = (target, selectedClass, selected, exclusive) ->
 						target.toggleClass selectedClass, selected
@@ -125,22 +128,29 @@
 					
 					
 					delay = 300
-					menu = 	$ 	"""
-								<div class="J-M J-M-ayU" style="-webkit-user-select: none; left: 178px; top: 239px; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
+					menuBase = 	"""
+								<div class="J-M J-M-ayU" style="-webkit-user-select: none; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
 								</div>
 								"""
+					menu = 	$ menuBase
+					menu.inMenu = false
+
+					# Clicks on menu do not close the popup
+					menu.on 'click', (e) ->
+						e.stopPropagation()
+						return
 
 					hideMenu = ->
-						return if inMenu
+						return if menu.inMenu
 						menu.hide()
 						return
 
 
 					menu.hover ((e) -> 
-									inMenu = true
+									menu.inMenu = true
 									return),
 								((e) ->
-									inMenu = false
+									menu.inMenu = false
 									_.delay hideMenu, delay
 									return)
 
@@ -154,10 +164,16 @@
 										</div>
 									</div>
 									"""
+						element.attr 'id', MailButler.ID_PREFIX + (Math.random()+"").substr 2
 
 						toggle element, selectedClass, checked, false
 
-						addHovering element
+						addHovering element, ((e) ->
+												menu.attr 'aria-activedescendant', element.attr 'id'
+												return),
+											((e) ->
+												menu.attr 'aria-activedescendant', null
+												return)
 
 						boxToggle element, selectedClass, true, (e, checked) ->
 							toggle parentMenuItem, selectedClass, true, true
@@ -166,13 +182,37 @@
 						menu.append element
 						element
 
+					picker = $ menuBase
+					picker.inMenu = false
+
+					# Clicks on menu do not close the popup
+					picker.on 'click', (e) ->
+						e.stopPropagation()
+						return
+
+					datePicker = $ '<div act="picker"></div>'
+					picker.append datePicker
+
+					hidePicker = ->
+						return if picker.inMenu
+						picker.hide()
+						return
+
+					picker.hover ((e) -> 
+									picker.inMenu = true
+									return),
+								((e) ->
+									picker.inMenu = false
+									_.delay hidePicker, delay
+									return)
+
 
 					popup = $ 	"""
 								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
 									<div class="SK AX" style="-webkit-user-select: none;">
 
 
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">Thy conversation shalt be</div>
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">Thy letters shalt be</div>
 
 										<div style="-webkit-user-select: none;">
 											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Mark as unread">
@@ -197,23 +237,24 @@
 										</div>
 
 
-										<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-										<!--
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">At</div>
-										-->
+										<div act="when_section" style="display: none">
+											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
+											<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">At the time you giveth us</div>
 
-										<div>
-											<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
-												<div class="J-N-Jz">
-													<div class="J-N-Jo"></div>
-													in &hellip;
-													<span class="J-Ph-hFsbo"></span>
+											<div>
+												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
+													<div class="J-N-Jz">
+														<div class="J-N-Jo"></div>
+														In close future
+														<span class="J-Ph-hFsbo"></span>
+													</div>
 												</div>
-											</div>
-											<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " act="manual">
-												<div class="J-N-Jz">
-													<div class="J-N-Jo"></div>
-													<div>on <input type="text" act="picker" /></div>
+												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="manual">
+													<div class="J-N-Jz">
+														<div class="J-N-Jo"></div>
+														On a specified date
+														<span class="J-Ph-hFsbo"></span>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -231,9 +272,8 @@
 										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
 											<div class="J-Kh" style="-webkit-user-select: none; "></div>
 											<div class="asd ja" style="-webkit-user-select: none; ">
-												<span act="when" style="display: none;">When shalt thy butler do this?</span>
-												<span act="what" style="display: none;">Wilt ye tell us what ye want to do with thy conversation?</span>
-												<span act="when_what">Wilt ye tell thy butler what to do and when?</span>
+												<span act="when" style="display: none;">When shalt thy butler fulfill thy wishes?</span>
+												<span act="what">Wilt ye tell us what thy butler shalt to do with thy letters?</span>
 											</div>
 										</div>
 										<div act="submit" style="display: none;">
@@ -249,31 +289,94 @@
 								</div>
 								"""
 
+					# Clicks on popup itself do not close it either
+					popup.on 'click', (e) ->
+						e.stopPropagation()
+						return
+
 					popup.addClass MailButler.MB_CLASS_POPUP
 					t.parent().parent().append popup
 
 					# Hovering
-					addHovering = (target) ->
+					addHovering = (target, over, out) ->
 						for cls in ['J-N','J-LC','J-JK']
 							hoverClass = cls+'-JT'
 							target.find('.'+cls).hover 	((e) ->
 															$(@).addClass hoverClass
+															over? e
 															return),
 														((e) ->
 															$(@).removeClass hoverClass
+															out? e
 															return)
 						return
 
 					addHovering popup
 
-					# Popup menu
-					menuElement = popup.find(".J-N.J-Ks[role='menuitem']")
-					popup.parent().append menu
-					menuElement.hover 	((e) ->
-											inMenu = true
+					actionOps = [
+						'unread'
+						'star'
+						'inbox'
+					]
+
+					manual 				= popup.find "[act='manual']"
+					presets 			= popup.find "[act='presets']"
+					submit 				= popup.find "[act='submit']"
+					error 				= popup.find "[act='error']"
+					ands = {}
+					for op in actionOps
+						ret = popup.find "[act='and_#{op}']"
+						ands[op] = ret if ret.length > 0
+
+					noanswer_section 	= popup.find "[act='noanswer_section']"
+					when_section 		= popup.find "[act='when_section']"
+					error_when 		 	= popup.find "[act='when']"
+					error_what 		 	= popup.find "[act='what']"
+
+					# Picker
+					popup.parent().append picker
+					datePicker.datepicker
+									minDate: '+1d'
+									onSelect: (dateText, inst) ->
+														date = datePicker.datepicker 'getDate'
+														if date
+															props.when = "specified:#{date.getTime()}"
+															toggle manual, 'J-Ks-KO', true, true
+															toggle menu.children(), 'J-Ks-KO', false, false
+															datePicker.addClass MailButler.MB_PICKER_FILLED
+														isValid()
+														return
+					manual.hover 		((e) ->
+											picker.inMenu = true
 
 											x = =>
-												return unless inMenu
+												return unless picker.inMenu
+												ppos = popup.position()
+												picker.css
+													top: 	$(@).position().top + ppos.top
+													left: 	ppos.left + popup.outerWidth()
+												#datePicker.datepicker 'hide'
+												#datePicker.blur()
+												picker.show()
+												return
+
+											_.delay x, delay
+
+											return),
+										((e) ->
+											picker.inMenu = false
+
+											_.delay hidePicker, delay
+
+											return)
+
+					# Popup menu
+					popup.parent().append menu
+					presets.hover 		((e) ->
+											menu.inMenu = true
+
+											x = =>
+												return unless menu.inMenu
 												ppos = popup.position()
 												menu.css
 													top: 	$(@).position().top + ppos.top
@@ -287,13 +390,9 @@
 
 											return),
 										((e) ->
-											inMenu = false
+											menu.inMenu = false
 
-											x = ->
-												hideMenu()
-												return
-
-											_.delay x, delay
+											_.delay hideMenu, delay
 
 											return)
 
@@ -311,39 +410,11 @@
 						inbox:		false
 						#when:		_delta _1m
 
-					manual 				= popup.find "[act='manual']"
-					datePicker 			= popup.find "[act='picker']"
-					submit 				= popup.find "[act='submit']"
-					error 				= popup.find "[act='error']"
-					and_star 		 	= popup.find "[act='and_star']"
-					and_inbox 		 	= popup.find "[act='and_inbox']"
-					noanswer_section 	= popup.find "[act='noanswer_section']"
-					error_when 		 	= popup.find "[act='when']"
-					error_what 		 	= popup.find "[act='what']"
-					error_when_what  	= popup.find "[act='when_what']"
-
-					datePicker.datepicker
-									minDate: '+1d'
-									onSelect: (dateText, inst) ->
-														date = datePicker.datepicker 'getDate'
-														if date
-															props.when = "specified:#{date.getTime()}"
-															toggle manual, 'J-Ks-KO', true, true
-															toggle menu.children(), 'J-Ks-KO', false, false
-															datePicker.addClass MailButler.MB_PICKER_FILLED
-														isValid()
-														return
-
-					
-					#boxToggle manual, 'J-Ks-KO', true, (e, checked) ->
-					#	if checked
-					#		toggle menu.children(), 'J-Ks-KO', false, false
-					#	return
-
-
 					isValid = ->
-						and_star.toggle !! (props.unread)
-						and_inbox.toggle !! (props.unread or props.star)
+						actionToggle = false
+						for op,i in actionOps
+							ands[op].toggle !!actionToggle if i > 0
+							actionToggle |= props[op]
 
 						wat = !! (props.unread or props.star or props.inbox)
 						wen  = !! props.when
@@ -353,9 +424,9 @@
 						unless valid
 							error_what.toggle not wat and wen
 							error_when.toggle wat and not wen
-							error_when_what.toggle not wat and not wen
 						
 						noanswer_section.toggle valid
+						when_section.toggle wat
 						submit.toggle valid
 						error.toggle !valid
 						return
@@ -365,9 +436,6 @@
 						props[e.attr 'act'] = checked
 						isValid()
 						return
-
-
-					presets = popup.find "[act='presets']"
 
 					emptyPicker = ->
 						datePicker.val ''
@@ -411,13 +479,7 @@
 
 					addHovering menu
 
-					# Clicks on menu do not close the popup
-					menu.on 'click', (e) ->
-						e.stopPropagation()
 
-					# Clicks on popup itself do not close it either
-					popup.on 'click', (e) ->
-						e.stopPropagation()
 
 					# Close the popup
 					close = ->

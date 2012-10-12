@@ -18,7 +18,8 @@
 				<include name="underscore/underscore-min.js"/>
 				<include name="jquery/jquery.min.js"/>
 
-				<include name="jquery-ui/development-bundle/themes/base/*.css"/>
+				<include name="jquery-ui/development-bundle/themes/base/*.core.css"/>
+				<include name="jquery-ui/development-bundle/themes/base/*.datepicker.css"/>
 				<include name="jquery-ui/js/jquery-ui-1.8.24.custom.min.js"/>
 			
     		</zipfileset>
