@@ -18,7 +18,7 @@
 		@ID_PREFIX: 'mailbutler-id-'
 
 		# production URL
-		url: "https://script.google.com/a/macros/feth.com/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
+		url: "https://script.google.com/macros/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
 
 		# dev URL
 		# url: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
