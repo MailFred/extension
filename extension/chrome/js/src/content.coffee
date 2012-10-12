@@ -166,7 +166,7 @@
 										</div>
 									</div>
 									"""
-						element.attr 'id', MailButler.ID_PREFIX + (Math.random()+"").substr 2
+						element.attr 'id', _.uniqueId MailButler.ID_PREFIX
 
 						toggle element, selectedClass, checked, false
 
