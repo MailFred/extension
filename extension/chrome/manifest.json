@@ -1,33 +1,40 @@
 {
-  "name": "MailButler",
-  "version": "1.0.5",
-  "manifest_version": 2,
-  "description": "I am here to serve",
-  "icons": {
-    "16":   "images/tie16x16.png",
-    "32":   "images/tie32x32.png",
-    "48":   "images/tie48x48.png",
-    "128":  "images/tie128x128.png"
+  "background": {
+    "persistent": false,
+    "scripts": [
+      "js/lib/background.js"
+    ]
   },
   "content_scripts": [
-      {
-        "matches": ["*://mail.google.com/*"],
-        "css": [
-          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.core.css",
-          "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.datepicker.css",
-          "css/styles.css"
-        ],
-        "js": [
-          "js/lib/underscore/underscore-min.js",
-          "js/lib/jquery/jquery.min.js",
-          "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
-          "js/lib/content.js"
-        ],
-        "permissions": [
-          "*://mail.google.com/*"
-        ]
-      }
+    {
+      "css": [
+        "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.core.css",
+        "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.datepicker.css",
+        "css/styles.css"
+      ],
+      "js": [
+        "js/lib/underscore/underscore-min.js",
+        "js/lib/jquery/jquery.min.js",
+        "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
+        "js/lib/content.js"
+      ],
+      "matches": [
+        "*://mail.google.com/*"
+      ],
+      "permissions": [
+        "*://mail.google.com/*"
+      ]
+    }
   ],
+  "description": "I am here to serve",
+  "icons": {
+    "128": "images/tie128x128.png",
+    "16": "images/tie16x16.png",
+    "32": "images/tie32x32.png",
+    "48": "images/tie48x48.png"
+  },
+  "manifest_version": 2,
+  "name": "MailButler",
   "permissions": [
     "webNavigation",
     "notifications",
@@ -36,15 +43,10 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
+  "version": "1.0.5",
   "web_accessible_resources": [
     "images/tie21x21black.png",
     "images/tie48x48.png",
     "images/loader.gif"
-  ],
-  "background": {
-    "scripts": [
-      "js/lib/background.js"
-    ],
-    "persistent": false
-  }
+  ]
 }
