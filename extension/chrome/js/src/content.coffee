@@ -39,14 +39,24 @@
 
 			if navs.length > 0
 				navs.append @composeButton MailButler.TYPE_NAV
+			else
+				log 'Could not find compose button bar'
 			return
 
 		injectThread: ->
-			threads = ($ '.iH > div').filter (index) ->
+			sels = [
+				'.iH > div,[gh="mtb"] > div'
+				"[gh='tm'] > div:first-child > div"
+				'.aeH > div > div:first-child > div'
+			]
+
+			threads = ($ sels.join ',').filter (index) ->
 				($ ".#{MailButler.MB_CLASS_THREAD}", @).length is 0
 			
 			if threads.length > 0
 				threads.append @composeButton MailButler.TYPE_THREAD
+			else
+				log 'Could not find thread button bar'
 			return
 
 		copyAttrs: (attrs, source, target) ->
@@ -561,6 +571,8 @@
 				inbox:		!!props.inbox
 				#callback:	'alert'
 
+
+
 			#jQuery.getJSON @url, data, @onScheduleSuccess
 			log 'scheduling mail...', data
 
@@ -617,13 +629,15 @@
 			return
 
 		onMessage: (request, sender, sendResponse) =>
-			# log request
+			log request
 			switch request.type
 				when "fragment"
 					@injectButtons()
 				when "loaded"
 					@injectButtons()
-			return		
+			return
 
 	mb = new MailButler
-) jQuery, window
+	return
+
+) jQuery, window if top.document is document
