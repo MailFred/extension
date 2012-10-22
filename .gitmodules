@@ -4,3 +4,6 @@
 [submodule "extension/chrome/js/lib/jquery"]
 	path = extension/chrome/js/lib/jquery
 	url = git://github.com/joscha/jquery-release.git
+[submodule "extension/chrome/js/lib/gmailr"]
+	path = extension/chrome/js/lib/gmailr
+	url = git@github.com:joscha/gmailr.git

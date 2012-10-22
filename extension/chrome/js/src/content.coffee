@@ -5,15 +5,12 @@
 
 	class MailButler
 		debug: true
+		port: null
 		@MB_CLASS: 'mailbutler'
 		@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
-		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
 		@MB_CLASS_POPUP: MailButler.MB_CLASS + '-popup'
 		@MB_CLASS_MENU: MailButler.MB_CLASS + '-menu'
 		@MB_CLASS_PICKER: MailButler.MB_CLASS + '-picker'
-
-		@TYPE_THREAD: 'thread'
-		@TYPE_NAV: 'nav'
 
 		@ID_PREFIX: 'mailbutler-id-'
 
@@ -23,41 +20,40 @@
 		# dev URL
 		# url: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
 
-		#injectScript: (url) ->
-		#	e = document.createElement 'script'
-		#	(document.body.appendChild e).src = url
-		#	e
-
 		constructor: ->
-			chrome.extension.onMessage.addListener @onMessage
+			window.addEventListener "message", @gmailrListener, false
+
+		gmailrListener: (e) =>
+			if e.source is window
+				# We only accept messages from ourselves
+				log "event", e
+
+				if e.data?.from is "GMAILR"
+					log e.data.event.type
+					switch e.data.event.type
+						when 'viewChanged'
+							@injectButtons()
+			return
 
 		getServiceURL: -> @url
 
-		injectCompose: ->
-			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
-				($ ".#{MailButler.MB_CLASS_NAV}", @).length is 0
-
-			if navs.length > 0
-				navs.append @composeButton MailButler.TYPE_NAV
-			else
-				log 'Could not find compose button bar'
-			return
-
-		injectThread: ->
+		injectButtons: ->
 			sels = [
-				'.iH > div,[gh="mtb"] > div'
-				"[gh='tm'] > div:first-child > div"
-				'.aeH > div > div:first-child > div'
+				'.iH > div'
+				'.dW.E[role=navigation] > .J-Jw'
+				
+				"[gh='tm'] > div:first-child > div:first-child > div > div"
+				'.aeH > div > div:first-child > div:first-child > div > div'
+				'[gh="mtb"] > div > div'
 			]
 
-			threads = ($ sels.join ',').filter (index) ->
-				($ ".#{MailButler.MB_CLASS_THREAD}", @).length is 0
+			elems = ($ sels.join ',')
+			#log elems
+
+			threads = elems.first().filter (index) ->
+				($ ".#{MailButler.MB_CLASS}", @).length is 0
 			
-			if threads.length > 0
-				threads.append @composeButton MailButler.TYPE_THREAD
-			else
-				log 'Could not find thread button bar'
-			return
+			threads.append @composeButton if threads.length > 0
 
 		copyAttrs: (attrs, source, target) ->
 			for attr in attrs
@@ -65,13 +61,10 @@
 			return
 
 		composeButton: (type) =>
-			cls = [MailButler.MB_CLASS]
-
-			switch type
-				when MailButler.TYPE_THREAD
-					cls.push MailButler.MB_CLASS_THREAD
-				when MailButler.TYPE_NAV
-					cls.push MailButler.MB_CLASS_NAV
+			cls = 	[
+						MailButler.MB_CLASS
+						MailButler.MB_CLASS_THREAD
+					]
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
 
@@ -617,24 +610,10 @@
 				delete params.callback if params.callback
 
 				query = $.param params
-				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=500,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
 				chrome.extension.sendMessage 
 					error: status
-			return
-
-		injectButtons: ->
-			@injectThread()
-			@injectCompose()
-			return
-
-		onMessage: (request, sender, sendResponse) =>
-			log request
-			switch request.type
-				when "fragment"
-					@injectButtons()
-				when "loaded"
-					@injectButtons()
 			return
 
 	mb = new MailButler

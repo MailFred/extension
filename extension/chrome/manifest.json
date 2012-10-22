@@ -16,6 +16,10 @@
         "js/lib/underscore/underscore-min.js",
         "js/lib/jquery/jquery.min.js",
         "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
+
+        "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
+        "js/lib/bootstrap.js",
+
         "js/lib/content.js"
       ],
       "matches": [
@@ -28,26 +32,29 @@
   ],
   "description": "I am here to serve",
   "icons": {
-    "128": "images/tie128x128.png",
-    "16": "images/tie16x16.png",
-    "32": "images/tie32x32.png",
-    "48": "images/tie48x48.png"
+    "16" : "images/tie16x16.png",
+    "32" : "images/tie32x32.png",
+    "48" : "images/tie48x48.png",
+    "128": "images/tie128x128.png"
   },
   "manifest_version": 2,
   "name": "MailButler",
   "permissions": [
-    "webNavigation",
     "notifications",
-    "tabs",
     "https://script.google.com/*",
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.0.6",
+  "version": "1.0.7",
   "web_accessible_resources": [
     "images/tie21x21black.png",
     "images/tie48x48.png",
-    "images/loader.gif"
+    "images/loader.gif",
+
+    "js/lib/jquery/jquery.min.js",
+    "js/lib/gmailr/chrome/lib/jquery-bbq/jquery.ba-bbq.min.js",
+    "js/lib/gmailr/chrome/lib/gmailr.js",
+    "js/lib/mediator.js"
   ]
 }
         

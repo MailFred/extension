@@ -7,3 +7,5 @@ chrome.zip
 chrome.crx
 mailbutler.sublime-project
 mailbutler.sublime-workspace
+extension/chrome/js/lib/bootstrap.js
+extension/chrome/js/lib/mediator.js
