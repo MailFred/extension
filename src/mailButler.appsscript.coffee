@@ -81,25 +81,28 @@ class MailButler
       # refresh its state
       message.refresh()
 
-      if @hasLabel @LABEL_OUTBOX, message
+      # get the thread the email belongs to
+      # message.getThread() seems to return the wrong number of messages (only one message)
+      thread = GmailApp.getThreadById message.getThread().getId()
+
+      # refresh the thread
+      thread.refresh()
+
+      if @hasLabel @LABEL_OUTBOX, thread
         # Has the outbox label
         Logger.log "Start processing message with ID '%s'", messageId
         
         # remove the outbox label from the message
-        @removeLabel @LABEL_OUTBOX, message
+        @removeLabel @LABEL_OUTBOX, thread
 
         # By default we assume there was no answer - this is also correct if the user doesn't care about answers
         hasAnswer = false
 
         if props.how.noanswer
           # all the actions shall only take place if there was no answer
-          
-          # get the thread the email belongs to
-          # message.getThread() seems to return the wrong number of messages (only one message)
-          thread = GmailApp.getThreadById message.getThread().getId()
-          
+
           # find the date of the last message
-          dateOfLastMessage = thread.refresh().getLastMessageDate()
+          dateOfLastMessage = thread.getLastMessageDate()
           Logger.log "Action was scheduled on '%s' and date of last message was %s ", new Date(props.scheduled).toUTCString(), dateOfLastMessage.toUTCString()
           
           # check if that message was sent after or on the scheduling date
@@ -114,10 +117,10 @@ class MailButler
           message.star()  if props.how.star and not message.isStarred()
           
           # mark it unread only if not unread and marking unread is enabled
-          message.markUnread()  if props.how.unread and not message.isUnread()
+          thread.markUnread()  if props.how.unread and not thread.isUnread()
           
           # move it to inbox only if not in inbox already and moving is enabled
-          GmailApp.moveThreadToInbox thread ? message.getThread()  if props.how.inbox and not message.isInInbox()
+          GmailApp.moveThreadToInbox thread ? message.getThread()  if props.how.inbox and not thread.isInInbox()
 
         else
           # There was an answer on this thread
@@ -138,19 +141,19 @@ class MailButler
     GmailApp.getUserLabelByName(name) ? (GmailApp.createLabel(name) if create)
 
   # Add a label to a message (thread) - create newly if needed
-  @addLabel: (name, message) ->
-    @getLabel(name, true)?.addToThread message.getThread()
+  @addLabel: (name, thread) ->
+    @getLabel(name, true)?.addToThread thread
     return
 
   # Checks if a given message (thread) has a specified label attached
-  @hasLabel: (name, message) ->
-    for label in message.getThread().getLabels()
+  @hasLabel: (name, thread) ->
+    for label in thread.getLabels()
       return true if label.getName() is name
     false
 
   # Removes a label from a message (thread)
-  @removeLabel: (name, message) ->
-    @getLabel(name, false)?.removeFromThread message.getThread()
+  @removeLabel: (name, thread) ->
+    @getLabel(name, false)?.removeFromThread thread
     return
 
   @normalize: (messageId, noPrefix) ->
@@ -206,8 +209,13 @@ class MailButler
       throw "No action (star, marking unread, move to inbox) specified"
 
     MailButler.storeButlerMail props
-    MailButler.addLabel MailButler.LABEL_BASE, message
-    MailButler.addLabel MailButler.LABEL_OUTBOX, message
+
+    thread = GmailApp.getThreadById message.getThread().getId()
+    thread.moveToArchive() if String(form.archive) is "true"
+
+    MailButler.addLabel MailButler.LABEL_BASE, thread
+    MailButler.addLabel MailButler.LABEL_OUTBOX, thread
+
     return
 
 doGet = (request) ->
@@ -271,7 +279,7 @@ _process = (e) ->
 _test = ->
   doGet
     parameter:
-      msgId: "13a1a6948cb7471f"
+      msgId: "13a1a6948cb7471f" # works with joscha@feth.com only
       when: "delta:"+ (2 * 1000 * 60)
       inbox: true
       unread: true
