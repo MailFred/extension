@@ -6,6 +6,7 @@
 
 	class MailButler
 		debug: true
+		dev: true
 		port: null
 		@MB_CLASS: 'mailbutler'
 		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
@@ -20,10 +21,10 @@
 		@TYPE_NAV: 'nav'
 
 		# production URL
-		url: "https://script.google.com/macros/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
 
 		# dev URL
-		# url: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
 
 		constructor: ->
 			window.addEventListener "message", @gmailrListener, false
@@ -41,7 +42,8 @@
 								@injectThread()
 			return
 
-		getServiceURL: -> @url
+		getServiceURL: ->
+			if @dev then @devUrl else @prodUrl
 
 		injectCompose: ->
 			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
