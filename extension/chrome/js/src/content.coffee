@@ -5,15 +5,15 @@
     	return
 
 	class MailButler
-		debug: true
-		dev: false
-		port: null
-		@MB_CLASS: 'mailbutler'
-		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
-		@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
-		@MB_CLASS_POPUP: MailButler.MB_CLASS + '-popup'
-		@MB_CLASS_MENU: MailButler.MB_CLASS + '-menu'
-		@MB_CLASS_PICKER: MailButler.MB_CLASS + '-picker'
+		debug: 	true
+		dev: 	false
+		
+		@MB_CLASS: 			'mailbutler'
+		@MB_CLASS_NAV: 		MailButler.MB_CLASS + '-nav'
+		@MB_CLASS_THREAD: 	MailButler.MB_CLASS + '-thread'
+		@MB_CLASS_POPUP: 	MailButler.MB_CLASS + '-popup'
+		@MB_CLASS_MENU: 	MailButler.MB_CLASS + '-menu'
+		@MB_CLASS_PICKER: 	MailButler.MB_CLASS + '-picker'
 
 		@ID_PREFIX: 'mailbutler-id-'
 
@@ -579,8 +579,6 @@
 				chrome.extension.sendMessage
 					error: e.toString()
 				return
-			
-			log 'scheduling mail...', data
 
 			loadingIcon?()
 			
@@ -594,6 +592,8 @@
 				inbox:		!!props.inbox
 				archive:	!!props.archive
 				#callback:	'alert'
+
+			log 'scheduling mail...', data
 
 			# remove false values to transmit less data over the wire
 			_.each data, (val, key) ->
