@@ -20,6 +20,8 @@
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",
 
+        "js/lib/store.js/store.min.js",
+        
         "js/lib/content.js"
       ],
       "matches": [

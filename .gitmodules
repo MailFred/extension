@@ -7,3 +7,6 @@
 [submodule "extension/chrome/js/lib/gmailr"]
 	path = extension/chrome/js/lib/gmailr
 	url = git@github.com:joscha/gmailr.git
+[submodule "extension/chrome/js/lib/store.js"]
+	path = extension/chrome/js/lib/store.js
+	url = git://github.com/marcuswestin/store.js.git
