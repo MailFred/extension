@@ -8,12 +8,16 @@
 		debug: true
 		port: null
 		@MB_CLASS: 'mailbutler'
+		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
 		@MB_CLASS_THREAD: MailButler.MB_CLASS + '-thread'
 		@MB_CLASS_POPUP: MailButler.MB_CLASS + '-popup'
 		@MB_CLASS_MENU: MailButler.MB_CLASS + '-menu'
 		@MB_CLASS_PICKER: MailButler.MB_CLASS + '-picker'
 
 		@ID_PREFIX: 'mailbutler-id-'
+
+		@TYPE_THREAD: 'thread'
+		@TYPE_NAV: 'nav'
 
 		# production URL
 		url: "https://script.google.com/macros/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
@@ -27,34 +31,31 @@
 		gmailrListener: (e) =>
 			if e.source is window
 				# We only accept messages from ourselves
-				log "event", e
+				#log "event", e
 
 				if e.data?.from is "GMAILR"
-					log e.data.event.type
+					# log e.data.event.type
 					switch e.data.event.type
 						when 'viewChanged'
-							@injectButtons()
+							if e.data.event.args[0] is "conversation"
+								@injectThread()
 			return
 
 		getServiceURL: -> @url
 
-		injectButtons: ->
-			sels = [
-				'.iH > div'
-				'.dW.E[role=navigation] > .J-Jw'
-				
-				"[gh='tm'] > div:first-child > div:first-child > div > div"
-				'.aeH > div > div:first-child > div:first-child > div > div'
-				'[gh="mtb"] > div > div'
-			]
+		injectCompose: ->
+			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
+				($ ".#{MailButler.MB_CLASS_NAV}", @).length is 0
 
-			elems = ($ sels.join ',')
-			#log elems
+			navs.append @composeButton MailButler.TYPE_NAV if navs.length > 0
+			return
 
-			threads = elems.first().filter (index) ->
-				($ ".#{MailButler.MB_CLASS}", @).length is 0
+		injectThread: ->
+			threads = ($ '.iH > div').filter (index) ->
+				($ ".#{MailButler.MB_CLASS_THREAD}", @).length is 0
 			
-			threads.append @composeButton if threads.length > 0
+			threads.append @composeButton MailButler.TYPE_THREAD if threads.length > 0
+			return
 
 		copyAttrs: (attrs, source, target) ->
 			for attr in attrs
@@ -62,10 +63,13 @@
 			return
 
 		composeButton: (type) =>
-			cls = 	[
-						MailButler.MB_CLASS
-						MailButler.MB_CLASS_THREAD
-					]
+			cls = [MailButler.MB_CLASS]
+
+			switch type
+				when MailButler.TYPE_THREAD
+					cls.push MailButler.MB_CLASS_THREAD
+				when MailButler.TYPE_NAV
+					cls.push MailButler.MB_CLASS_NAV
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
 
@@ -274,6 +278,11 @@
 													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>But only if noone answered.
 												</div>
 											</div>
+											<div act="archive" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Archive">
+												<div class="J-LC-Jz" style="-webkit-user-select: none;">
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Archive conversation after scheduling
+												</div>
+											</div>
 										</div>
 
 										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
@@ -320,6 +329,7 @@
 
 					addHovering popup
 
+
 					actionOps = [
 						'unread'
 						'star'
@@ -330,7 +340,7 @@
 					presets 			= popup.find "[act='presets']"
 					submit 				= popup.find "[act='submit']"
 					error 				= popup.find "[act='error']"
-					ands = {}
+					ands 				= {}
 					for op in actionOps
 						ret = popup.find "[act='and_#{op}']"
 						ands[op] = ret if ret.length > 0
@@ -339,6 +349,13 @@
 					when_section 		= popup.find "[act='when_section']"
 					error_when 		 	= popup.find "[act='when']"
 					error_what 		 	= popup.find "[act='what']"
+
+					reposition = (menuElement, target) ->
+						ppos = popup.position()
+						target.css
+							top: 	menuElement.position().top + ppos.top
+							left: 	ppos.left + popup.outerWidth()
+						return
 
 					# Picker
 					popup.parent().append picker
@@ -362,12 +379,7 @@
 
 											x = =>
 												return unless picker.inMenu
-												ppos = popup.position()
-												picker.css
-													top: 	$(@).position().top + ppos.top
-													left: 	ppos.left + popup.outerWidth()
-												#datePicker.datepicker 'hide'
-												#datePicker.blur()
+												reposition $(@), picker
 												picker.show()
 												return
 
@@ -388,10 +400,7 @@
 
 											x = =>
 												return unless menu.inMenu
-												ppos = popup.position()
-												menu.css
-													top: 	$(@).position().top + ppos.top
-													left: 	ppos.left + popup.outerWidth()
+												reposition $(@), menu
 												datePicker.datepicker 'hide'
 												datePicker.blur()
 												menu.show()
@@ -414,12 +423,29 @@
 					_delta = (offset) ->
 						"delta:#{offset}"
 
+					boxSelectedClass = 'J-LC-JR-Jp'
+
 					props =
 						noanswer: 	false
 						unread:		false
 						star:		false
 						inbox:		false
+						archive:	false
 						#when:		_delta _1m
+
+					_.each props, (v, op) ->
+						selected = store.get "selection_act_#{op}"
+						props[op] = selected
+						toggle (popup.find "[act='#{op}']"), boxSelectedClass, selected, false
+						return
+
+					# This shows the error message or the submit button
+					boxToggle popup.find('.J-LC'), boxSelectedClass, false, (e, checked) ->
+						act = e.attr 'act'
+						props[act] = checked
+						store.set "selection_act_#{act}", checked
+						isValid()
+						return
 
 					isValid = ->
 						actionToggle = false
@@ -432,21 +458,19 @@
 
 						valid = wat and wen
 
-						unless valid
-							error_what.toggle not wat and wen
-							error_when.toggle wat and not wen
+						error_what.toggle not wat
+						error_when.toggle wat and not wen
 						
 						noanswer_section.toggle valid
 						when_section.toggle wat
 						submit.toggle valid
 						error.toggle !valid
+						reposition manual, picker
+						reposition presets, menu
 						return
 
-					# This shows the error message or the submit button
-					boxToggle popup.find('.J-LC'), 'J-LC-JR-Jp', false, (e, checked) ->
-						props[e.attr 'act'] = checked
-						isValid()
-						return
+
+					isValid()
 
 					if self.debug
 						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
@@ -554,37 +578,26 @@
 					error: e.toString()
 				return
 			
+			log 'scheduling mail...', data
+
+			loadingIcon?()
 			
 			data = 
 				action:		'schedule'
-				messageId: 	messageId
+				messageId:	messageId
 				when:		props.when
 				unread:		!!props.unread
 				star:		!!props.star
 				noanswer:	!!props.noanswer
 				inbox:		!!props.inbox
+				archive:	!!props.archive
 				#callback:	'alert'
 
+			# remove false values to transmit less data over the wire
+			_.each data, (val, key) ->
+				delete data[key] if val is false
+				return
 
-
-			#jQuery.getJSON @url, data, @onScheduleSuccess
-			log 'scheduling mail...', data
-
-			loadingIcon?()
-
-			#u = @url + "?" + ($.param data)
-			#log 'URL is: ', u
-			#@injectScript u
-
-			#chrome.extension.sendMessage {data: data, url: @url}, (response) ->
-			#  log "res", response
-			#  return
-
-			#xhr = new XMLHttpRequest
-			#xhr.onreadystatechange = -> log arguments
-			#xhr.open "GET", (@url + "?" + ($.param data)), true
-			#xhr.send()
-			#return
 			
 			$.ajax
 				url: 			@getServiceURL()
