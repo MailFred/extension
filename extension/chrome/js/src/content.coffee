@@ -6,7 +6,7 @@
 
 	class MailButler
 		debug: true
-		dev: true
+		dev: false
 		port: null
 		@MB_CLASS: 'mailbutler'
 		@MB_CLASS_NAV: MailButler.MB_CLASS + '-nav'
@@ -609,7 +609,7 @@
 									@onScheduleSuccess data
 				error:			(jqXHR, textStatus, errorThrown) =>
 									log arguments
-									@onScheduleError data, textStatus
+									@onScheduleError data, textStatus, errorThrown
 				complete:		(jqXHR, textStatus) ->
 									resetIcon?()
 			return
@@ -619,7 +619,7 @@
 			chrome.extension.sendMessage data
 			return
 
-		onScheduleError: (params, status) =>
+		onScheduleError: (params, status, error) =>
 			log arguments
 			if status is 'parsererror'
 				params.action = 'setup'
@@ -629,7 +629,7 @@
 				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
 				chrome.extension.sendMessage 
-					error: status
+					error: error.toString()
 			return
 
 	mb = new MailButler
