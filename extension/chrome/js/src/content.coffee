@@ -2,6 +2,7 @@
 
 	log = (args...) ->
     	console.log.apply console, args if console?.log and mb.debug is true
+    	return
 
 	class MailButler
 		debug: true
