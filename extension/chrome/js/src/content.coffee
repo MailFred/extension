@@ -436,7 +436,7 @@
 						#when:		_delta _1m
 
 					_.each props, (v, op) ->
-						selected = store.get "selection_act_#{op}"
+						selected = !! store.get "selection_act_#{op}"
 						props[op] = selected
 						toggle (popup.find "[act='#{op}']"), boxSelectedClass, selected, false
 						return
