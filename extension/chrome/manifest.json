@@ -40,14 +40,14 @@
     "128": "images/tie128x128.png"
   },
   "manifest_version": 2,
-  "name": "MailButler",
+  "name": "MailFred",
   "permissions": [
     "notifications",
     "https://script.google.com/*",
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.0.7",
+  "version": "1.0.8",
   "web_accessible_resources": [
     "images/tie21x21black.png",
     "images/tie48x48.png",
