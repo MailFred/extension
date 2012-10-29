@@ -21,10 +21,10 @@
 		@TYPE_NAV: 'nav'
 
 		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbxf5DLvznehMYEK5u3p9d-f1F_iwIIqs11SCw_loUDogp3iDg/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbwT5nETb_-UH44thhzLobUpoB0Zt5BuLUNscv5JAKyJJlVglfY/exec"
 
 		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbztqUX2xb2_w4NnlsaUP_f5sdLl8h9Fsc5AORb9Pg/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwo-RvSWoFJizb-lNzR7uSBsmSh4X2q9ehs7q4M7Rk/dev"
 
 		constructor: ->
 			window.addEventListener "message", @gmailrListener, false

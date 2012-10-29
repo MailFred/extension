@@ -1,11 +1,10 @@
 class MailButler
 
-  @VERSION:             '1.0.0'
-  @TYPE:                'mailbutler'
-  @LABEL_BASE:          'MailButler'
+  @VERSION:             1.08
+  @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
   @FREQUENCY_MINUTES:   1
-  @DB:                  ScriptDb.getMyDb()
+  @DB:                  MailButlerDBLibrary.Db
 
   prefix: null
 
@@ -26,8 +25,7 @@ class MailButler
       e
 
   @uninstall: (automatic) ->
-    base = ScriptApp.getService().getUrl()
-    if not automatic and base
+    if not automatic and (base = ScriptApp.getService().getUrl())
       # Only if no automatic uninstall (e.g. the user has to confirm) and the script is published as a WebApp
       target = base.substring 0, base.lastIndexOf '/'
 
@@ -59,41 +57,34 @@ class MailButler
     if ScriptApp.getScriptTriggers().length is 0
       Logger.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
+      @DB.setCurrentVersion @getEmail(), @VERSION
+    @DB.setLastUsed @getEmail()
     return
 
   @getEmail: ->
-    Session.getEffectiveUser().getEmail()
+    Session.getEffectiveUser().getEmail() ? Session.getActiveUser().getEmail()
 
   @getScheduledMails: ->
-    q =
-      user:     @getEmail()
-      type:     @TYPE
-    result = @DB.query q
+    user = @getEmail()
+    Logger.log 'Get scheduled mails for %s', user
+    result = @DB.getMails user
     result.next() while result.hasNext()
 
   @processButlerMails: (d) ->
     Logger.log "Checking for scheduled mails on %s", d
 
-    q =
-      user:     @getEmail()
-      version:  @VERSION
-      type:     @TYPE
-      when:     @DB.lessThanOrEqualTo d.getTime()
-
-    Logger.log "Using the query #{q}"
-
-    result = @DB.query(q).sortBy 'when', @DB.ASCENDING
+    result = @DB.getMails @getEmail(), @VERSION, d.getTime()
 
     if (s = result.getSize()) > 0    
       # yep there are some
-      Logger.log "Found %s candidates", s
+      Logger.log "... found %s candidates", s
 
       while result.hasNext()
         @processButlerMail result.next()
 
     else
       # No scheduled messages available
-      Logger.log "...none found."
+      Logger.log "... none found."
     return
 
   @processButlerMail: (props) ->
@@ -164,7 +155,7 @@ class MailButler
       Logger.log "Finished processing message with ID '%s'", messageId
 
     # delete the scheduled butler mail, because we couldn't find the real message
-    @DB.remove props # pass "" + x in case messageId is undefined (should not happen)
+    @DB.removeMail props # pass "" + x in case messageId is undefined (should not happen)
     return
 
   # Get a label or create it
@@ -188,12 +179,7 @@ class MailButler
     return
 
   @storeButlerMail: (props) ->
-    props.user    = @getEmail()
-    props.version = @VERSION
-    props.type    = @TYPE
-
-    @DB.save props
-    return
+    @DB.storeMail @getEmail(), @VERSION, props
 
   addButlerMail: (form) ->
     messageId = form.msgId ? form.messageId
@@ -229,7 +215,9 @@ class MailButler
       Logger.log "No action specified"
       throw "No action (star, marking unread, move to inbox) specified"
 
-    MailButler.storeButlerMail props
+
+    stored = MailButler.storeButlerMail props
+    throw 'Storing the scheduling action failed' unless stored
 
     thread = GmailApp.getThreadById message.getThread().getId()
     thread.moveToArchive() if String(form.archive) is "true"
@@ -239,7 +227,14 @@ class MailButler
 
     return
 
+  @isEnabled: ->
+    @DB.isEnabled @getEmail(), @VERSION
+
+  @isOutdated: ->
+    not @DB.isCurrent @getEmail(), @VERSION
+
 doGet = (request) ->
+  return unless MailButler.isEnabled()
   MailButler.setup()
   
   butler = new MailButler request.parameter.callback
@@ -268,38 +263,37 @@ doGet = (request) ->
 }`
 
 _process = (e) ->
-  
-  # Get a lock for the current user
-  lock = LockService.getPrivateLock()
-  if lock.tryLock(10000)
-    
-    # wait 10 seconds at most
-    Logger.log "We have the lock...start"
-    
-    # Get the time this scheduled execution started
-    d = new Date()
-    if e
-      d.setUTCDate e["day-of-month"]
-      d.setUTCFullYear e.year
-      d.setUTCMonth e.month
-      d.setUTCHours e.hour
-      d.setUTCMinutes e.minute
-      d.setUTCSeconds e.second
+  if MailButler.isEnabled()
+    # Get a lock for the current user
+    lock = LockService.getPrivateLock()
+    if lock.tryLock(10000)
+      
+      # wait 10 seconds at most
+      Logger.log 'We have the lock...'
+      
+      # Get the time this scheduled execution started
+      d = new Date()
+      if e
+        d.setUTCDate e["day-of-month"]
+        d.setUTCFullYear e.year
+        d.setUTCMonth e.month
+        d.setUTCHours e.hour
+        d.setUTCMinutes e.minute
+        d.setUTCSeconds e.second
 
-    MailButler.processButlerMails d
-  
-  # release our lock
-  lock.releaseLock()
+      MailButler.processButlerMails d
+    
+    # release our lock
+    lock.releaseLock()
+    Logger.log '...lock released'
+  else if MailButler.isOutdated()
+    # Automatic uninstall
+    MailButler.uninstall true
   return
 
 #`function onInstall() {
 #  MailButler.setup();
 #}`
-
-
-`function revoke() {
-  ScriptApp.invalidateAuth();
-}`
 
 _test = ->
   doGet
@@ -332,12 +326,6 @@ _test = ->
 #  Logger.log "triggers: %s", ScriptApp.getScriptTriggers()
 #  return
 
-`function showDb() {
-  var result = ScriptDb.getMyDb().query({type: MailButler.TYPE});
-  Logger.log('Size: %s', result.getSize());
-  while(result.hasNext()) {
-    Logger.log(result.next());
-  }
+`function dump() {
+  Logger.log(doGet({parameter: {action: 'dump'}}));
 }`
-
-
