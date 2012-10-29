@@ -1,13 +1,15 @@
 class MailButler
 
-  constructor: (@prefix) ->
-
-  @LABEL_BASE: "MailButler"
-  @LABEL_OUTBOX: MailButler.LABEL_BASE + "/" + "Outbox"
-  @KEY_PREFIX_MESSAGE: "msg_"
-  @FREQUENCY_MINUTES: 1
+  @VERSION:             '1.0.0'
+  @TYPE:                'mailbutler'
+  @LABEL_BASE:          'MailButler'
+  @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
+  @FREQUENCY_MINUTES:   1
+  @DB:                  ScriptDb.getMyDb()
 
   prefix: null
+
+  constructor: (@prefix) ->
 
   scheduleJson: (params) ->
     try
@@ -22,6 +24,23 @@ class MailButler
       true
     catch e
       e
+
+  @uninstall: (automatic) ->
+    base = ScriptApp.getService().getUrl()
+    if not automatic and base
+      # Only if no automatic uninstall (e.g. the user has to confirm) and the script is published as a WebApp
+      target = base.substring 0, base.lastIndexOf '/'
+
+      HtmlService.createHtmlOutput  """Click here to <a href="#{target}/manage/uninstall">uninstall</a>."""
+    else
+      # Fallback, if this is not a published WebApp or automatic uninstall is wanted
+      # remove all triggers, so there are no errors when we invalidate the authentification
+      for trigger in ScriptApp.getScriptTriggers()
+        ScriptApp.deleteTrigger trigger
+
+      # invalidate authentication
+      ScriptApp.invalidateAuth()
+      ContentService.createTextOutput 'Application successfully uninstalled.'
 
   result: (err, result) ->
     ret = []
@@ -42,23 +61,35 @@ class MailButler
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
     return
 
+  @getEmail: ->
+    Session.getEffectiveUser().getEmail()
+
+  @getScheduledMails: ->
+    q =
+      user:     @getEmail()
+      type:     @TYPE
+    result = @DB.query q
+    result.next() while result.hasNext()
+
   @processButlerMails: (d) ->
     Logger.log "Checking for scheduled mails on %s", d
 
-    validKeys = []
-    for key in UserProperties.getKeys()
-      if @isButlerMessage key
-        validKeys.push key
+    q =
+      user:     @getEmail()
+      version:  @VERSION
+      type:     @TYPE
+      when:     @DB.lessThanOrEqualTo d.getTime()
 
-    if validKeys.length > 0
-      
+    Logger.log "Using the query #{q}"
+
+    result = @DB.query(q).sortBy 'when', @DB.ASCENDING
+
+    if (s = result.getSize()) > 0    
       # yep there are some
-      Logger.log "Found %s possible candidates", validKeys.length
+      Logger.log "Found %s candidates", s
 
-      now = d.getTime()
-      for key in validKeys
-        props = @getButlerMail key, true
-        @processButlerMail props  if isNaN(props.when) or props.when <= now
+      while result.hasNext()
+        @processButlerMail result.next()
 
     else
       # No scheduled messages available
@@ -133,7 +164,7 @@ class MailButler
       Logger.log "Finished processing message with ID '%s'", messageId
 
     # delete the scheduled butler mail, because we couldn't find the real message
-    @deleteButlerMail messageId # pass "" + x in case messageId is undefined (should not happen)
+    @DB.remove props # pass "" + x in case messageId is undefined (should not happen)
     return
 
   # Get a label or create it
@@ -156,22 +187,12 @@ class MailButler
     @getLabel(name, false)?.removeFromThread thread
     return
 
-  @normalize: (messageId, noPrefix) ->
-    ((if noPrefix then "" else @KEY_PREFIX_MESSAGE)) + ("" + messageId).toLowerCase()
-
-  @isButlerMessage: (key) ->
-    key?.indexOf(@KEY_PREFIX_MESSAGE) is 0
-
   @storeButlerMail: (props) ->
-    UserProperties.setProperty @normalize(props.messageId), Utilities.jsonStringify props
-    return
+    props.user    = @getEmail()
+    props.version = @VERSION
+    props.type    = @TYPE
 
-  @getButlerMail: (messageId, noPrefix) ->
-    Utilities.jsonParse UserProperties.getProperty (@normalize messageId, noPrefix)
-
-  @deleteButlerMail: (messageId) ->
-    Logger.log "Removing scheduled message with ID '%s'", messageId
-    UserProperties.deleteProperty @normalize messageId
+    @DB.save props
     return
 
   addButlerMail: (form) ->
@@ -224,6 +245,10 @@ doGet = (request) ->
   butler = new MailButler request.parameter.callback
 
   switch request.parameter.action
+    when 'uninstall'
+      out = MailButler.uninstall true
+    when 'dump'
+      out = butler.result null, MailButler.getScheduledMails()
     when 'schedule'
       out = butler.scheduleJson request.parameter
     when 'setup'
@@ -279,22 +304,19 @@ _process = (e) ->
 _test = ->
   doGet
     parameter:
-      msgId: "13a1a6948cb7471f" # works with joscha@feth.com only
-      when: "delta:"+ (2 * 1000 * 60)
-      inbox: true
-      unread: true
+      msgId:    "13a1a6948cb7471f" # works with joscha@feth.com only
+      when:     "delta:"+ (2 * 1000 * 60)
+      inbox:    true
+      unread:   true
       noanswer: true
-      action: 'schedule'
+      action:   'schedule'
+      archive:  false
   return
 
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
 `function test() {
   _test.apply(this, arguments);
 }`
-
-#deleteProps = ->
-#  UserProperties.deleteAllProperties()
-#  return
 
 #testLastMessageDate = ->
 #  message = GmailApp.getMessageById("13a1a6948cb7471f")
@@ -306,10 +328,16 @@ _test = ->
 #    Logger.log msg.getDate().toUTCString()
 #  return
 
-#testProps = ->
-#  Logger.log UserProperties.getProperties()
-#  return
-
 #getTriggers = ->
 #  Logger.log "triggers: %s", ScriptApp.getScriptTriggers()
 #  return
+
+`function showDb() {
+  var result = ScriptDb.getMyDb().query({type: MailButler.TYPE});
+  Logger.log('Size: %s', result.getSize());
+  while(result.hasNext()) {
+    Logger.log(result.next());
+  }
+}`
+
+
