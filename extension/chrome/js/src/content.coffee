@@ -482,12 +482,12 @@
 							isValid()
 							return
 
-					addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
-						if checked
-							props.when = _delta _1m * 5
-							(presets.find '.selected').html 'In five minutes'
-						isValid()
-						return
+						addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
+							if checked
+								props.when = _delta _1m * 5
+								(presets.find '.selected').html 'In five minutes'
+							isValid()
+							return
 
 					addMenuElement 'in 1 hour', false, presets, (e, checked) ->
 						if checked
