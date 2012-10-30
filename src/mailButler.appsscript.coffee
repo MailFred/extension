@@ -57,6 +57,7 @@ class MailButler
     if ScriptApp.getScriptTriggers().length is 0
       Logger.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
+      Logger.log 'Setting version'
       @DB.setCurrentVersion @getEmail(), @VERSION
     @DB.setLastUsed @getEmail()
     return
