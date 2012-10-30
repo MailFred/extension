@@ -4,18 +4,18 @@
     	console.log.apply console, args if console?.log and mb.debug is true
     	return
 
-	class MailButler
+	class M
 		debug: 	true
 		dev: 	false
 		
-		@MB_CLASS: 			'mailbutler'
-		@MB_CLASS_NAV: 		MailButler.MB_CLASS + '-nav'
-		@MB_CLASS_THREAD: 	MailButler.MB_CLASS + '-thread'
-		@MB_CLASS_POPUP: 	MailButler.MB_CLASS + '-popup'
-		@MB_CLASS_MENU: 	MailButler.MB_CLASS + '-menu'
-		@MB_CLASS_PICKER: 	MailButler.MB_CLASS + '-picker'
+		@CLS: 			'mailfred'
+		@CLS_NAV: 		M.CLS + '-nav'
+		@CLS_THREAD: 	M.CLS + '-thread'
+		@CLS_POPUP: 	M.CLS + '-popup'
+		@CLS_MENU: 		M.CLS + '-menu'
+		@CLS_PICKER: 	M.CLS + '-picker'
 
-		@ID_PREFIX: 'mailbutler-id-'
+		@ID_PREFIX: 'mailfred-id-'
 
 		@TYPE_THREAD: 'thread'
 		@TYPE_NAV: 'nav'
@@ -60,16 +60,17 @@
 
 		injectCompose: ->
 			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
-				($ ".#{MailButler.MB_CLASS_NAV}", @).length is 0
+				($ ".#{M.CLS_NAV}", @).length is 0
 
-			navs.append @composeButton MailButler.TYPE_NAV if navs.length > 0
+			navs.append @composeButton M.TYPE_NAV if navs.length > 0
 			return
 
 		injectThread: ->
+			log 'Injecting in thread'
 			threads = ($ '.iH > div').filter (index) ->
-				($ ".#{MailButler.MB_CLASS_THREAD}", @).length is 0
+				($ ".#{M.CLS_THREAD}", @).length is 0
 			
-			threads.append @composeButton MailButler.TYPE_THREAD if threads.length > 0
+			threads.append @composeButton M.TYPE_THREAD if threads.length > 0
 			return
 
 		copyAttrs: (attrs, source, target) ->
@@ -78,13 +79,13 @@
 			return
 
 		composeButton: (type) =>
-			cls = [MailButler.MB_CLASS]
+			cls = [M.CLS]
 
 			switch type
-				when MailButler.TYPE_THREAD
-					cls.push MailButler.MB_CLASS_THREAD
-				when MailButler.TYPE_NAV
-					cls.push MailButler.MB_CLASS_NAV
+				when M.TYPE_THREAD
+					cls.push M.CLS_THREAD
+				when M.TYPE_NAV
+					cls.push M.CLS_NAV
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
 
@@ -157,7 +158,7 @@
 								</div>
 								"""
 					menu = 	$ menuBase
-					menu.addClass MailButler.MB_CLASS_MENU
+					menu.addClass M.CLS_MENU
 					menu.inMenu = false
 
 					# Clicks on menu do not close the popup
@@ -189,7 +190,7 @@
 										</div>
 									</div>
 									"""
-						element.attr 'id', _.uniqueId MailButler.ID_PREFIX
+						element.attr 'id', _.uniqueId M.ID_PREFIX
 
 						toggle element, selectedClass, checked, false
 
@@ -209,7 +210,7 @@
 
 					picker = $ menuBase
 					picker.inMenu = false
-					picker.addClass MailButler.MB_CLASS_PICKER
+					picker.addClass M.CLS_PICKER
 
 					# Clicks on menu do not close the popup
 					picker.on 'click', (e) ->
@@ -325,7 +326,7 @@
 						e.stopPropagation()
 						return
 
-					popup.addClass MailButler.MB_CLASS_POPUP
+					popup.addClass M.CLS_POPUP
 					t.parent().parent().append popup
 
 					# Hovering
@@ -685,7 +686,7 @@
 				delete params.callback if params.callback
 
 				query = $.param params
-				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
 				chrome.extension.sendMessage
 					action: 'notification'
@@ -693,7 +694,7 @@
 					error: error.toString()
 			return
 
-	mb = new MailButler
+	mb = new M
 	return
 
 ) jQuery, window if top.document is document
