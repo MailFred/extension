@@ -506,37 +506,46 @@
 
 					isValid()
 
-					aME = (keySuffix, t) ->
+					aME = (keySuffix, x, t) ->
 						key = "menuTimePresetCloseFutureItem#{keySuffix}"
 						addMenuElement (__msg key), false, presets, (e, checked) ->
 							if checked
-								props.when = t()
+								props.when = t x
 								(presets.find '.selected').html __msg "#{key}Selected"
 							isValid()
 							return
 
 					if self.debug
 						for minute in [1,5]
-							aME "Minutes#{minute}", -> _delta (_1m * minute)
+							aME "Minutes#{minute}", minute, (minute) ->
+								log "in #{minute} minute"
+								_delta (_1m * minute)
 
 					for hour in [1,4]
-						aME "Hours#{hour}", -> _delta (_1h * hour)
+						aME "Hours#{hour}", hour, (hour) -> 
+							log "in #{hour} hour"
+							_delta (_1h * hour)
 
 					for hour in [8,14]
-						aME "Tomorrow#{hour}", ->
+						aME "Tomorrow#{hour}", hour, (hour) ->
+							log "tomorrow, #{hour}h"
 							now = new Date
 							tomorrow = new Date
 							tomorrow.setDate (now.getDate() + 1)
 							tomorrow.setHours hour
 							tomorrow.setMinutes 0
 							tomorrow.setSeconds 0
+							tomorrow.setMilliseconds 0
 							_specified tomorrow.getTime()
 
 					for day in [2,7,14]
-						aME "Days#{day}", -> _delta (_1d * day)
+						aME "Days#{day}", day, (day) ->
+							log "in #{day} day"
+							_delta (_1d * day)
 
 					for month in [1]
-						aME "Months#{month}", ->
+						aME "Months#{month}", month, (month) ->
+							log "in #{month} month"
 							now = new Date
 							tomorrow = new Date
 							tomorrow.setMonth (now.getMonth() + month)
