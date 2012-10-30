@@ -79,11 +79,10 @@ class Db
 
 	@isEnabled: (user, version) ->
 		user = @getOrCreateUser user
-		now = (new Date()).getTime()
 		# User must be active
 		ret = user.active
 		# have paid until now
-		ret &= user.until >= now if user.until isnt -1
+		ret &= user.until >= @now() if user.until isnt -1
 		# and the version of the script calling this method is higher or the same the user used lastly
 		ret &= version >= user.version if user.version
 		ret
