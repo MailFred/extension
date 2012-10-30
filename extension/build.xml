@@ -1,10 +1,88 @@
 <project name="MailButler" default="dist" basedir=".">
+    <!--
+        npm install coffee-script -g
+        npm install less -g
+        npm install uglify-js2 -g
+    -->
     <description>
         Packages the mailbutler browser extensions
     </description>
 
     <target name="chrome">
     	<delete file="chrome.zip" failonerror="false"/>
+
+        <echo message="Building main JS"/>
+        <exec executable="cake" dir="chrome/js">
+            <arg value="build"/>
+        </exec>
+        <echo message="Minifying main JS"/>
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="background.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="background.js"/>
+        </exec>
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="bootstrap.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="bootstrap.js"/>
+        </exec>    
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="content.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="content.js"/>
+        </exec>    
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="mediator.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="mediator.js"/>
+        </exec>  
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="options.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="options.js"/>
+        </exec>    
+
+        <echo message="Building Gmailr JS"/>
+        <exec executable="cake" dir="chrome/js/lib/gmailr/chrome">
+            <arg value="build"/>
+        </exec>  
+        <echo message="Minifying Gmailr JS"/>
+        <exec executable="uglifyjs2" dir="chrome/js/lib/gmailr/chrome/lib">
+            <arg value="gmailr.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="gmailr.js"/>
+        </exec>    
+
+        <echo message="Generating CSS"/>
+        <exec executable="lessc" dir="chrome/css">
+            <arg value="-x"/>
+            <arg value="-s"/>
+            <arg value="styles.less"/>
+            <arg value="styles.css"/>
+        </exec>
+
     	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="
     		**/*.less,
     		**/*.coffee,
