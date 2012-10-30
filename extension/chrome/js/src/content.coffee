@@ -27,10 +27,10 @@
 		@TYPE_NAV: 		'nav'
 
 		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbwT5nETb_-UH44thhzLobUpoB0Zt5BuLUNscv5JAKyJJlVglfY/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbyIevx6VNG9t2_Mhrf3GcJEms3e57Tj7GjMr4sjoelFGbuzWyI/exec"
 
 		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwo-RvSWoFJizb-lNzR7uSBsmSh4X2q9ehs7q4M7Rk/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbw4QMEDksokZ52F8kXhOoaqdKFpxT2Ri_UfTEmy1pw/dev"
 
 		# Current GMail address of the logged in user
 		currentGmail: null

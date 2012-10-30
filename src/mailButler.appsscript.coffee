@@ -1,6 +1,6 @@
 class MailButler
 
-  @VERSION:             1.08
+  @VERSION:             1.09
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
   @FREQUENCY_MINUTES:   1
