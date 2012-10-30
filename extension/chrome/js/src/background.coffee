@@ -16,8 +16,11 @@ chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 			# Or create an HTML notification:
 			# notification = webkitNotifications.createHTMLNotification 'notification.html'
 			notification.show()
-		when 'email'
-			ret = localStorage['email']
+		when 'setting'
+			ret = localStorage[request.key]
+			switch request.key
+				when 'debug'
+					ret = String(ret) is "true"
 
 	sendResponse? ret
 	false # we don't want to message back anything after the script finished

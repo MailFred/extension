@@ -26,24 +26,28 @@
 		# dev URL
 		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwo-RvSWoFJizb-lNzR7uSBsmSh4X2q9ehs7q4M7Rk/dev"
 
+		# Current GMail address of the logged in user
 		currentGmail: null
 
 		constructor: ->
 			window.addEventListener "message", @gmailrListener, false
+			
+			chrome.extension.sendMessage {action: "setting", key: 'debug'}, (debug) =>
+				@debug = debug
+				log 'MailFred debugging is enabled'
+				return
 
 		getSettingEmail: (resp) ->
-			chrome.extension.sendMessage {action: "email"}, resp
+			chrome.extension.sendMessage {action: "setting", key: 'email'}, resp
 			return
 
 		gmailrListener: (e) =>
-			#log "email address:" + Gmailr.emailAddress()
-
 			if e.source is window
 				# We only accept messages from ourselves
 				#log "event", e
 
 				if e.data?.from is "GMAILR"
-					# log e.data.event.type
+					log 'Got Gmailr event: ', e.data.event.type
 					evt = e.data.event
 					switch evt.type
 						when 'init'
@@ -51,7 +55,10 @@
 						when 'viewChanged'
 							if evt.args[0] is "conversation"
 								@getSettingEmail (settingEmail) =>
-									@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail in settingEmail.split /[, ]+/ig
+									log 'Email address in settings', settingEmail
+									log 'Email address of current Gmail window', @currentGmail
+
+									@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail.trim() in settingEmail.split /[, ]+/ig
 									return
 			return
 
