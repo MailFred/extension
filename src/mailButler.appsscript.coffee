@@ -274,7 +274,7 @@ _process = (e) ->
   if MailButler.isEnabled()
     # Get a lock for the current user
     lock = LockService.getPrivateLock()
-    if lock.tryLock(10000)
+    if lock.tryLock 10000
       
       # wait 10 seconds at most
       Logger.log 'We have the lock...'
