@@ -51,7 +51,7 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.0.9",
+  "version": "1.10",
   "web_accessible_resources": [
     "images/tie21x21black.png",
     "images/tie48x48.png",
