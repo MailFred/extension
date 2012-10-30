@@ -32,6 +32,7 @@
       ]
     }
   ],
+  "options_page": "html/options.html",
   "description": "I am here to serve",
   "icons": {
     "16" : "images/tie16x16.png",

@@ -26,20 +26,33 @@
 		# dev URL
 		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwo-RvSWoFJizb-lNzR7uSBsmSh4X2q9ehs7q4M7Rk/dev"
 
+		currentGmail: null
+
 		constructor: ->
 			window.addEventListener "message", @gmailrListener, false
 
+		getSettingEmail: (resp) ->
+			chrome.extension.sendMessage {action: "email"}, resp
+			return
+
 		gmailrListener: (e) =>
+			#log "email address:" + Gmailr.emailAddress()
+
 			if e.source is window
 				# We only accept messages from ourselves
 				#log "event", e
 
 				if e.data?.from is "GMAILR"
 					# log e.data.event.type
-					switch e.data.event.type
+					evt = e.data.event
+					switch evt.type
+						when 'init'
+							@currentGmail = evt.email
 						when 'viewChanged'
-							if e.data.event.args[0] is "conversation"
-								@injectThread()
+							if evt.args[0] is "conversation"
+								@getSettingEmail (settingEmail) =>
+									@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail in settingEmail.split /[, ]+/ig
+									return
 			return
 
 		getServiceURL: ->
@@ -616,7 +629,10 @@
 
 
 		onScheduleSuccess: (data) =>
-			chrome.extension.sendMessage data
+			chrome.extension.sendMessage
+				action: 'notification'
+				success: true
+				data: 	data
 			return
 
 		onScheduleError: (params, status, error) =>
@@ -628,7 +644,9 @@
 				query = $.param params
 				window.open "#{@getServiceURL()}?#{query}", 'mailbutler', 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
-				chrome.extension.sendMessage 
+				chrome.extension.sendMessage
+					action: 'notification'
+					success: false
 					error: error.toString()
 			return
 
