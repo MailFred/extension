@@ -15,7 +15,9 @@
       "js": [
         "js/lib/underscore/underscore-min.js",
         "js/lib/jquery/jquery.min.js",
+
         "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
+        "js/lib/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-de.js",
 
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",

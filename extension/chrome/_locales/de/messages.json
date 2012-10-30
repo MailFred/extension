@@ -37,7 +37,7 @@
   },
   "mailActionMarkUnread": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "als ungelesen markiert"
+    "message": "Als ungelesen markiert"
   },
   "mailActionMarkUnreadTitle": {
     "description": "The title attribute of the mark unread option",
@@ -77,11 +77,11 @@
   },
   "menuMailActions": {
     "description": "The headline for the menu of selecting what action shall be done to the scheduled mail (mark unread, move to inbox, etc.)",
-    "message": "Ihre Korrespondenz soll"
+    "message": "Ihre Korrespondenz soll:"
   },
   "menuTime": {
     "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
-    "message": "Zum gewünschten Zeitpunkt"
+    "message": "Zum gewünschten Zeitpunkt:"
   },
   "menuTimePresetCloseFuture": {
     "description": "This is the menu item for selecting time that opens a submenu with predefined times (next week, 2 hours, etc.)",

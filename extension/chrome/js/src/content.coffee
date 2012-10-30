@@ -393,6 +393,9 @@
 
 					# Picker
 					popup.parent().append picker
+					locale = window.navigator.language
+					$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
+
 					datePicker.datepicker
 									minDate: '+1d'
 									dateFormat: __msg 'dateFormat'
