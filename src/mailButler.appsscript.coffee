@@ -215,6 +215,10 @@ class MailButler
         inbox:    String(form.inbox)    is "true"
         noanswer: String(form.noanswer) is "true"
 
+    # clean up the amount of data we store
+    for key, val of props.how
+      delete props.how[key] if val is false
+
     unless props.how.star or props.how.unread or props.how.inbox
       Logger.log "No action specified"
       throw "No action (star, marking unread, move to inbox) specified"
