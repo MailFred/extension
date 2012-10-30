@@ -1,0 +1,33 @@
+User <?= user ?> has <?= emails.getSize() ?> scheduled mails
+<table border="1" cellpadding="1" cellspacing="1">
+  <tr>
+    <th>#</th>
+    <th>Message ID</th>
+    <th>Scheduled</th>
+    <th>For</th>
+    <th>With version</th>
+    <th>Actions</th>
+  <tr>
+  <? 
+      var i = 1;
+      while (emails.hasNext()) {
+      var email = emails.next()
+  ?>
+    <tr>
+      <td><?= i++ ?></td>
+      <td><?= email.messageId ?></td>
+      <td><?= new Date(email.scheduled).toUTCString() ?></td>
+      <td><?= new Date(email.when).toUTCString() ?></td>
+      <td><?= email.version ?></td>
+      <td>
+        <ul>
+          <? for(var action in email.how) {
+              if(email.how[action]) {
+           ?>
+           <li><?= action ?></li>
+          <?} } ?>
+        </ul>
+      </td>
+    </tr>
+  <? } ?>
+</table>

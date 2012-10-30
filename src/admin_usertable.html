@@ -1,0 +1,29 @@
+<?= users.getSize() ?> users
+<table border="1" cellpadding="1" cellspacing="1">
+	<tr>
+		<th>#</th>
+		<th>Email</th>
+		<th>Active</th>
+		<th>Until</th>
+		<th>Signed up</th>
+		<th>Last used</th>
+		<th>On version</th>
+		<th>Actions</th>
+	<tr>
+  <? 
+  		var i = 1;
+  		while (users.hasNext()) {
+  		var user = users.next()
+  ?>
+    <tr>
+		<td><?= i++ ?></td>
+		<td><?= user.user ?></td>
+        <td><?= user.active ?></td>
+        <td><? if(user.until === -1) { ?> forever <? } else { ?> <?= new Date(user.until).toUTCString() ?> <?} ?></td>
+        <td><?= new Date(user.signup).toUTCString() ?></td>
+        <td><?= new Date(user.lastUsed).toUTCString() ?></td>
+        <td><?= user.version ?></td>
+        <td><a href="<?= baseUrl ?>?action=mails&amp;user=<?= user.user ?>">Show mails</a></td>
+    </tr>
+  <? } ?>
+</table>
