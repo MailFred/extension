@@ -41,7 +41,6 @@
 			chrome.extension.sendMessage {action: "setting", key: 'debug'}, (debug) =>
 				@debug = debug
 				log 'MailFred debugging is enabled'
-				log chrome.i18n.getMessage 'mailActionStarTitle'
 				return
 
 			
