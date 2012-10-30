@@ -438,6 +438,9 @@
 					_delta = (offset) ->
 						"delta:#{offset}"
 
+					_specified = (time) ->
+						"specified:#{time}"
+
 					boxSelectedClass = 'J-LC-JR-Jp'
 
 					props =
@@ -486,6 +489,7 @@
 
 
 					isValid()
+					now = new Date
 
 					if self.debug
 						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
@@ -509,6 +513,37 @@
 						isValid()
 						return
 
+					addMenuElement 'in 4 hours', false, presets, (e, checked) ->
+						if checked
+							props.when = _delta _1h * 4
+							(presets.find '.selected').html 'In four hours'
+						isValid()
+						return
+
+					addMenuElement 'tomorrow 8am', false, presets, (e, checked) ->
+						if checked
+							tomorrow = new Date
+							tomorrow.setDate now.getDate() + 1
+							tomorrow.setHours 8
+							tomorrow.setMinutes 0
+							tomorrow.setSeconds 0
+							props.when = _specified tomorrow.getTime()
+							(presets.find '.selected').html 'Tomorrow morning'
+						isValid()
+						return
+
+					addMenuElement 'tomorrow 2pm', false, presets, (e, checked) ->
+						if checked
+							tomorrow = new Date
+							tomorrow.setDate now.getDate() + 1
+							tomorrow.setHours 14
+							tomorrow.setMinutes 0
+							tomorrow.setSeconds 0
+							props.when = _specified tomorrow.getTime()
+							(presets.find '.selected').html 'Tomorrow afternoon'
+						isValid()
+						return
+
 					addMenuElement 'in 2 days', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 2
@@ -516,15 +551,23 @@
 						isValid()
 						return
 
-					addMenuElement 'in 1 week', false, presets, (e, checked) ->
+					addMenuElement 'in 7 days', false, presets, (e, checked) ->
 						if checked
 							props.when = _delta _1d * 7
-							(presets.find '.selected').html 'Next week'
+							(presets.find '.selected').html 'Next week this time'
+						isValid()
+						return
+
+					addMenuElement 'in 1 month', false, presets, (e, checked) ->
+						if checked
+							tomorrow = new Date
+							tomorrow.setMonth now.getMonth() + 1
+							props.when = _specified tomorrow.getTime()
+							(presets.find '.selected').html 'Next month this time'
 						isValid()
 						return
 
 					addHovering menu
-
 
 
 					# Close the popup
@@ -547,7 +590,7 @@
 						reset = =>
 							div.removeClass cls
 							return
-
+							
 						self.onSchedule props, loading, reset
 						close()
 						return
