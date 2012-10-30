@@ -9,16 +9,16 @@
 		dev: 	false
 		
 		@CLS: 			'mailfred'
-		@CLS_NAV: 		M.CLS + '-nav'
+		#@CLS_NAV: 		M.CLS + '-nav'
 		@CLS_THREAD: 	M.CLS + '-thread'
 		@CLS_POPUP: 	M.CLS + '-popup'
 		@CLS_MENU: 		M.CLS + '-menu'
 		@CLS_PICKER: 	M.CLS + '-picker'
 
-		@ID_PREFIX: 'mailfred-id-'
+		@ID_PREFIX: 	M.CLS + '-id-'
 
-		@TYPE_THREAD: 'thread'
-		@TYPE_NAV: 'nav'
+		@TYPE_THREAD: 	'thread'
+		@TYPE_NAV: 		'nav'
 
 		# production URL
 		prodUrl: "https://script.google.com/macros/s/AKfycbwT5nETb_-UH44thhzLobUpoB0Zt5BuLUNscv5JAKyJJlVglfY/exec"
@@ -47,13 +47,14 @@
 				#log "event", e
 
 				if e.data?.from is "GMAILR"
-					log 'Got Gmailr event: ', e.data.event.type
+					# log 'Got Gmailr event: ', e.data.event.type
 					evt = e.data.event
 					switch evt.type
 						when 'init'
 							@currentGmail = evt.email
 						when 'viewChanged'
 							if evt.args[0] is "conversation"
+								log 'User switched to conversation view'
 								@getSettingEmail (settingEmail) =>
 									log 'Email address in settings', settingEmail
 									log 'Email address of current Gmail window', @currentGmail
@@ -65,24 +66,19 @@
 		getServiceURL: ->
 			if @dev then @devUrl else @prodUrl
 
-		injectCompose: ->
-			navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
-				($ ".#{M.CLS_NAV}", @).length is 0
-
-			navs.append @composeButton M.TYPE_NAV if navs.length > 0
-			return
+		#injectCompose: ->
+		#	navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
+		#		($ ".#{M.CLS_NAV}", @).length is 0
+		#
+		#	navs.append @composeButton M.TYPE_NAV if navs.length > 0
+		#	return
 
 		injectThread: ->
-			log 'Injecting in thread'
+			log 'Injecting buttons in thread view'
 			threads = ($ '.iH > div').filter (index) ->
 				($ ".#{M.CLS_THREAD}", @).length is 0
 			
 			threads.append @composeButton M.TYPE_THREAD if threads.length > 0
-			return
-
-		copyAttrs: (attrs, source, target) ->
-			for attr in attrs
-				target.attr attr, (source.attr attr)
 			return
 
 		composeButton: (type) =>
@@ -380,6 +376,12 @@
 							left: 	ppos.left + popup.outerWidth()
 						return
 
+					_delta = (offset) ->
+						"delta:#{offset}"
+
+					_specified = (time) ->
+						"specified:#{time}"
+
 					# Picker
 					popup.parent().append picker
 					datePicker.datepicker
@@ -391,7 +393,7 @@
 									onSelect: (dateText, inst) ->
 														date = datePicker.datepicker 'getDate'
 														if date
-															props.when = "specified:#{date.getTime()}"
+															props.when = _specified date.getTime()
 															toggle manual, 'J-Ks-KO', true, true
 															toggle menu.children(), 'J-Ks-KO', false, false
 															(manual.find '.selected').html "On #{dateText}"
@@ -443,12 +445,6 @@
 					_1h = 60 * _1m
 					_1d = 24 * _1h
 
-					_delta = (offset) ->
-						"delta:#{offset}"
-
-					_specified = (time) ->
-						"specified:#{time}"
-
 					boxSelectedClass = 'J-LC-JR-Jp'
 
 					props =
@@ -467,9 +463,9 @@
 
 					# This shows the error message or the submit button
 					boxToggle popup.find('.J-LC'), boxSelectedClass, false, (e, checked) ->
-						act = e.attr 'act'
-						props[act] = checked
-						store.set "selection_act_#{act}", checked
+						op = e.attr 'act'
+						props[op] = checked
+						store.set "selection_act_#{op}", checked
 						isValid()
 						return
 
