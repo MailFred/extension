@@ -284,7 +284,7 @@ _process = (e) ->
       if e
         d.setUTCDate e["day-of-month"]
         d.setUTCFullYear e.year
-        d.setUTCMonth e.month
+        d.setUTCMonth (e.month - 1)
         d.setUTCHours e.hour
         d.setUTCMinutes e.minute
         d.setUTCSeconds e.second
