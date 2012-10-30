@@ -235,7 +235,7 @@ class MailButler
     not @DB.isCurrent @getEmail(), @VERSION
 
 doGet = (request) ->
-  return unless MailButler.isEnabled()
+  return ContentService.createTextOutput 'This script is not enabled' unless MailButler.isEnabled()
   MailButler.setup()
   
   butler = new MailButler request.parameter.callback
