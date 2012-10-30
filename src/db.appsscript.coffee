@@ -42,11 +42,12 @@ class Db
 		else
 			now = @now()
 
-			entity.active = true
-			entity.until = -1
-			entity.signup = now
-			entity.lastUsed = now
-			entity.version = 0
+			entity.active	= true
+			entity.until	= -1
+			entity.signup	= now
+			entity.lastUsed	= now
+			entity.version	= 0
+			
 			entity = @DB.save entity
 		entity
 
