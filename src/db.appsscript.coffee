@@ -37,6 +37,10 @@ class Db
 		ret = @DB.remove mail if mail.type is @TYPE_MAIL
 		ret
 
+	@update: (entity) ->
+		return unless entity.type in [@TYPE_MAIL]
+		@DB.save entity
+
 	@now: ->
 		(new Date()).getTime()
 
