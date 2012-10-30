@@ -1,8 +1,14 @@
 (($, window) ->
 
 	log = (args...) ->
-    	console.log.apply console, args if console?.log and mb.debug is true
+    	console.log.apply console, args if console?.log and mb?.debug is true
     	return
+
+    #__msg = (args...) ->
+    #	ret = chrome.i18n.getMessage.apply chrome.i18n, args
+    #	log args, ret
+    #	ret
+    __msg = chrome.i18n.getMessage
 
 	class M
 		debug: 	true
@@ -35,7 +41,10 @@
 			chrome.extension.sendMessage {action: "setting", key: 'debug'}, (debug) =>
 				@debug = debug
 				log 'MailFred debugging is enabled'
+				log chrome.i18n.getMessage 'mailActionStarTitle'
 				return
+
+			
 
 		getSettingEmail: (resp) ->
 			chrome.extension.sendMessage {action: "setting", key: 'email'}, resp
@@ -100,8 +109,8 @@
 			item.attr
 				id: 				null
 				title: 				null
-				'data-tooltip': 	'MailButler'
-				'aria-label': 		'MailButler'
+				'data-tooltip': 	__msg "extName"
+				'aria-label': 		__msg "extName"
 				'aria-expanded': 	'false'
 				'aria-haspopup': 	'true'
 
@@ -242,24 +251,24 @@
 									<div class="SK AX" style="-webkit-user-select: none;">
 
 
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">Thy letters shalt be</div>
+										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">#{__msg 'menuMailActions'}</div>
 
 										<div style="-webkit-user-select: none;">
-											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Mark as unread">
+											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionMarkUnreadTitle'}">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>markedth unread
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'mailActionMarkUnread'}
 												</div>
 											</div>
 
-											<div act="star" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Star it">
+											<div act="star" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionStarTitle'}">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_star" style="display: none">and</span> starredth
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_star" style="display: none">#{__msg 'mailActionAndPrefix'}</span> #{__msg 'mailActionStar'}
 												</div>
 											</div>
 
-											<div act="inbox" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Move to inbox">
+											<div act="inbox" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionMoveToInboxTitle'}">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_inbox" style="display: none">and</span> movedth to thy inbox
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_inbox" style="display: none">#{__msg 'mailActionAndPrefix'}</span> #{__msg 'mailActionMoveToInbox'}
 												</div>
 											</div>
 
@@ -269,20 +278,20 @@
 
 										<div act="when_section" style="display: none">
 											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-											<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">At the time you giveth us</div>
+											<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">#{__msg 'menuTime'}</div>
 
 											<div>
 												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
 													<div class="J-N-Jz">
 														<div class="J-N-Jo"></div>
-														<span class="default">In close future</span><span class="selected"></span>
+														<span class="default">#{__msg 'menuTimePresetCloseFuture'}</span><span class="selected"></span>
 														<span class="J-Ph-hFsbo"></span>
 													</div>
 												</div>
 												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="manual">
 													<div class="J-N-Jz">
 														<div class="J-N-Jo"></div>
-														<span class="default">On a specified date</span><span class="selected"></span>
+														<span class="default">#{__msg 'menuTimePresetSpecifiedDate'}</span><span class="selected"></span>
 														<span class="J-Ph-hFsbo"></span>
 													</div>
 												</div>
@@ -292,14 +301,14 @@
 										<div act="noanswer_section" style="display: none">
 											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
 
-											<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Only if noone answered">
+											<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'menuConstraintsNoAnswerTitle'}">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>But only if noone answered.
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'menuConstraintsNoAnswer'}
 												</div>
 											</div>
-											<div act="archive" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="Archive">
+											<div act="archive" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'menuAdditionalActionsArchiveTitle'}">
 												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>Archive conversation after scheduling
+													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'menuAdditionalActionsArchive'}
 												</div>
 											</div>
 										</div>
@@ -307,16 +316,16 @@
 										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
 											<div class="J-Kh" style="-webkit-user-select: none; "></div>
 											<div class="asd ja" style="-webkit-user-select: none; ">
-												<span act="when" style="display: none;">When shalt thy butler fulfill thy wishes?</span>
-												<span act="what">Wilt ye tell us what thy butler shalt to do with thy letters?</span>
+												<span act="when" style="display: none;">#{__msg 'errorNoTimeSpecified'}</span>
+												<span act="what">#{__msg 'errorNoActionSpecified'}</span>
 											</div>
 										</div>
 										<div act="submit" style="display: none;">
 											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
 
 											<div act="schedule" class="J-JK" role="menuitem" style="-webkit-user-select: none;">
-												<div class="J-JK-Jz" style="-webkit-user-select: none;">
-													Schedule!
+												<div class="J-JK-Jz" style="-webkit-user-select: none;" title="#{__msg 'buttonScheduleTitle'}">
+													#{__msg 'buttonSchedule'}
 												</div>
 											</div>
 										</div>
@@ -386,6 +395,7 @@
 					popup.parent().append picker
 					datePicker.datepicker
 									minDate: '+1d'
+									dateFormat: __msg 'dateFormat'
 									showOtherMonths: true
 									selectOtherMonths: true
 									changeMonth: true
@@ -396,7 +406,7 @@
 															props.when = _specified date.getTime()
 															toggle manual, 'J-Ks-KO', true, true
 															toggle menu.children(), 'J-Ks-KO', false, false
-															(manual.find '.selected').html "On #{dateText}"
+															(manual.find '.selected').html __msg 'menuTimePresetSpecifiedDateOnDate', dateText
 														isValid()
 														return
 					manual.hover 		((e) ->
@@ -493,83 +503,42 @@
 
 
 					isValid()
-					now = new Date
+
+					aME = (keySuffix, t) ->
+						key = "menuTimePresetCloseFutureItem#{keySuffix}"
+						addMenuElement (__msg key), false, presets, (e, checked) ->
+							if checked
+								props.when = t()
+								(presets.find '.selected').html __msg "#{key}Selected"
+							isValid()
+							return
 
 					if self.debug
-						addMenuElement 'in 1 minute', false, presets, (e, checked) ->
-							if checked
-								props.when = _delta _1m
-								(presets.find '.selected').html 'In about a minute'
-							isValid()
-							return
+						for minute in [1,5]
+							aME "Minutes#{minute}", -> _delta (_1m * minute)
 
-						addMenuElement 'in 5 minutes', false, presets, (e, checked) ->
-							if checked
-								props.when = _delta _1m * 5
-								(presets.find '.selected').html 'In five minutes'
-							isValid()
-							return
+					for hour in [1,4]
+						aME "Hours#{hour}", -> _delta (_1h * hour)
 
-					addMenuElement 'in 1 hour', false, presets, (e, checked) ->
-						if checked
-							props.when = _delta _1h
-							(presets.find '.selected').html 'In one hour'
-						isValid()
-						return
-
-					addMenuElement 'in 4 hours', false, presets, (e, checked) ->
-						if checked
-							props.when = _delta _1h * 4
-							(presets.find '.selected').html 'In four hours'
-						isValid()
-						return
-
-					addMenuElement 'tomorrow 8am', false, presets, (e, checked) ->
-						if checked
+					for hour in [8,14]
+						aME "Tomorrow#{hour}", ->
+							now = new Date
 							tomorrow = new Date
-							tomorrow.setDate now.getDate() + 1
-							tomorrow.setHours 8
+							tomorrow.setDate (now.getDate() + 1)
+							tomorrow.setHours hour
 							tomorrow.setMinutes 0
 							tomorrow.setSeconds 0
-							props.when = _specified tomorrow.getTime()
-							(presets.find '.selected').html 'Tomorrow morning'
-						isValid()
-						return
+							_specified tomorrow.getTime()
 
-					addMenuElement 'tomorrow 2pm', false, presets, (e, checked) ->
-						if checked
+					for day in [2,7,14]
+						aME "Days#{day}", -> _delta (_1d * day)
+
+					for month in [1]
+						aME "Months#{month}", ->
+							now = new Date
 							tomorrow = new Date
-							tomorrow.setDate now.getDate() + 1
-							tomorrow.setHours 14
-							tomorrow.setMinutes 0
-							tomorrow.setSeconds 0
-							props.when = _specified tomorrow.getTime()
-							(presets.find '.selected').html 'Tomorrow afternoon'
-						isValid()
-						return
-
-					addMenuElement 'in 2 days', false, presets, (e, checked) ->
-						if checked
-							props.when = _delta _1d * 2
-							(presets.find '.selected').html 'In two days'
-						isValid()
-						return
-
-					addMenuElement 'in 7 days', false, presets, (e, checked) ->
-						if checked
-							props.when = _delta _1d * 7
-							(presets.find '.selected').html 'Next week this time'
-						isValid()
-						return
-
-					addMenuElement 'in 1 month', false, presets, (e, checked) ->
-						if checked
-							tomorrow = new Date
-							tomorrow.setMonth now.getMonth() + 1
-							props.when = _specified tomorrow.getTime()
-							(presets.find '.selected').html 'Next month this time'
-						isValid()
-						return
+							tomorrow.setMonth (now.getMonth() + month)
+							_specified tomorrow.getTime()
 
 					addHovering menu
 
@@ -628,7 +597,7 @@
 			catPos = address.lastIndexOf '#'
 			slashPos = address.lastIndexOf '/'
 			if catPos > slashPos
-				throw 'Not within a message!'
+				throw __msg 'errorNotWithinAConversation'
 			else
 				address.substr (1 + slashPos)
 
@@ -677,9 +646,10 @@
 
 		onScheduleSuccess: (data) =>
 			chrome.extension.sendMessage
-				action: 'notification'
-				success: true
-				data: 	data
+				action: 	'notification'
+				icon: 		"images/tie48x48.png"
+				title: 		__msg 'notificationScheduleSuccessTitle'
+				message: 	__msg 'notificationScheduleSuccess'
 			return
 
 		onScheduleError: (params, status, error) =>
@@ -692,9 +662,10 @@
 				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
 				chrome.extension.sendMessage
-					action: 'notification'
-					success: false
-					error: error.toString()
+					action: 	'notification'
+					icon: 		"images/tie48x48.png"
+					title:		__msg 'notificationScheduleErrorTitle'
+					message:	__msg 'notificationScheduleError', ''+error
 			return
 
 	mb = new M

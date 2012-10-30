@@ -1,0 +1,226 @@
+{
+  "buttonSchedule": {
+    "description": "The button label on the end of the dropdown that initiates the scheduling",
+    "message": "I shalt carry out thy orders!"
+  },
+  "buttonScheduleTitle": {
+    "description": "The title attribute of the scheduling button",
+    "message": "Click here to complete scheduling the actions specified above at the given time."
+  },
+  "dateFormat": {
+    "description": "The date format for the calendar",
+    "message": "mm/dd/yy"
+  },
+  "errorNoActionSpecified": {
+    "description": "This is displayed if the user did not select an action (mark unread, star, etc.), yet",
+    "message": "Wilt ye tell us what thy butler shalt to do with thy letters?"
+  },
+  "errorNoTimeSpecified": {
+    "description": "This is displayed if the user did not select a time yet, when the actions shall be carried out",
+    "message": "When shalt thy butler fulfill thy wishes?"
+  },
+  "errorNotWithinAConversation": {
+    "description": "This error is shown if someone tries to use our extension when not being in a conversation view",
+    "message": "You have to be in conversation view to use this feature!"
+  },
+  "extName": {
+    "description": "Extension name",
+    "message": "MailFred"
+  },
+  "extTeaser": {
+    "description": "The teaser used for the extension page and the webstore",
+    "message": "Master Your Inbox"
+  },
+  "mailActionAndPrefix": {
+    "description": "Prefix used before actions when multiple are selected",
+    "message": "and"
+  },
+  "mailActionMarkUnread": {
+    "description": "might be prefixed with 'mailActionAndPrefix'",
+    "message": "markedth unread"
+  },
+  "mailActionMarkUnreadTitle": {
+    "description": "The title attribute of the mark unread option",
+    "message": "Mark the current thread as unread"
+  },
+  "mailActionMoveToInbox": {
+    "description": "might be prefixed with 'mailActionAndPrefix'",
+    "message": "movedth to thy inbox"
+  },
+  "mailActionMoveToInboxTitle": {
+    "description": "The title attribute of the move to inbox option",
+    "message": "Move the current conversation to the inbox"
+  },
+  "mailActionStar": {
+    "description": "might be prefixed with 'mailActionAndPrefix'",
+    "message": "starredth"
+  },
+  "mailActionStarTitle": {
+    "description": "The title attribute of the starring option",
+    "message": "Mark the current conversation with a star"
+  },
+  "menuAdditionalActionsArchive": {
+    "description": "The option to archive the scheduled conversation after scheduling",
+    "message": "Archive this conversation when scheduling"
+  },
+  "menuAdditionalActionsArchiveTitle": {
+    "description": "The title attribute of the archive option",
+    "message": "Archive this conversation right after scheduling, thus removing it from your inbox"
+  },
+  "menuConstraintsNoAnswer": {
+    "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
+    "message": "But only if noone answered."
+  },
+  "menuConstraintsNoAnswerTitle": {
+    "description": "The title attribute of the noanswer constraint option",
+    "message": "Only execute the planned actions if there was no activity on the conversation until the scheduling date. Forwarding an email, mailing to or from people in the conversation or to yourself is considered activity."
+  },
+  "menuMailActions": {
+    "description": "The headline for the menu of selecting what action shall be done to the scheduled mail (mark unread, move to inbox, etc.)",
+    "message": "Thy letters shalt be"
+  },
+  "menuTime": {
+    "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
+    "message": "At the time you giveth us"
+  },
+  "menuTimePresetCloseFuture": {
+    "description": "This is the menu item for selecting time that opens a submenu with predefined times (next week, 2 hours, etc.)",
+    "message": "In close future"
+  },
+  "menuTimePresetCloseFutureItemDays14": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 14 days"
+  },
+  "menuTimePresetCloseFutureItemDays14Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "In a fortnight"
+  },
+  "menuTimePresetCloseFutureItemDays2": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 2 days"
+  },
+  "menuTimePresetCloseFutureItemDays2Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "The day after tomorrow"
+  },
+  "menuTimePresetCloseFutureItemDays7": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 7 days"
+  },
+  "menuTimePresetCloseFutureItemDays7Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "Same day next week"
+  },
+  "menuTimePresetCloseFutureItemHours1": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 1 hour"
+  },
+  "menuTimePresetCloseFutureItemHours1Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "One hour from now"
+  },
+  "menuTimePresetCloseFutureItemHours4": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 4 hours"
+  },
+  "menuTimePresetCloseFutureItemHours4Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "Four hours from now"
+  },
+  "menuTimePresetCloseFutureItemMinutes1": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 1 minute"
+  },
+  "menuTimePresetCloseFutureItemMinutes1Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "In about a minute"
+  },
+  "menuTimePresetCloseFutureItemMinutes5": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 5 minutes"
+  },
+  "menuTimePresetCloseFutureItemMinutes5Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "In five minutes"
+  },
+  "menuTimePresetCloseFutureItemMonths1": {
+    "description": "One of the options in the predefined time presets",
+    "message": "In 1 month"
+  },
+  "menuTimePresetCloseFutureItemMonths1Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "Same time next month"
+  },
+  "menuTimePresetCloseFutureItemTomorrow14": {
+    "description": "One of the options in the predefined time presets",
+    "message": "Tomorrow, 2 pm"
+  },
+  "menuTimePresetCloseFutureItemTomorrow14Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "Tomorrow afternoon"
+  },
+  "menuTimePresetCloseFutureItemTomorrow8": {
+    "description": "One of the options in the predefined time presets",
+    "message": "Tomorrow, 8 am"
+  },
+  "menuTimePresetCloseFutureItemTomorrow8Selected": {
+    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "message": "Tomorrow morning"
+  },
+  "menuTimePresetSpecifiedDate": {
+    "description": "This is the menu item for selecting a time from the calendar",
+    "message": "On a specified date"
+  },
+  "menuTimePresetSpecifiedDateOnDate": {
+    "description": "The text that replaces the 'menuTimePresetSpecifiedDate' text after selecting a date from the calendar",
+    "message": "On $date$",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "Monday, 21/21/2121"
+      }
+    }
+  },
+  "notificationScheduleError": {
+    "description": "This gets displayed within a notification if anything within the scheduling process went wrong",
+    "message": "Error: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Could not find URL"
+      }
+    }
+  },
+  "notificationScheduleErrorTitle": {
+    "description": "The notification title when an error happened",
+    "message": "Something went wrong!"
+  },
+  "notificationScheduleSuccess": {
+    "description": "The notification text when a mail has been scheduled successfully",
+    "message": "Your actions have been scheduled successfully."
+  },
+  "notificationScheduleSuccessTitle": {
+    "description": "The notification title when a mail has been scheduled successfully",
+    "message": "Message scheduled!"
+  },
+  "optionsButtonSaveLabel": {
+    "description": "The label for the save button in the options dialog",
+    "message": "Save settings"
+  },
+  "optionsFeedbackOptionsSaved": {
+    "description": "The user feedback after hitting the save button in the options dialog",
+    "message": "The settings were saved."
+  },
+  "optionsLabelDebugging": {
+    "description": "The debug setting in the options dialog",
+    "message": "Debugging enabled:"
+  },
+  "optionsLabelGmailAddress": {
+    "description": "The email setting in the options dialog",
+    "message": "Your GMail address:"
+  },
+  "optionsPageTitle": {
+    "description": "The title of the options page",
+    "message": "MailFred options"
+  }
+}

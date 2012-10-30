@@ -32,8 +32,8 @@
       ]
     }
   ],
-  "options_page": "html/options.html",
-  "description": "I am here to serve",
+  "default_locale": "en",
+  "description": "__MSG_extTeaser__",
   "icons": {
     "16" : "images/tie16x16.png",
     "32" : "images/tie32x32.png",
@@ -41,7 +41,8 @@
     "128": "images/tie128x128.png"
   },
   "manifest_version": 2,
-  "name": "MailFred",
+  "name": "__MSG_extName__",
+  "options_page": "html/options.html",
   "permissions": [
     "notifications",
     "https://script.google.com/*",

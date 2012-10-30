@@ -4,14 +4,7 @@ chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 	
 	switch request.action
 		when 'notification'
-			if not request.success
-				title 	= 'Something went wrong!'
-				message = request.error
-			else
-				title 	= 'Message scheduled!'
-				message = 'Your message was scheduled successfully.'
-
-			notification = webkitNotifications.createNotification "images/tie48x48.png",  title, message
+			notification = webkitNotifications.createNotification request.icon, request.title, request.message
 
 			# Or create an HTML notification:
 			# notification = webkitNotifications.createHTMLNotification 'notification.html'
