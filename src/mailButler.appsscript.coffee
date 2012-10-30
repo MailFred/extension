@@ -74,7 +74,10 @@ class MailButler
   @processButlerMails: (d) ->
     Logger.log "Checking for scheduled mails on %s", d
 
-    result = @DB.getMails @getEmail(), @VERSION, d.getTime()
+    user = @getEmail()
+    time = d.getTime()
+    Logger.log "With user '%s', version '%s' and time %s", user, @VERSION, time
+    result = @DB.getMails user, @VERSION, time
 
     if (s = result.getSize()) > 0    
       # yep there are some

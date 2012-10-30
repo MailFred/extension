@@ -9,11 +9,20 @@ class Db
 			type:		@TYPE_MAIL
 
 		q.user = user if user
-		q.version = @DB.lessThanOrEqualTo version if version
-		q.when = @DB.lessThanOrEqualTo time if time
+		q.version = @DB.lessThanOrEqualTo Number version if version
+		q.when = @DB.lessThanOrEqualTo Number time if time
+
+		Logger.log 'getting mails with query %s', q
 
 		result = @DB.query q
 		result = result.sortBy 'when'
+		result
+
+	@getUsers: ->
+		q =
+			type: @TYPE_USER
+		result = @DB.query q
+		result = result.sortBy 'user'
 		result
 
 	@storeMail: (user, version, props) ->
@@ -79,11 +88,31 @@ class Db
 		version >= @getCurrentVersion user
 
 
-`function showDb() {
-  var result = Db.getMails()
-  Logger.log('Size: %s', result.getSize());
-  while(result.hasNext()) {
-    Logger.log(result.next());
-  }
+_showMails = (user, version, time) ->
+	result = Db.getMails user, version, time
+	Logger.log 'There are %s scheduled mails', result.getSize()
+	while result.hasNext()
+		Logger.log result.next()
+	return
+
+`function showMails() {
+	_showMails();
 }`
+
+_showUsers = ->
+	result = Db.getUsers()
+	Logger.log 'There are %s users', result.getSize()
+	while result.hasNext()
+		Logger.log result.next()
+	return
+
+`function showUsers() {
+	_showUsers();
+}`
+
+`function showToScheduleMailsForUser() {
+	var now = new Date().getTime();
+	_showMails('joscha@feth.com','1.09',now);
+}`
+
 
