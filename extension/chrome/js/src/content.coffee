@@ -11,7 +11,7 @@
     __msg = chrome.i18n.getMessage
 
 	class M
-		debug: 	true
+		debug: 	false
 		dev: 	false
 		
 		@CLS: 			'mailfred'
@@ -27,10 +27,10 @@
 		@TYPE_NAV: 		'nav'
 
 		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbyIevx6VNG9t2_Mhrf3GcJEms3e57Tj7GjMr4sjoelFGbuzWyI/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbx1qmZutS_6z16Jkh2LB_cUuR7Q9SCC-smTs-79SYHmGPGE1tU/exec"
 
 		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbw4QMEDksokZ52F8kXhOoaqdKFpxT2Ri_UfTEmy1pw/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbxfdkvTL2x02pLmSgOIjrU4t7fPwnVssBuEx2PJOig/dev"
 
 		# Current GMail address of the logged in user
 		currentGmail: null
