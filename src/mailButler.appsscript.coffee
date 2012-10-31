@@ -1,6 +1,36 @@
+class ErrorCodes
+  @INVALID_MESSAGE_ID:    'MessageIdInvalid'
+  @NO_SCHEDULE_TIME:      'NoScheduleTime'
+  @INVALID_SCHEDULE_TIME: 'InvalidScheduleTime'
+  @NO_ACTION:             'NoActionSpecified'
+  @STORE_FAILED:          'StoringFailed'
+
+  @toReadable: (code) ->
+    i18n.get "error#{code}"
+
+class i18n
+  @messages:
+    en:
+      clickHereToUninstall:       """Click here to <a href="<%= href %>">uninstall</a>."""
+      uninstallSuccess:           'Application successfully uninstalled.'
+      scriptNotEnabled:           'This script is not enabled'
+      setupComplete:              'Setup complete!'
+      statusOK:                   'Service status: OK'
+      scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
+      butSomethingWentWrong:      'But something went wrong: <%= status %>'
+      errorMessageIdInvalid:      'Given message ID is not valid'
+      errorNoScheduleTime:        'No scheduling time given'
+      errorInvalidScheduleTime:   'Given scheduling time is not valid'
+      errorNoActionSpecified:     'No action (star, marking unread, move to inbox, etc.) specified'
+      errorStoringFailed:         'Storing the scheduling action failed'
+
+  @get: (key, map, locale = 'en') ->
+    str = @message[locale]?[key]?
+    if map and str then _.template str, map else str
+
 class MailButler
 
-  @VERSION:             1.09
+  @VERSION:             1.11
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
   @FREQUENCY_MINUTES:   1
@@ -22,14 +52,14 @@ class MailButler
       @addButlerMail params
       true
     catch e
-      e
+      ErrorCodes.toReadable e
 
   @uninstall: (automatic) ->
     if not automatic and (base = ScriptApp.getService().getUrl())
       # Only if no automatic uninstall (e.g. the user has to confirm) and the script is published as a WebApp
       target = base.substring 0, base.lastIndexOf '/'
 
-      HtmlService.createHtmlOutput  """Click here to <a href="#{target}/manage/uninstall">uninstall</a>."""
+      HtmlService.createHtmlOutput  (i18n.get 'clickHereToUninstall', href: "#{target}/manage/uninstall")
     else
       # Fallback, if this is not a published WebApp or automatic uninstall is wanted
       # remove all triggers, so there are no errors when we invalidate the authentification
@@ -38,7 +68,7 @@ class MailButler
 
       # invalidate authentication
       ScriptApp.invalidateAuth()
-      ContentService.createTextOutput 'Application successfully uninstalled.'
+      ContentService.createTextOutput i18n.get 'uninstallSuccess'
 
   result: (err, result) ->
     ret = []
@@ -190,7 +220,7 @@ class MailButler
 
     if not messageId or not (message = GmailApp.getMessageById messageId)
       Logger.log "Given message ID '%s' is not valid", messageId
-      throw "Given message ID '#{messageId}' is not valid"
+      throw ErrorCodes.INVALID_MESSAGE_ID
 
     now = new Date().getTime()
     matches = form.when?.match /^(delta|specified):([0-9]+)/
@@ -200,10 +230,10 @@ class MailButler
       else
         unless form.when
           Logger.log 'No scheduling time given'
-          throw 'No scheduling time given'
+          throw ErrorCodes.NO_SCHEDULE_TIME
         else
           Logger.log "Given scheduling time '%s' is not valid", form.when
-          throw "Given scheduling time '#{form.when}' is not valid"
+          throw ErrorCodes.INVALID_SCHEDULE_TIME
 
     props =
       messageId: messageId
@@ -221,11 +251,11 @@ class MailButler
 
     unless props.how.star or props.how.unread or props.how.inbox
       Logger.log "No action specified"
-      throw "No action (star, marking unread, move to inbox) specified"
+      throw ErrorCodes.NO_ACTION
 
 
     stored = MailButler.storeButlerMail props
-    throw 'Storing the scheduling action failed' unless stored
+    throw ErrorCodes.STORE_FAILED unless stored
 
     thread = GmailApp.getThreadById message.getThread().getId()
     thread.moveToArchive() if String(form.archive) is "true"
@@ -242,7 +272,7 @@ class MailButler
     not @DB.isCurrent @getEmail(), @VERSION
 
 doGet = (request) ->
-  return ContentService.createTextOutput 'This script is not enabled' unless MailButler.isEnabled()
+  return ContentService.createTextOutput i18n.get 'scriptNotEnabled' unless MailButler.isEnabled()
   MailButler.setup()
   
   butler = new MailButler request.parameter.callback
@@ -255,14 +285,15 @@ doGet = (request) ->
     when 'schedule'
       out = butler.scheduleJson request.parameter
     when 'setup'
-      success = butler.scheduleSetup request.parameter
-      out = ContentService.createTextOutput 'Setup complete!'
-      if success is true
-        out.append "\nYour email has been scheduled, you can close this window now!"
+      status = butler.scheduleSetup request.parameter
+      out = ContentService.createTextOutput i18n.get 'setupComplete'
+      out.append "\n"
+      if status is true
+        out.append i18n.get 'scheduleSuccessCloseWindow'
       else
-        out.append "\nBut something went wrong: #{success}"
+        out.append (i18n.get 'butSomethingWentWrong', status: status)
     else
-      out = ContentService.createTextOutput 'Service status: OK'
+      out = ContentService.createTextOutput i18n.get 'statusOK'
   out
 
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments

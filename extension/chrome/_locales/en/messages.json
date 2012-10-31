@@ -191,6 +191,26 @@
       }
     }
   },
+  "notificationScheduleErrorInvalidScheduleTime": {
+    "description": "Error message in case the given time could not be parsed",
+    "message": "The time or format of the schedule given is invalid"
+  },
+  "notificationScheduleErrorMessageIdInvalid": {
+    "description": "The error message when a given message ID was invalid",
+    "message": "The conversation you tried scheduling the actions for could not be found - did you sign up with a different GMail address maybe?"
+  },
+  "notificationScheduleErrorNoActionSpecified": {
+    "description": "Error message if there was no action given",
+    "message": "For a successful scheduling an action is needed"
+  },
+  "notificationScheduleErrorNoScheduleTime": {
+    "description": "Error message when there was no schedule time given",
+    "message": "For a successful scheduling a schedule time is needed"
+  },
+  "notificationScheduleErrorStoringFailed": {
+    "description": "Error if the mail could not be persisted",
+    "message": "We are sorry, but we could not process your request. Please try again later and if the problem persists contact support."
+  },
   "notificationScheduleErrorTitle": {
     "description": "The notification title when an error happened",
     "message": "Something went wrong!"

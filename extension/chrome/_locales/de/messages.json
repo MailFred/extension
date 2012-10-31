@@ -191,6 +191,26 @@
       }
     }
   },
+  "notificationScheduleErrorInvalidScheduleTime": {
+    "description": "Error message in case the given time could not be parsed",
+    "message": "Die gegebene Zeit oder das verwendete Datumsformat sind ungültig"
+  },
+  "notificationScheduleErrorMessageIdInvalid": {
+    "description": "The error message when a given message ID was invalid",
+    "message": "Die Konversation, welche Sie zu planen versuchen kann nicht gefunden werden - sind Sie mit dem richtigen GMail-Benutzer angemeldet?"
+  },
+  "notificationScheduleErrorNoActionSpecified": {
+    "description": "Error message if there was no action given",
+    "message": "Für eine erfolgreiche Planung wird mindestens eine durchzuführende Aktion benötigt"
+  },
+  "notificationScheduleErrorNoScheduleTime": {
+    "description": "Error message when there was no schedule time given",
+    "message": "Für eine erfolgreiche Planung wird ein Zeitpunkt benötigt"
+  },
+  "notificationScheduleErrorStoringFailed": {
+    "description": "Error if the mail could not be persisted",
+    "message": "Es tut uns sehr leid aber ihre Anfrage konnte nicht erfolgreich bearbeitet werden. Bitte versuchen Sie es noch einmal oder wenden Sie sich an den Support."
+  },
   "notificationScheduleErrorTitle": {
     "description": "The notification title when an error happened",
     "message": "Etwas ging schief!"

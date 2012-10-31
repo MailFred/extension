@@ -656,6 +656,7 @@
 
 
 		onScheduleSuccess: (data) =>
+			log 'Scheduling success', data
 			chrome.extension.sendMessage
 				action: 	'notification'
 				icon: 		"images/tie48x48.png"
@@ -664,7 +665,7 @@
 			return
 
 		onScheduleError: (params, status, error) =>
-			log arguments
+			log 'There was an error', arguments
 			if status is 'parsererror'
 				params.action = 'setup'
 				delete params.callback if params.callback
@@ -672,11 +673,18 @@
 				query = $.param params
 				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
-				chrome.extension.sendMessage
+				notification =
 					action: 	'notification'
 					icon: 		"images/tie48x48.png"
 					title:		__msg 'notificationScheduleErrorTitle'
 					message:	__msg 'notificationScheduleError', ''+error
+
+				# we get 'InvalidScheduleTime' and we need to add 'notificationScheduleError' to it
+				message = __msg "notificationScheduleError#{error}"
+				notification.message = message if message
+
+				chrome.extension.sendMessage notification
+
 			return
 
 	mb = new M
