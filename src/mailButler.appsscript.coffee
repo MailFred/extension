@@ -36,7 +36,7 @@ class i18n
 
 class MailButler
 
-  @VERSION:             1.13
+  @VERSION:             1.131
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
   @FREQUENCY_MINUTES:   1
@@ -93,8 +93,9 @@ class MailButler
     if ScriptApp.getScriptTriggers().length is 0
       Logger.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
-      Logger.log 'Setting version'
-      @DB.setCurrentVersion @getEmail(), @VERSION
+
+    Logger.log 'Setting version'
+    @DB.setCurrentVersion @getEmail(), @VERSION
     @DB.setLastUsed @getEmail()
     return
 
