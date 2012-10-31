@@ -11,13 +11,13 @@ class ErrorCodes
 class i18n
   @messages:
     en:
-      clickHereToUninstall:       """Click here to <a href="<%= href %>">uninstall</a>."""
+      clickHereToUninstall:       """Click here to <a href="$href$">uninstall</a>."""
       uninstallSuccess:           'Application successfully uninstalled.'
       scriptNotEnabled:           'This script is not enabled'
       setupComplete:              'Setup complete!'
       statusOK:                   'Service status: OK'
       scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
-      butSomethingWentWrong:      'But something went wrong: <%= status %>'
+      butSomethingWentWrong:      'But something went wrong: $status$'
       errorMessageIdInvalid:      'Given message ID is not valid'
       errorNoScheduleTime:        'No scheduling time given'
       errorInvalidScheduleTime:   'Given scheduling time is not valid'
@@ -25,12 +25,18 @@ class i18n
       errorStoringFailed:         'Storing the scheduling action failed'
 
   @get: (key, map, locale = 'en') ->
-    str = @message[locale]?[key]?
-    if map and str then _.template str, map else str
+    loc = @messages[locale]
+    loc = @messages.en if !loc
+    str = loc[key]
+    if map and str
+      for k,v in map
+        rgx = new RegExp "\\$#{key}\\$", 'g'
+        str = str.replace rgx, v
+    str
 
 class MailButler
 
-  @VERSION:             1.11
+  @VERSION:             1.13
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
   @FREQUENCY_MINUTES:   1

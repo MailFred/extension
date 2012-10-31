@@ -671,7 +671,7 @@
 				delete params.callback if params.callback
 
 				query = $.param params
-				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=600,height=600,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			else
 				notification =
 					action: 	'notification'
