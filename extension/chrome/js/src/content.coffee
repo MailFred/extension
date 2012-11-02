@@ -27,10 +27,10 @@
 		@TYPE_NAV: 		'nav'
 
 		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbx1qmZutS_6z16Jkh2LB_cUuR7Q9SCC-smTs-79SYHmGPGE1tU/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbzWm8LljtgQreQt2DoGe7g-fiZeXwjgy4rZQXw8CY7aFnucKtk/exec"
 
 		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbxfdkvTL2x02pLmSgOIjrU4t7fPwnVssBuEx2PJOig/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwriDyhVS8RTcPDEvd1p_OZSc2w9r2pUd1ZtDhp6xo/dev"
 
 		# Current GMail address of the logged in user
 		currentGmail: null
@@ -650,8 +650,11 @@
 				error:			(jqXHR, textStatus, errorThrown) =>
 									log arguments
 									@onScheduleError data, textStatus, errorThrown
-				complete:		(jqXHR, textStatus) ->
-									resetIcon?()
+				#complete:		(jqXHR, textStatus) ->
+				#					resetIcon?()
+
+			_.delay (-> resetIcon?()), 400
+
 			return
 
 

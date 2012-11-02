@@ -23,7 +23,16 @@
         <td><?= new Date(user.signup).toUTCString() ?></td>
         <td><?= new Date(user.lastUsed).toUTCString() ?></td>
         <td><?= user.version ?></td>
-        <td><a href="<?= baseUrl ?>?action=mails&amp;user=<?= user.user ?>">Show mails</a></td>
+        <td>
+          <ul>
+            <li>
+              <a href="<?= baseUrl ?>?action=mails&amp;user=<?= user.user ?>">Show mails</a>
+            </li>
+            <li>
+              <a href="<?= baseUrl ?>?action=remove&amp;id=<?= user.getId() ?>" target="_blank">delete</a>
+            </li>
+          </ul>
+        </td>
     </tr>
   <? } ?>
 </table>

@@ -4,18 +4,20 @@ class Db
 	@TYPE_MAIL:		'mail'
 	@TYPE_USER:		'user'
 
-	@getMails: (user, version, time) ->
+	@getMails: (user, version, time, processed = null) ->
 		q =
 			type:		@TYPE_MAIL
 
 		q.user = user if user
 		q.version = @DB.lessThanOrEqualTo Number version if version
 		q.when = @DB.lessThanOrEqualTo Number time if time
+		q.processed = !! processed if processed isnt null
 
 		Logger.log 'getting mails with query %s', q
 
 		result = @DB.query q
-		result = result.sortBy 'when'
+		result = result.sortBy 'processed', @DB.ASCENDING, @DB.NUMERIC
+		result = result.sortBy 'when', @DB.ASCENDING, @DB.NUMERIC
 		result
 
 	@getUsers: ->
@@ -30,6 +32,7 @@ class Db
 		props.user = user
 		props.version = version
 		props.type = @TYPE_MAIL
+		props.processed = false
 
 		@DB.save props
 
@@ -37,7 +40,7 @@ class Db
 		ret = @DB.remove mail if mail.type is @TYPE_MAIL
 		ret
 
-	@update: (entity) ->
+	@updateMail: (entity) ->
 		return unless entity.type in [@TYPE_MAIL]
 		@DB.save entity
 
@@ -90,6 +93,8 @@ class Db
 	@isCurrent: (user, version) ->
 		version >= @getCurrentVersion user
 
+	@removeById: (id) ->
+		@DB.removeById id
 
 _showMails = (user, version, time) ->
 	result = Db.getMails user, version, time

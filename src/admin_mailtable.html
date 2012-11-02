@@ -1,4 +1,4 @@
-User <?= user ?> has <?= emails.getSize() ?> scheduled mails
+User <?= user ?> has <?= emails.getSize() ?> mails
 <table border="1" cellpadding="1" cellspacing="1">
   <tr>
     <th>#</th>
@@ -7,6 +7,8 @@ User <?= user ?> has <?= emails.getSize() ?> scheduled mails
     <th>For</th>
     <th>With version</th>
     <th>Actions</th>
+    <th>Processed</th>
+    <th>Admin</th>
   <tr>
   <? 
       var i = 1;
@@ -28,6 +30,8 @@ User <?= user ?> has <?= emails.getSize() ?> scheduled mails
           <?} } ?>
         </ul>
       </td>
+      <td><? if(email.processed) { ?> <?= new Date(email.processed).toUTCString() ?> <? } else { ?> <?= email.processed ?> <? } ?></td>
+      <td><a href="<?= baseUrl ?>?action=remove&amp;id=<?= email.getId() ?>" target="_blank">delete</a></td>
     </tr>
   <? } ?>
 </table>

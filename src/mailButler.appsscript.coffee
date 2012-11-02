@@ -36,9 +36,9 @@ class i18n
 
 class MailButler
 
-  @VERSION:             1.131
+  @VERSION:             1.132
   @LABEL_BASE:          'MailFred'
-  @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Outbox'
+  @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
   @FREQUENCY_MINUTES:   1
   @DB:                  MailButlerDBLibrary.Db
 
@@ -105,7 +105,7 @@ class MailButler
   @getScheduledMails: ->
     user = @getEmail()
     Logger.log 'Get scheduled mails for %s', user
-    result = @DB.getMails user
+    result = @DB.getMails user, null, null, false
     result.next() while result.hasNext()
 
   @processButlerMails: (d) ->
@@ -114,21 +114,21 @@ class MailButler
     user = @getEmail()
     time = d.getTime()
     Logger.log "With user '%s', version '%s' and time %s", user, @VERSION, time
-    result = @DB.getMails user, @VERSION, time
+    result = @DB.getMails user, @VERSION, time, false
 
-    if (s = result.getSize()) > 0    
+    if (s = result.getSize()) > 0
       # yep there are some
       Logger.log "... found %s candidates", s
 
       while result.hasNext()
-        @processButlerMail result.next()
+        @processButlerMail result.next(), time
 
     else
       # No scheduled messages available
       Logger.log "... none found."
     return
 
-  @processButlerMail: (props) ->
+  @processButlerMail: (props, time) ->
     Logger.log "Process mail with props: %s", props
 
     messageId = props.messageId
@@ -195,8 +195,9 @@ class MailButler
     
       Logger.log "Finished processing message with ID '%s'", messageId
 
-    # delete the scheduled butler mail, because we couldn't find the real message
-    @DB.removeMail props # pass "" + x in case messageId is undefined (should not happen)
+    # update the scheduled butler mail, because we couldn't find the real message
+    props.processed = time
+    @DB.updateMail props
     return
 
   # Get a label or create it
