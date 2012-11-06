@@ -18,6 +18,8 @@ class i18n
       statusOK:                   'Service status: OK'
       scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
       butSomethingWentWrong:      'But something went wrong: $status$'
+
+      # The following keys must not be changed - they are "error" + ErrorCodes.KEY
       errorMessageIdInvalid:      'Given message ID is not valid'
       errorNoScheduleTime:        'No scheduling time given'
       errorInvalidScheduleTime:   'Given scheduling time is not valid'
