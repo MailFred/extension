@@ -326,25 +326,25 @@ _process = (e) ->
     # Get a lock for the current user
     lock = LockService.getPrivateLock()
     if lock.tryLock 10000
-      
-      # wait 10 seconds at most
-      Logger.log 'We have the lock...'
-      
-      # Get the time this scheduled execution started
-      d = new Date()
-      if e
-        d.setUTCDate e["day-of-month"]
-        d.setUTCFullYear e.year
-        d.setUTCMonth (e.month - 1)
-        d.setUTCHours e.hour
-        d.setUTCMinutes e.minute
-        d.setUTCSeconds e.second
+      try
+        # wait 10 seconds at most
+        Logger.log 'We have the lock...'
+        
+        # Get the time this scheduled execution started
+        d = new Date()
+        if e
+          d.setUTCDate e["day-of-month"]
+          d.setUTCFullYear e.year
+          d.setUTCMonth (e.month - 1)
+          d.setUTCHours e.hour
+          d.setUTCMinutes e.minute
+          d.setUTCSeconds e.second
 
-      MailButler.processButlerMails d
-    
-    # release our lock
-    lock.releaseLock()
-    Logger.log '...lock released'
+        MailButler.processButlerMails d
+      finally
+        # release our lock
+        lock.releaseLock()
+        Logger.log '...lock released'
   else if MailButler.isOutdated()
     # Automatic uninstall
     MailButler.uninstall true
