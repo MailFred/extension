@@ -69,16 +69,21 @@ class Db
 
 	@setCurrentVersion: (user, version) ->
 		user = @getOrCreateUser user
-		user.version = version
-		@DB.save user
+		if user.version isnt version
+			user.version = version
+			user = @DB.save user
+		user
 
 	@getCurrentVersion: (user) ->
 		(@getOrCreateUser user).version ? 0
 
 	@setLastUsed: (user) ->
 		user = @getOrCreateUser user
-		user.lastUsed = @now()
-		@DB.save user
+		now = @now()
+		if user.lastUsed isnt now
+			user.lastUsed = now
+			user = @DB.save user
+		user
 
 	@isEnabled: (user, version) ->
 		user = @getOrCreateUser user
