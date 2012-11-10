@@ -1,14 +1,60 @@
 (($, window) ->
 
 	log = (args...) ->
-    	console.log.apply console, args if console?.log and mb?.debug is true
-    	return
+		console.log.apply console, args if console?.log and mb?.debug is true
+		return
 
-    #__msg = (args...) ->
-    #	ret = chrome.i18n.getMessage.apply chrome.i18n, args
-    #	log args, ret
-    #	ret
-    __msg = chrome.i18n.getMessage
+	#__msg = (args...) ->
+	#	ret = chrome.i18n.getMessage.apply chrome.i18n, args
+	#	log args, ret
+	#	ret
+	__msg = chrome.i18n.getMessage
+
+	# Adapted from http://stackoverflow.com/questions/6157929
+	class Eventr
+		@eventMatchers:
+			HTMLEvents:		/^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/i
+			MouseEvents:	/^(?:click|dblclick|mouse(?:down|up|over|move|out))$/i
+
+		@defaults:
+			pointerX: 	0
+			pointerY: 	0
+			button: 	0
+			ctrlKey: 	false
+			altKey: 	false
+			shiftKey: 	false
+			metaKey: 	false
+			bubbles: 	true
+			cancelable: true
+		
+		@simulate: (target, eventName, options = {}) ->
+			for name,matcher of @eventMatchers
+				if matcher.test eventName
+					eventType = name
+					break
+
+			throw new SyntaxError 'Only HTMLEvents and MouseEvents interfaces are supported' unless eventType
+			eventName = eventName.toLowerCase()
+			options = _.defaults @defaults, options
+
+			if document.createEvent
+				evt = document.createEvent eventType
+				switch eventType
+					when 'HTMLEvents'
+						evt.initEvent eventName, options.bubbles, options.cancelable
+					else
+						evt.initMouseEvent eventName, options.bubbles, options.cancelable, document.defaultView, options.button, options.pointerX, options.pointerY, options.pointerX, options.pointerY, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, target
+				target.dispatchEvent evt
+			else
+				options.clientX = options.pointerX
+				options.clientY = options.pointerY
+				delete options.pointerX
+				delete options.pointerY
+				evt = document.createEventObject()
+				oEvent = _.extend evt, options
+				target.fireEvent "on#{eventName}", oEvent
+			
+			target
 
 	class M
 		debug: 	false
@@ -35,6 +81,8 @@
 		# Current GMail address of the logged in user
 		currentGmail: null
 
+		currentView: null
+
 		constructor: ->
 			window.addEventListener "message", @gmailrListener, false
 			
@@ -44,6 +92,19 @@
 				return
 
 			
+		inConversation: ->
+			@currentView is 'conversation'
+
+		getArchiveButton: ->
+			$ '.'+"T-I J-J5-Ji lR T-I-ax7 T-I-Js-IF ar7".split(' ').join '.'
+		
+		activateArchiveButton: ->
+			return unless @inConversation()
+			button = @getArchiveButton().get 0
+			if button
+				Eventr.simulate button, 'mousedown'
+				Eventr.simulate button, 'mouseup'
+			return
 
 		getSettingEmail: (resp) ->
 			chrome.extension.sendMessage {action: "setting", key: 'email'}, resp
@@ -61,7 +122,8 @@
 						when 'init'
 							@currentGmail = evt.email
 						when 'viewChanged'
-							if evt.args[0] is "conversation"
+							@currentView = evt.args[0]
+							if @inConversation()
 								log 'User switched to conversation view'
 								@getSettingEmail (settingEmail) =>
 									log 'Email address in settings', settingEmail
@@ -603,14 +665,11 @@
 			div
 
 		getMessageId: ->
-			address = window.location.href
-
-			catPos = address.lastIndexOf '#'
-			slashPos = address.lastIndexOf '/'
-			if catPos > slashPos
+			id = /[0-9a-f]{16}/.exec window.location.hash
+			if id is null
 				throw __msg 'errorNotWithinAConversation'
 			else
-				address.substr (1 + slashPos)
+				id[0]
 
 		onSchedule: (props, loadingIcon, resetIcon) =>
 			try
@@ -620,8 +679,6 @@
 					error: e.toString()
 				return
 
-			loadingIcon?()
-			
 			data = 
 				action:		'schedule'
 				messageId:	messageId
@@ -635,6 +692,8 @@
 
 			log 'scheduling mail...', data
 
+			loadingIcon?() unless data.archive
+
 			# remove false values to transmit less data over the wire
 			_.each data, (val, key) ->
 				delete data[key] if val is false
@@ -647,14 +706,22 @@
 				data:			data
 				success:		(data, textStatus, jqXHR) =>
 									@onScheduleSuccess data
+									return
 				error:			(jqXHR, textStatus, errorThrown) =>
 									log arguments
 									@onScheduleError data, textStatus, errorThrown
-				#complete:		(jqXHR, textStatus) ->
-				#					resetIcon?()
+									return
+				complete:		(jqXHR, textStatus) ->
+									resetIcon?() unless data.archive
+									return
 
-			_.delay (-> resetIcon?()), 400
-
+			if data.archive
+				@activateArchiveButton()
+			else
+				_.delay (->
+						resetIcon?()
+						return
+						), 400
 			return
 
 
