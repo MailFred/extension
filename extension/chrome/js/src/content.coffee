@@ -72,6 +72,10 @@
 		@TYPE_THREAD: 	'thread'
 		@TYPE_NAV: 		'nav'
 
+		@GM_SEL:
+			ARCHIVE_BUTTON: 	'.'+"T-I J-J5-Ji lR T-I-ax7 T-I-Js-IF ar7".split(' ').join '.'
+			THREAD_BUTTON_BAR: 	'.iH > div'
+
 		# production URL
 		prodUrl: "https://script.google.com/macros/s/AKfycbzWm8LljtgQreQt2DoGe7g-fiZeXwjgy4rZQXw8CY7aFnucKtk/exec"
 
@@ -95,12 +99,9 @@
 		inConversation: ->
 			@currentView is 'conversation'
 
-		getArchiveButton: ->
-			$ '.'+"T-I J-J5-Ji lR T-I-ax7 T-I-Js-IF ar7".split(' ').join '.'
-		
 		activateArchiveButton: ->
 			return unless @inConversation()
-			button = @getArchiveButton().get 0
+			button = ($ M.GM_SEL.ARCHIVE_BUTTON).get 0
 			if button
 				Eventr.simulate button, 'mousedown'
 				Eventr.simulate button, 'mouseup'
@@ -145,7 +146,7 @@
 
 		injectThread: ->
 			log 'Injecting buttons in thread view'
-			threads = ($ '.iH > div').filter (index) ->
+			threads = ($ M.GM_SEL.THREAD_BUTTON_BAR).filter (index) ->
 				($ ".#{M.CLS_THREAD}", @).length is 0
 			
 			threads.append @composeButton M.TYPE_THREAD if threads.length > 0
