@@ -122,16 +122,23 @@
 					switch evt.type
 						when 'init'
 							@currentGmail = evt.email
+						when 'viewThread'
+							@inject()
 						when 'viewChanged'
 							@currentView = evt.args[0]
-							if @inConversation()
-								log 'User switched to conversation view'
-								@getSettingEmail (settingEmail) =>
-									log 'Email address in settings', settingEmail
-									log 'Email address of current Gmail window', @currentGmail
+							log "User switched to #{@currentView} view"
+							@inject()
 
-									@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail.trim() in settingEmail.split /[, ]+/ig
-									return
+			return
+
+		inject: ->
+			return unless @inConversation()
+			@getSettingEmail (settingEmail) =>
+				log 'Email address in settings', settingEmail
+				log 'Email address of current Gmail window', @currentGmail
+
+				@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail.trim() in settingEmail.split /[, ]+/ig
+				return
 			return
 
 		getServiceURL: ->
