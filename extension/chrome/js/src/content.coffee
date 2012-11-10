@@ -170,21 +170,17 @@
 
 			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
 
-			orig = $ ".T-I.J-J5-Ji.T-I-Js-IF.ar7.ns.T-I-ax7.L3"
-			item = orig.first().clone()
+			item = $	"""
+						<div class="T-I J-J5-Ji T-I-Js-IF ar7 ns T-I-ax7 L3" data-tooltip="#{__msg 'extName'}" aria-label="#{__msg 'extName'}" role="button" tabindex="0" aria-expanded="false" aria-haspopup="true" style="-webkit-user-select: none;">
+							<div class="asa">
+								<span class="J-J5-Ji ask">&nbsp;</span>
+								<div class="ase T-I-J3 J-J5-Ji"></div>
+							</div>
+							<div class="G-asx T-I-J3 J-J5-Ji">&nbsp;</div>
+						</div>
+						"""
 
 			div.append item
-
-			item.attr
-				id: 				null
-				title: 				null
-				'data-tooltip': 	__msg "extName"
-				'aria-label': 		__msg "extName"
-				'aria-expanded': 	'false'
-				'aria-haspopup': 	'true'
-
-			item.css '-webkit-user-select', 'none'
-
 
 			item.hover ((e) ->
 							$(@).addClass 'T-I-JW'
