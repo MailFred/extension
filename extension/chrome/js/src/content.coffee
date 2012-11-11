@@ -73,7 +73,7 @@
 		@TYPE_NAV: 		'nav'
 
 		@GM_SEL:
-			ARCHIVE_BUTTON: 	'.'+"T-I J-J5-Ji lR T-I-ax7 T-I-Js-IF ar7".split(' ').join '.'
+			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7'
 			THREAD_BUTTON_BAR: 	'.iH > div'
 
 		# production URL
