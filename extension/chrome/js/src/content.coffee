@@ -56,6 +56,88 @@
 			
 			target
 
+	class GMailUI
+		@Breadcrumbs: class
+			@LIST_SEL: 'ol.gbtc'
+			@markup: _.template """
+								<li class="gbt">
+									<a href="#" class="gbgt">
+									<span class="gbts">
+										<span><%- label %></span>
+										<% if(isMenu) { %>
+										<span class="gbma"></span>
+										<% } %>
+									</span>
+									</a>
+								</li>
+								"""
+			@add: (label, onClick, isMenu = false) ->
+				obj =
+					label: label
+					isMenu: !!isMenu
+				item = 	$ @markup obj
+				(item.find '.gbgt').on 'click', onClick if onClick
+				item.prependTo $ @LIST_SEL
+				item
+
+
+		@ModalDialog: class
+			@BG: 	$ 	"""
+						<div class="Kj-JD-Jh" style="opacity: 0.75; width: 2560px; height: 2560px; margin-left: -230px; margin-top: -64px;"></div>
+						"""
+			@dialog: _.template """
+								<div class="Kj-JD" tabindex="0" style="left: 50%; top: 40%; width: 460px; overflow: visible; margin-left: -230px; margin-top: -64px;" role="dialog" aria-labelledby="<%= id %>">
+									<div class="Kj-JD-K7 Kj-JD-K7-GIHV4" id="<%= id %>">
+										<span class="Kj-JD-K7-K0"><%- title %></span>
+										<span class="Kj-JD-K7-Jq" act="close"></span>
+									</div>
+									<!--
+									<div class="Kj-JD-Jz">
+										<div id="ri_selecttimezone_invalid" style="margin-bottom: 15px;display:none">
+											<div class="asl T-I-J3 J-J5-Ji" style="margin-bottom: -5px;"></div>
+											Invalid Date
+										</div>
+										<div style="float:left;padding-right:10px">
+											<label for="ri_selectdate" class="el">Select date</label>
+											<br><input id="ri_selectdate" class="rbx nr">
+										</div>
+										<div style="float:left;padding-right:10px">
+											<label for="ri_selecttime" class="el">
+												time <span class="font-gray">(24h format)</span>
+											</label>
+											<br><input id="ri_selecttime" class="rbx nr" style="width:120px" autocomplete="OFF">
+										</div>
+										<div style="float:left">
+											<label for="ri_selecttimezone" class="el">timezone (optional)</label>
+											<br><input id="ri_selecttimezone" class="rbx nr" style="width:120px" autocomplete="OFF">
+										</div> 
+										<div style="clear:both;"></div>
+									</div>
+									<div class="Kj-JD-Jl">
+										<button id="ri_b2" class="J-at1-atl"> Add reminder </button>
+										<button id="ri_b1" class="J-at1-auR"> Cancel </button>
+									</div>
+									-->
+								</div>
+								"""
+			@open: (title, onClose) ->
+				body = $ 'body'
+				@BG.appendTo body
+				obj =
+					id: 	_.uniqueId 'modalDialog-'
+					title: 	title
+
+				dialog = $ @dialog obj
+				closeButton = dialog.find "[act='close']"
+				closeButton.on 'click', (e) =>
+					@BG.detach()
+					dialog.remove()
+					onClose?()
+					return
+				dialog.appendTo body
+				dialog
+
+
 	class M
 		debug: 	false
 		dev: 	false
@@ -122,6 +204,8 @@
 					switch evt.type
 						when 'init'
 							@currentGmail = evt.email
+							GMailUI.Breadcrumbs.add (__msg 'extName'), -> GMailUI.ModalDialog.open (__msg 'extName')
+
 						when 'viewThread'
 							@inject()
 						when 'viewChanged'
