@@ -203,12 +203,15 @@
 					evt = e.data.event
 					switch evt.type
 						when 'init'
+						# GMailr is ready
 							@currentGmail = evt.email
 							GMailUI.Breadcrumbs.add (__msg 'extName'), -> GMailUI.ModalDialog.open (__msg 'extName')
 
 						when 'viewThread'
+						# User moves to previous or next convo
 							@inject()
 						when 'viewChanged'
+						# User switches view (conversation <-> threads)
 							@currentView = evt.args[0]
 							log "User switched to #{@currentView} view"
 							@inject()
@@ -219,7 +222,7 @@
 			return unless @inConversation()
 			@getSettingEmail (settingEmail) =>
 				log 'Email address in settings', settingEmail
-				log 'Email address of current Gmail window', @currentGmail
+				log 'Current Gmail window', @currentGmail
 
 				@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail.trim() in settingEmail.split /[, ]+/ig
 				return
