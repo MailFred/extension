@@ -753,11 +753,11 @@
 			div
 
 		getMessageId: ->
-			id = /[0-9a-f]{16}/.exec window.location.hash
+			id = /\/([0-9a-f]{16})/.exec window.location.hash
 			if id is null
 				throw __msg 'errorNotWithinAConversation'
 			else
-				id[0]
+				id[1]
 
 		onSchedule: (props, loadingIcon, resetIcon) =>
 			try
