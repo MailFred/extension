@@ -671,7 +671,7 @@
 								log "in #{minute} minute"
 								_delta (_1m * minute)
 
-					for hour in [1,4]
+					for hour in [2,4]
 						aME "Hours#{hour}", hour, (hour) -> 
 							log "in #{hour} hour"
 							_delta (_1h * hour)
