@@ -148,6 +148,7 @@
 		@CLS_POPUP: 	M.CLS + '-popup'
 		@CLS_MENU: 		M.CLS + '-menu'
 		@CLS_PICKER: 	M.CLS + '-picker'
+		@CLS_LOADER: 	M.CLS + '-loader'
 
 		@ID_PREFIX: 	M.CLS + '-id-'
 
@@ -770,6 +771,10 @@
 					error: e.toString()
 				return
 
+			archive = !!props.archive
+
+			loadingIcon?() unless archive
+
 			data = 
 				action:		'schedule'
 				messageId:	messageId
@@ -778,13 +783,10 @@
 				star:		!!props.star
 				noanswer:	!!props.noanswer
 				inbox:		!!props.inbox
-				archive:	!!props.archive
+				archive:	archive
 				#callback:	'alert'
 
 			log 'scheduling mail...', data
-
-			loadingIcon?() unless data.archive
-
 			# remove false values to transmit less data over the wire
 			_.each data, (val, key) ->
 				delete data[key] if val is false
@@ -806,7 +808,7 @@
 									resetIcon?() unless data.archive
 									return
 
-			if data.archive
+			if archive
 				@activateArchiveButton()
 			else
 				_.delay (->
