@@ -301,7 +301,7 @@ class GMailUI.ButtonBarPopupButton extends GMailUI.ButtonBarButton
 
 class GMailUI.Popup extends GMailUI.Container
 	constructor: ->
-		element = @setElement 	"""
+		element = @setElement	"""
 								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
 									<div class="SK AX" style="-webkit-user-select: none;">
 									</div>
@@ -315,7 +315,7 @@ class GMailUI.Popup extends GMailUI.Container
 			return
 
 class GMailUI.PopupLabel extends GMailUI.UIElement
-	@template: _.template 	"""
+	@template: _.template	"""
 							<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; "><%- label %></div>
 							"""
 	constructor: (label) ->
@@ -370,13 +370,13 @@ class GMailUI.PopupMenuItem extends GMailUI.OnAble
 
 								@menu.getElement().attr 'aria-activedescendant', id
 								@menu.inMenu = true
-								x = =>
+
+								_.delay (=>
 									return unless @menu.inMenu
 									@reposition()
 									@menu.show()
-									return
-
-								_.delay x, @menu.delay
+									return), @menu.delay
+								
 								return),
 							((e) =>
 								@menu.inMenu = false
