@@ -1,12 +1,4 @@
 {
-  "buttonSchedule": {
-    "description": "The button label on the end of the dropdown that initiates the scheduling",
-    "message": "Jawohl, ich werde ihren Auftrag erledigen"
-  },
-  "buttonScheduleTitle": {
-    "description": "The title attribute of the scheduling button",
-    "message": "Klicken Sie hier um die definierten Aktionen zur gegebenen Zeit auszuführen"
-  },
   "dateFormat": {
     "description": "The date format for the calendar",
     "message": "dd.mm.yy"
@@ -33,39 +25,39 @@
   },
   "mailActionMarkUnread": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "Als ungelesen markiert"
+    "message": "Als ungelesen markiert werden."
   },
   "mailActionMarkUnreadTitle": {
     "description": "The title attribute of the mark unread option",
-    "message": "Markiere die momentane Konversation als ungelesen"
+    "message": "Markiere die momentane Konversation als ungelesen."
   },
   "mailActionMoveToInbox": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "in den Posteingang verschoben werden."
+    "message": "In den Posteingang verschoben werden."
   },
   "mailActionMoveToInboxTitle": {
     "description": "The title attribute of the move to inbox option",
-    "message": "Verschiebe die momentante Konversation in den Posteingang"
+    "message": "Verschiebe die momentante Konversation in den Posteingang."
   },
   "mailActionStar": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "mit einer Markierung versehen"
+    "message": "Mit einer Markierung versehen werden."
   },
   "mailActionStarTitle": {
     "description": "The title attribute of the starring option",
-    "message": "Markiere die momentane Konversation"
+    "message": "Markiere die momentane Konversation."
   },
   "menuAdditionalActionsArchive": {
     "description": "The option to archive the scheduled conversation after scheduling",
-    "message": "Archiviere diese Konversation"
+    "message": "Archiviere die momentane Konversation."
   },
   "menuAdditionalActionsArchiveTitle": {
     "description": "The title attribute of the archive option",
-    "message": "Archiviere diese Konversation nach der terminierung. Dies entfernt die Konversation aus dem Posteingang."
+    "message": "Archiviere diese Konversation nach der Terminierung. Dies entfernt die Konversation aus dem Posteingang."
   },
   "menuConstraintsNoAnswer": {
     "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
-    "message": "Aber nur wenn niemand antwortet."
+    "message": "Nur wenn niemand antwortet."
   },
   "menuConstraintsNoAnswerTitle": {
     "description": "The title attribute of the noanswer constraint option",
@@ -73,11 +65,11 @@
   },
   "menuMailActions": {
     "description": "The headline for the menu of selecting what action shall be done to the scheduled mail (mark unread, move to inbox, etc.)",
-    "message": "Ihre Korrespondenz soll:"
+    "message": "Diese Konversation soll:"
   },
   "menuTime": {
     "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
-    "message": "Zum gewünschten Zeitpunkt:"
+    "message": "Und zwar:"
   },
   "menuTimePresetCloseFuture": {
     "description": "This is the menu item for selecting time that opens a submenu with predefined times (next week, 2 hours, etc.)",

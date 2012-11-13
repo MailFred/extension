@@ -1,12 +1,4 @@
 {
-  "buttonSchedule": {
-    "description": "The button label on the end of the dropdown that initiates the scheduling",
-    "message": "I shalt carry out thy orders!"
-  },
-  "buttonScheduleTitle": {
-    "description": "The title attribute of the scheduling button",
-    "message": "Click here to complete scheduling the actions specified above at the given time."
-  },
   "dateFormat": {
     "description": "The date format for the calendar",
     "message": "mm/dd/yy"
@@ -33,27 +25,27 @@
   },
   "mailActionMarkUnread": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "markedth unread"
+    "message": "Markedth unread."
   },
   "mailActionMarkUnreadTitle": {
     "description": "The title attribute of the mark unread option",
-    "message": "Mark the current thread as unread"
+    "message": "Mark the current conversation as unread."
   },
   "mailActionMoveToInbox": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "movedth to thy inbox"
+    "message": "Movedth to thy inbox."
   },
   "mailActionMoveToInboxTitle": {
     "description": "The title attribute of the move to inbox option",
-    "message": "Move the current conversation to the inbox"
+    "message": "Move the current conversation to the inbox."
   },
   "mailActionStar": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
-    "message": "starredth"
+    "message": "Starredth."
   },
   "mailActionStarTitle": {
     "description": "The title attribute of the starring option",
-    "message": "Mark the current conversation with a star"
+    "message": "Mark the current conversation with a star."
   },
   "menuAdditionalActionsArchive": {
     "description": "The option to archive the scheduled conversation after scheduling",
@@ -65,7 +57,7 @@
   },
   "menuConstraintsNoAnswer": {
     "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
-    "message": "But only if noone answered."
+    "message": "Only if noone answered."
   },
   "menuConstraintsNoAnswerTitle": {
     "description": "The title attribute of the noanswer constraint option",
@@ -77,7 +69,7 @@
   },
   "menuTime": {
     "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
-    "message": "At the time you giveth us"
+    "message": "At the time you giveth:"
   },
   "menuTimePresetCloseFuture": {
     "description": "This is the menu item for selecting time that opens a submenu with predefined times (next week, 2 hours, etc.)",

@@ -27,6 +27,10 @@
 		@TYPE_THREAD: 	'thread'
 		@TYPE_NAV: 		'nav'
 
+		@STOREJS:
+			LASTUSED: 'lastUsed'
+			BOX_PREFIX: 'selection_act_'
+
 		@GM_SEL:
 			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7'
 			THREAD_BUTTON_BAR: 	'.iH > div'
@@ -119,6 +123,23 @@
 			threads.append @composeButton M.TYPE_THREAD if threads.length > 0
 			return
 
+		actionOps: [
+					'unread'
+					'star'
+					'inbox'
+					]
+
+		ucFirst: (str) ->
+			str[0].toUpperCase() + str.substring(1).toLowerCase()
+
+		getTexts: (key, time) ->
+			i18nKey = @ucFirst key
+			x = "menuTimePresetCloseFutureItem#{i18nKey}#{time}"
+			[
+				(__msg "#{x}Selected")
+				(__msg x)
+			]
+
 		composeButton: (type) =>
 
 			props =
@@ -129,7 +150,11 @@
 				archive:	false
 				#when:		_delta _1m
 
-			schedule = =>
+			schedule = (wen) =>
+				pickerMenu.close()
+				presetMenu.close()
+				button.close()
+
 				loading = ->
 					button.addClass M.CLS_LOADER
 					return
@@ -137,46 +162,39 @@
 					button.removeClass M.CLS_LOADER
 					return
 
+				props.when = wen
 				@onSchedule props, loading, reset
+
 				return
 
 			_.each props, (v, op) ->
-				selected = !! store.get "selection_act_#{op}"
+				selected = !! store.get "#{M.STOREJS.BOX_PREFIX}#{op}"
 				props[op] = selected
+				return
+
+			isValid = =>
+				valid = false
+				for op in @actionOps
+					valid |= props[op]
+				valid = !!valid
+				timeSection.toggle valid
+				constraintSection.toggle valid
+				errorSection.toggle !valid
 				return
 
 			propStoreFn = (checkbox, propName) ->
 				checkbox.addOnChange (e, checked) ->
 					props[propName] = checked
-					store.set "selection_act_#{propName}", checked
+					store.set "#{M.STOREJS.BOX_PREFIX}#{propName}", checked
 					isValid()
 				return
 
-			_delta = (offset) ->
-				"delta:#{offset}"
-
-			_specified = (time) ->
-				"specified:#{time}"
-
-			actionOps = [
-						'unread'
-						'star'
-						'inbox'
-						]
-			isValid = ->
-				valid = false
-				for op in actionOps
-					valid |= props[op]
-				valid = !!valid
-				timeSection.toggle valid
-				constraintSection.toggle valid
-				submitSection.toggle valid
-				errorSection.toggle !valid
-				return
-
-			
-			
-			_1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
+			presets = {}
+			presets.minutes 	= [1,5] if @debug
+			presets.hours 		= [2,4]
+			presets.tomorrow 	= [8,14]
+			presets.days 		= [2,7,14]
+			presets.months 		= [1]
 
 			# UI
 
@@ -188,6 +206,9 @@
 			popup.addClass M.CLS_POPUP
 
 			popup.append new GMailUI.PopupLabel __msg 'menuMailActions'
+
+			# Actions section
+
 			actionSection = popup.append new GMailUI.Section
 			actionSectionCheckboxes =
 				unread: actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMarkUnread'), 	props.unread, 	'', (__msg 'mailActionMarkUnreadTitle'))
@@ -195,6 +216,16 @@
 				inbox:	actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMoveToInbox'), 	props.inbox, 	'', (__msg 'mailActionMoveToInboxTitle'))
 
 			_.each actionSectionCheckboxes, propStoreFn
+
+			# Constraints section
+
+			constraintSection = popup.append new GMailUI.Section
+			constraintSection.append new GMailUI.Separator
+			constraintSectionCheckboxes =
+				noanswer:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuConstraintsNoAnswer'),		props.noanswer,	'', (__msg 'menuConstraintsNoAnswerTitle'))
+				archive:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuAdditionalActionsArchive'), props.archive,	'', (__msg 'menuAdditionalActionsArchiveTitle'))
+
+			_.each constraintSectionCheckboxes, propStoreFn
 
 
 			presetMenu = new GMailUI.PopupMenu popup
@@ -218,13 +249,11 @@
 							selectOtherMonths: true
 							changeMonth: true
 							changeYear: true
-							onSelect: (dateText, inst) ->
+							onSelect: (dateText, inst) =>
 												if (date = datePicker.datepicker 'getDate')
-													props.when = _specified date.getTime()
-													timeSectionElements.manual.setSelected true, true
-													#schedule()
-													#pickerMenu.close()
-													#button.close()
+													#timeSectionElements.manual.setSelected true, true
+													log 'schedule', date
+													schedule @_specified date.getTime()
 												return
 
 			# Time section
@@ -232,88 +261,57 @@
 			timeSection = popup.append new GMailUI.Section
 			timeSection.append new GMailUI.Separator
 			timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
-			timeSectionElements =
-				presets:	timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
-				manual:		timeSection.append (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),	'',	'',	true)
+
+			lastUsed = @getLastUsed()
+			unless _.isEmpty lastUsed
+				lastUsedSection = timeSection.append new GMailUI.Section
+
+				_.each lastUsed, (tuple) =>
+					key = tuple.key
+					time = tuple.time
+					# Remove the last used presets from the list
+					presets[key] = _.without presets[key], time if presets[key]
+
+					[label, title] = @getTexts key, time
+					button = lastUsedSection.append new GMailUI.Button label, title
+					timeFn = @generateTimeFn key
+					button.on 'click', (e) =>
+						@storeLastUsed key, time
+						wen = timeFn time
+						log "schedule: #{time}, #{key}: #{wen}"
+						schedule wen
+						return
+					return
+				lastUsedSection.append new GMailUI.Separator
+
+			timeSection.append 				(new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),	'',	'',	true)
+			presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
 
 
 			# Presets
 
-			aME = (keySuffix, x, t) ->
-				key = "menuTimePresetCloseFutureItem#{keySuffix}"
-				item = new GMailUI.PopupMenuItem timeSectionElements.presets, (__msg "#{key}Selected"), (__msg key), '', false
-
-				onChange = (e, checked) ->
-					if checked
-						props.when = t x
-					isValid()
-					return
-				item.addOnChange onChange, true
-				presetMenu.append item
-
-			if mb.debug
-				for minute in [1,5]
-					aME "Minutes#{minute}", minute, (minute) ->
-						log "in #{minute} minute"
-						_delta (_1m * minute)
-
-				presetMenu.append new GMailUI.Separator
-
-			for hour in [2,4]
-				aME "Hours#{hour}", hour, (hour) -> 
-					log "in #{hour} hour"
-					_delta (_1h * hour)
-
-			presetMenu.append new GMailUI.Separator
-
-			for hour in [8,14]
-				aME "Tomorrow#{hour}", hour, (hour) ->
-					log "tomorrow, #{hour}h"
-					now = new Date
-					tomorrow = new Date
-					tomorrow.setDate (now.getDate() + 1)
-					tomorrow.setHours hour
-					tomorrow.setMinutes 0
-					tomorrow.setSeconds 0
-					tomorrow.setMilliseconds 0
-					_specified tomorrow.getTime()
-
-			presetMenu.append new GMailUI.Separator
-
-			for day in [2,7,14]
-				aME "Days#{day}", day, (day) ->
-					log "in #{day} day"
-					_delta (_1d * day)
-
-			presetMenu.append new GMailUI.Separator
-
-			for month in [1]
-				aME "Months#{month}", month, (month) ->
-					log "in #{month} month"
-					now = new Date
-					other = new Date
-					other.setMonth (now.getMonth() + month)
-					_specified other.getTime()
-
-
-			constraintSection = popup.append new GMailUI.Section
-			constraintSection.append new GMailUI.Separator
-			constraintSectionCheckboxes =
-				noanswer:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuConstraintsNoAnswer'),		props.noanswer,	'', (__msg 'menuConstraintsNoAnswerTitle'))
-				archive:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuAdditionalActionsArchive'), props.archive,	'', (__msg 'menuAdditionalActionsArchiveTitle'))
-
-			_.each constraintSectionCheckboxes, propStoreFn
-
-			submitSection = popup.append new GMailUI.Section
-			submitSection.append new GMailUI.Separator
-			submitSectionButton = submitSection.append new GMailUI.Button (__msg 'buttonSchedule'), '', (__msg 'buttonScheduleTitle')
+			sep = null
+			_.each presets, (times, key) =>
+				unless _.isEmpty times
+					presetMenu.append sep if sep
+					_.each times, (time) =>
+						timeFn = @generateTimeFn key
+						[label, title] = @getTexts key, time
+						item = new GMailUI.PopupMenuItem presetItem, label, title, '', false
+						onChange = (e, checked) =>
+							if checked
+								@storeLastUsed key, time
+								wen = timeFn time
+								log "schedule: #{time}, #{key}: #{wen}"
+								schedule wen
+							return
+						item.addOnChange onChange, true
+						presetMenu.append item
+						return
+					sep = new GMailUI.Separator
+				return
 
 			button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
-			
-			submitSectionButton.on 'click', (e) =>
-				schedule()
-				button.close()
-				return
 
 			errorSection = popup.append new GMailUI.ErrorSection __msg 'errorNoActionSpecified' # __msg 'errorNoTimeSpecified'
 
@@ -321,6 +319,53 @@
 
 			bar.getElement()
 
+		storeLastUsed: (key, time) ->
+			lastUsed = @getLastUsed()
+			entry =
+				key: key
+				time: time
+
+			lastUsed = _.reject lastUsed, (item) -> _.isEqual item, entry
+
+			lastUsed.unshift entry
+			store.set M.STOREJS.LASTUSED, (_.first lastUsed, 3)
+
+		getLastUsed: ->
+			(store.get M.STOREJS.LASTUSED) ? []
+
+		_delta: (offset) ->
+			"delta:#{offset}"
+
+		_specified: (time) ->
+			"specified:#{time}"
+
+		generateTimeFn: (unit) ->
+			_1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
+
+			switch unit
+				when 'minutes'
+					(time) => @_delta (_1m * time)
+				when 'hours'
+					(time) => @_delta (_1h * time)
+				when 'tomorrow'
+					(hour) =>
+						now = new Date
+						tomorrow = new Date
+						tomorrow.setDate (now.getDate() + 1)
+						tomorrow.setHours hour
+						tomorrow.setMinutes 0
+						tomorrow.setSeconds 0
+						tomorrow.setMilliseconds 0
+						@_specified tomorrow.getTime()
+				when 'days'
+					(time) => @_delta (_1d * time)
+				when 'month'
+					(month) =>
+						now = new Date
+						other = new Date
+						other.setMonth (now.getMonth() + month)
+						@_specified other.getTime()
+		
 		getMessageId: ->
 			id = /\/([0-9a-f]{16})/.exec window.location.hash
 			if id is null
