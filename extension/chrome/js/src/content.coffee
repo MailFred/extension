@@ -802,7 +802,7 @@
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
 									log arguments
-									@onScheduleError data, textStatus, errorThrown
+									@onScheduleError textStatus, data, errorThrown
 									return
 				complete:		(jqXHR, textStatus) ->
 									resetIcon?() unless data.archive
@@ -820,14 +820,17 @@
 
 		onScheduleSuccess: (data) =>
 			log 'Scheduling success', data
-			chrome.extension.sendMessage
-				action: 	'notification'
-				icon: 		"images/tie48x48.png"
-				title: 		__msg 'notificationScheduleSuccessTitle'
-				message: 	__msg 'notificationScheduleSuccess'
+			if data.success
+				chrome.extension.sendMessage
+					action: 	'notification'
+					icon: 		"images/tie48x48.png"
+					title: 		__msg 'notificationScheduleSuccessTitle'
+					message: 	__msg 'notificationScheduleSuccess'
+			else
+				@onScheduleError data.error, null, data.error
 			return
 
-		onScheduleError: (params, status, error) =>
+		onScheduleError: (status, params, error) =>
 			log 'There was an error', arguments
 			if status is 'parsererror'
 				params.action = 'setup'
