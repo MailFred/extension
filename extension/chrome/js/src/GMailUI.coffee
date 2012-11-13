@@ -1,63 +1,5 @@
 GMailUI = {}
 
-class GMailUI.ModalDialog
-	@BG: 	$ 	"""
-				<div class="Kj-JD-Jh" style="opacity: 0.75; width: 2560px; height: 2560px; margin-left: -230px; margin-top: -64px;"></div>
-				"""
-	@dialog: _.template """
-						<div class="Kj-JD" tabindex="0" style="left: 50%; top: 40%; width: 460px; overflow: visible; margin-left: -230px; margin-top: -64px;" role="dialog" aria-labelledby="<%= id %>">
-							<div class="Kj-JD-K7 Kj-JD-K7-GIHV4" id="<%= id %>">
-								<span class="Kj-JD-K7-K0"><%- title %></span>
-								<span class="Kj-JD-K7-Jq" act="close"></span>
-							</div>
-						</div>
-						"""
-						###
-							<div class="Kj-JD-Jz">
-								<div id="ri_selecttimezone_invalid" style="margin-bottom: 15px;display:none">
-									<div class="asl T-I-J3 J-J5-Ji" style="margin-bottom: -5px;"></div>
-									Invalid Date
-								</div>
-								<div style="float:left;padding-right:10px">
-									<label for="ri_selectdate" class="el">Select date</label>
-									<br><input id="ri_selectdate" class="rbx nr">
-								</div>
-								<div style="float:left;padding-right:10px">
-									<label for="ri_selecttime" class="el">
-										time <span class="font-gray">(24h format)</span>
-									</label>
-									<br><input id="ri_selecttime" class="rbx nr" style="width:120px" autocomplete="OFF">
-								</div>
-								<div style="float:left">
-									<label for="ri_selecttimezone" class="el">timezone (optional)</label>
-									<br><input id="ri_selecttimezone" class="rbx nr" style="width:120px" autocomplete="OFF">
-								</div> 
-								<div style="clear:both;"></div>
-							</div>
-							<div class="Kj-JD-Jl">
-								<button id="ri_b2" class="J-at1-atl"> Add reminder </button>
-								<button id="ri_b1" class="J-at1-auR"> Cancel </button>
-							</div>
-						###
-						
-	@open: (title, onClose) ->
-		body = $ 'body'
-		@BG.appendTo body
-		obj =
-			id: 	_.uniqueId 'modalDialog-'
-			title: 	title
-
-		dialog = $ @dialog obj
-		closeButton = dialog.find "[act='close']"
-		closeButton.on 'click', (e) =>
-			@BG.detach()
-			dialog.remove()
-			onClose?()
-			return
-		dialog.appendTo body
-		dialog
-	@close: ->
-
 class GMailUI.Helper
 	@hover: (target, hoverClass) ->
 		target.hover 	((e) ->
@@ -122,37 +64,9 @@ class GMailUI.Container extends GMailUI.UIElement
 			throw 'Unknown element'
 		e
 
-class GMailUI.Breadcrumbs
-	@LIST_SEL: 'ol.gbtc'
-	@markup: _.template """
-						<li class="gbt">
-							<a href="#" class="gbgt">
-							<span class="gbts">
-								<span><%- label %></span>
-								<% if(isMenu) { %>
-								<span class="gbma"></span>
-								<% } %>
-							</span>
-							</a>
-						</li>
-						"""
-	@add: (label, onClick, isMenu = true) ->
-		item = 	$ @markup
-			label: label
-			isMenu: !!isMenu
-		(item.find '.gbgt').on 'click', onClick if onClick
-		item.prependTo $ @LIST_SEL
-		item
-
-class GMailUI.ButtonBar extends GMailUI.Container
-	constructor: ->
-		super @setElement	"""
-							<div class="G-Ni J-J5-Ji">
-							"""
-
 class GMailUI.OnAble extends GMailUI.UIElement
 	constructor: (hoverClass, @selectedClass) ->
-		GMailUI.Helper.hover @getElement(), hoverClass
+		GMailUI.Helper.hover @getElement(), hoverClass if hoverClass
 
 	toggle: (target, selected) ->
 		target.toggleClass @selectedClass, selected
@@ -188,6 +102,126 @@ class GMailUI.OnAble extends GMailUI.UIElement
 	on: (type, f) =>
 		element = @getElement()
 		element.on.apply element, arguments
+
+class GMailUI.Breadcrumbs
+	@LIST_SEL: 'ol.gbtc'
+	@markup: _.template """
+						<li class="gbt">
+							<a href="#" class="gbgt">
+							<span class="gbts">
+								<span><%- label %></span>
+								<% if(isMenu) { %>
+								<span class="gbma"></span>
+								<% } %>
+							</span>
+							</a>
+						</li>
+						"""
+	@add: (label, onClick, isMenu = true) ->
+		item = 	$ @markup
+			label: label
+			isMenu: !!isMenu
+		(item.find '.gbgt').on 'click', onClick if onClick
+		item.prependTo $ @LIST_SEL
+		item
+
+class GMailUI.ModalDialog extends GMailUI.Container
+	@BG: 	$ 	"""
+				<div class="Kj-JD-Jh" style="opacity: 0.75; width: 2560px; height: 2560px; margin-left: -230px; margin-top: -64px;"></div>
+				"""
+	@template: _.template """
+						<div class="Kj-JD" tabindex="0" style="left: 50%; top: 40%; width: 460px; overflow: visible; margin-left: -230px; margin-top: -64px;" role="dialog" aria-labelledby="<%= id %>">
+							<div class="Kj-JD-K7 Kj-JD-K7-GIHV4" id="<%= id %>">
+								<span class="Kj-JD-K7-K0"><%- title %></span>
+								<span class="Kj-JD-K7-Jq" act="close"></span>
+							</div>
+							<div act="container">
+							</div>
+						</div>
+						"""
+						###
+							<div class="Kj-JD-Jz">
+								<div id="ri_selecttimezone_invalid" style="margin-bottom: 15px;display:none">
+									<div class="asl T-I-J3 J-J5-Ji" style="margin-bottom: -5px;"></div>
+									Invalid Date
+								</div>
+								<div style="float:left;padding-right:10px">
+									<label for="ri_selectdate" class="el">Select date</label>
+									<br><input id="ri_selectdate" class="rbx nr">
+								</div>
+								<div style="float:left;padding-right:10px">
+									<label for="ri_selecttime" class="el">
+										time <span class="font-gray">(24h format)</span>
+									</label>
+									<br><input id="ri_selecttime" class="rbx nr" style="width:120px" autocomplete="OFF">
+								</div>
+								<div style="float:left">
+									<label for="ri_selecttimezone" class="el">timezone (optional)</label>
+									<br><input id="ri_selecttimezone" class="rbx nr" style="width:120px" autocomplete="OFF">
+								</div> 
+								<div style="clear:both;"></div>
+							</div>
+							<div class="Kj-JD-Jl">
+								<button id="ri_b2" class="J-at1-atl"> Add reminder </button>
+								<button id="ri_b1" class="J-at1-auR"> Cancel </button>
+							</div>
+						###
+	constructor: (title) ->
+		@setElement GMailUI.ModalDialog.template
+			id: 	_.uniqueId 'modalDialog-'
+			title: 	title
+		super @getElement().find "[act='container']"
+	open: ->
+		body = $ 'body'
+		GMailUI.ModalDialog.BG.appendTo body
+
+		element = @getElement()
+		closeButton = element.find "[act='close']"
+		closeButton.on 'click', @close
+		element.appendTo body
+	close: =>
+		element = @getElement()
+		GMailUI.ModalDialog.BG.detach()
+		element.remove()
+		return
+
+class GMailUI.ModalDialog.Container extends GMailUI.Container
+	constructor: ->
+		super @setElement	"""
+							<div class="Kj-JD-Jz">
+							"""
+
+class GMailUI.ModalDialog.Footer extends GMailUI.Container
+	constructor: ->
+		super @setElement	"""
+							<div class="Kj-JD-Jl">
+							"""
+
+
+class GMailUI.ModalDialog.Button extends GMailUI.OnAble
+	@template: _.template	"""
+							<button
+							<% if(tooltip) { %>
+							data-tooltip="<%- tooltip %>"
+							<% } %>
+							class="<%= clazz %>"><%- label %></button>
+							"""
+	constructor: (label, tooltip = '', type = 'normal') ->
+
+		@setElement GMailUI.ModalDialog.Button.template
+			label: 		label
+			tooltip: 	tooltip
+			clazz:		switch type
+							when 'cancel' then 'J-at1-auR'
+							else 'J-at1-atl'
+
+class GMailUI.ButtonBar extends GMailUI.Container
+	constructor: ->
+		super @setElement	"""
+							<div class="G-Ni J-J5-Ji">
+							"""
+
+
 
 class GMailUI.Button extends GMailUI.OnAble
 	@template: _.template	"""

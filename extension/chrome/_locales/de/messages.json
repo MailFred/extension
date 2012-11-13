@@ -1,4 +1,47 @@
 {
+  "authorizeDialogButtonCancel": {
+    "message": "Jetzt nicht"
+  },
+  "authorizeDialogButtonCancelTooltip": {
+    "message": "Wenn Sie diesen Vorgang abbrechen,<br>können Sie $name$ nicht verwenden",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "authorizeDialogButtonOk": {
+    "message": "Autorisierung jetzt vornehmen"
+  },
+  "authorizeDialogButtonOkTooltip": {
+    "message": "Ein neues Fenster wird sich öffnen"
+  },
+  "authorizeDialogImageAlt": {
+    "message": "Stilbild des Authorisationsdialogs"
+  },
+  "authorizeDialogImageHint": {
+    "message": "So in etwa wird das neue Fenster <br> mit der Abfrage um Erlaubnis aussehen."
+  },
+  "authorizeDialogText": {
+    "message": "Um $name$ benutzen zu können, müssen Sie zuerst die Erlaubnis erteilen. Ein Dialog von Google Apps Scripts wird sich öffnen, welcher Sie um Erlaubnis zum Zugriff auf Ihre Daten bittet. Sie können diese Erlaubnis jederzeit widerrufen.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "authorizeDialogTitle": {
+    "description": "The title of the authorize dialog",
+    "message": "$name$ Autorisierung",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
   "dateFormat": {
     "description": "The date format for the calendar",
     "message": "dd.mm.yy"

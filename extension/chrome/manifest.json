@@ -60,6 +60,7 @@
     "images/loader.gif",
     "images/prev.png",
     "images/next.png",
+    "images/clickToAuthorize.png",
 
     "js/lib/jquery/jquery.min.js",
     "js/lib/gmailr/chrome/lib/jquery-bbq/jquery.ba-bbq.min.js",

@@ -82,7 +82,7 @@
 						when 'init'
 						# GMailr is ready
 							@currentGmail = evt.email
-							GMailUI.Breadcrumbs.add (__msg 'extName'), -> GMailUI.ModalDialog.open (__msg 'extName')
+							# GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
 
 						when 'viewThread'
 						# User moves to previous or next convo
@@ -440,14 +440,46 @@
 				@onScheduleError data.error, null, data.error
 			return
 
+		gettingStarted: (params) ->
+			url = @getServiceURL()
+			if params
+				query = $.param params
+				url += "?#{query}"
+
+			extName = __msg 'extName'
+			dialog = new GMailUI.ModalDialog (__msg 'authorizeDialogTitle', extName)
+
+			container = dialog.append new GMailUI.ModalDialog.Container
+			text = __msg 'authorizeDialogText', extName
+			img = chrome.extension.getURL 'images/clickToAuthorize.png'
+			imgHint = __msg 'authorizeDialogImageHint'
+			imgAlt  = __msg 'authorizeDialogImageAlt'
+			container.append 	"""
+								<div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
+								#{text}
+								</div>
+								<div>
+								<img src="#{img}" data-tooltip="#{imgHint}" alt="#{imgAlt}">
+								</div>
+								"""
+
+			footer = dialog.append new GMailUI.ModalDialog.Footer
+			okButton = footer.append new GMailUI.ModalDialog.Button (__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')
+			okButton.on 'click', ->
+				window.open url, M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				dialog.close()
+				return
+			cancelButton = footer.append new GMailUI.ModalDialog.Button (__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName), 'cancel'
+			cancelButton.on 'click', dialog.close
+
+			dialog.open()
+
 		onScheduleError: (status, params, error) =>
 			log 'There was an error', arguments
 			if status is 'parsererror'
 				params.action = 'setup'
 				delete params.callback if params.callback
-
-				query = $.param params
-				window.open "#{@getServiceURL()}?#{query}", M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+				@gettingStarted params
 			else
 				notification =
 					action: 	'notification'
