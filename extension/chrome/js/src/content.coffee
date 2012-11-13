@@ -32,7 +32,7 @@
 			BOX_PREFIX: 'selection_act_'
 
 		@GM_SEL:
-			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7'
+			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
 			THREAD_BUTTON_BAR: 	'.iH > div'
 
 		# production URL
