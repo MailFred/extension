@@ -36,10 +36,10 @@
 			THREAD_BUTTON_BAR: 	'.iH > div'
 
 		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbzWm8LljtgQreQt2DoGe7g-fiZeXwjgy4rZQXw8CY7aFnucKtk/exec"
+		prodUrl: "https://script.google.com/macros/s/AKfycbyF_NpRI6dc_xOyOwV5xIIOCgRwsyou2QHSPNcBXO5CM8kIoKA/exec"
 
 		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbwriDyhVS8RTcPDEvd1p_OZSc2w9r2pUd1ZtDhp6xo/dev"
+		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbxDfbpvbasFE4IEFnMYwQd49MS7dMrB4efGYCMSTrI/dev"
 
 		# Current GMail address of the logged in user
 		currentGmail: null
