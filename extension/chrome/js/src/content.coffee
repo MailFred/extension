@@ -786,12 +786,12 @@
 				archive:	archive
 				#callback:	'alert'
 
-			log 'scheduling mail...', data
 			# remove false values to transmit less data over the wire
 			_.each data, (val, key) ->
 				delete data[key] if val is false
 				return
 
+			log 'scheduling mail...', data
 			
 			$.ajax
 				url: 			@getServiceURL()
