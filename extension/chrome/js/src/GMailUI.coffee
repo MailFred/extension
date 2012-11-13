@@ -210,11 +210,10 @@ class GMailUI.Button extends GMailUI.OnAble
 	@hoverClass: 'J-JK-JT'
 
 	constructor: (label, tooltip = '', title = '') ->
-		obj =
+		element = @setElement GMailUI.Button.template
 			label:		label
 			tooltip:	tooltip
 			title:		title
-		element = @setElement GMailUI.Button.template obj
 		super GMailUI.Button.hoverClass
 
 class GMailUI.ButtonBarButton extends GMailUI.OnAble
@@ -239,12 +238,10 @@ class GMailUI.ButtonBarButton extends GMailUI.OnAble
 	@pushedClass: 'T-I-Kq'
 
 	constructor: (label, tooltip = '', title = '') ->
-		obj =
+		element = @setElement GMailUI.ButtonBarButton.template
 			label:		label
 			tooltip:	tooltip
 			title:		title
-		element = @setElement GMailUI.ButtonBarButton.template obj
-
 		super GMailUI.ButtonBarButton.hoverClass
 
 		# Don't focus the item when clicking on it
@@ -324,10 +321,8 @@ class GMailUI.PopupLabel extends GMailUI.UIElement
 							<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; "><%- label %></div>
 							"""
 	constructor: (label) ->
-		obj =
+		@setElement GMailUI.PopupLabel.template
 			label: label
-		element = @setElement GMailUI.PopupLabel.template obj
-
 class GMailUI.PopupMenuItem extends GMailUI.OnAble
 	@template: _.template	"""
 							<div class="J-N J-Ks" role="menuitemcheckbox"
@@ -353,13 +348,11 @@ class GMailUI.PopupMenuItem extends GMailUI.OnAble
 	@selectedClass: 'J-Ks-KO'
 
 	constructor: (@menu, label, tooltip = '', title = '', hasChildren = false) ->
-		obj =
+		element = @setElement GMailUI.PopupMenuItem.template
 			label:			label
 			tooltip:		tooltip
 			title:			title
 			hasChildren:	hasChildren
-		element = @setElement GMailUI.PopupMenuItem.template obj
-
 		super GMailUI.PopupMenuItem.hoverClass, GMailUI.PopupMenuItem.selectedClass
 
 		# Don't focus the item when clicking on it
@@ -426,10 +419,9 @@ class GMailUI.ErrorSection extends GMailUI.Section
 		element = @getElement()
 		element.addClass 'b7o7Ic'
 		@append new GMailUI.Separator
-		obj =
-			message: message
-		@setContainer element.append $ GMailUI.ErrorSection.template obj
 
+		@setContainer element.append $ GMailUI.ErrorSection.template
+			message: message
 	setMessage: (message) ->
 		@getContainer().html message
 		return
@@ -495,12 +487,9 @@ class GMailUI.PopupCheckbox extends GMailUI.OnAble
 	@selectedClass: 'J-LC-JR-Jp'
 
 	constructor: (label, selected = false, tooltip = '', title = '') ->
-		obj =
+		element = @setElement GMailUI.PopupCheckbox.template
 			label:		label
 			title: 		title
 			tooltip: 	tooltip
-
-		element = @setElement GMailUI.PopupCheckbox.template obj
-
 		super GMailUI.PopupCheckbox.hoverClass, GMailUI.PopupCheckbox.selectedClass
 		@setSelected selected
