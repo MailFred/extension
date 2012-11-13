@@ -23,6 +23,19 @@
 }
 
 .mailfred-picker {
+	.ui-datepicker-prev {
+		background: url(chrome-extension://__MSG_@@extension_id__/images/prev.png) no-repeat;
+		&.ui-state-disabled {
+			background: none;
+		}
+	}
+
+	.ui-datepicker-next {
+		background: url(chrome-extension://__MSG_@@extension_id__/images/next.png) no-repeat;
+		&.ui-state-disabled {
+			background: none;
+		}
+	}
 	.ui-datepicker-calendar {
 		.ui-state-default {
 			color: #777;
