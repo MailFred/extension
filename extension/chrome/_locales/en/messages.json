@@ -31,10 +31,6 @@
     "description": "The teaser used for the extension page and the webstore",
     "message": "Master Your Inbox"
   },
-  "mailActionAndPrefix": {
-    "description": "Prefix used before actions when multiple are selected",
-    "message": "and"
-  },
   "mailActionMarkUnread": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
     "message": "markedth unread"
@@ -111,13 +107,13 @@
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
     "message": "Same day next week"
   },
-  "menuTimePresetCloseFutureItemHours1": {
+  "menuTimePresetCloseFutureItemHours2": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 1 hour"
+    "message": "In 2 hours"
   },
-  "menuTimePresetCloseFutureItemHours1Selected": {
+  "menuTimePresetCloseFutureItemHours2Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "One hour from now"
+    "message": "Two hours from now"
   },
   "menuTimePresetCloseFutureItemHours4": {
     "description": "One of the options in the predefined time presets",
@@ -170,16 +166,6 @@
   "menuTimePresetSpecifiedDate": {
     "description": "This is the menu item for selecting a time from the calendar",
     "message": "On a specified date"
-  },
-  "menuTimePresetSpecifiedDateOnDate": {
-    "description": "The text that replaces the 'menuTimePresetSpecifiedDate' text after selecting a date from the calendar",
-    "message": "On $date$",
-    "placeholders": {
-      "date": {
-        "content": "$1",
-        "example": "Monday, 21/21/2121"
-      }
-    }
   },
   "notificationScheduleError": {
     "description": "This gets displayed within a notification if anything within the scheduling process went wrong",

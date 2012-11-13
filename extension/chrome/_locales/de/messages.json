@@ -31,10 +31,6 @@
     "description": "The teaser used for the extension page and the webstore",
     "message": "Master Your Inbox"
   },
-  "mailActionAndPrefix": {
-    "description": "Prefix used before actions when multiple are selected",
-    "message": "und"
-  },
   "mailActionMarkUnread": {
     "description": "might be prefixed with 'mailActionAndPrefix'",
     "message": "Als ungelesen markiert"
@@ -111,13 +107,13 @@
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
     "message": "Nächste Woche"
   },
-  "menuTimePresetCloseFutureItemHours1": {
+  "menuTimePresetCloseFutureItemHours2": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 1 Stunde"
+    "message": "In 2 Stunden"
   },
-  "menuTimePresetCloseFutureItemHours1Selected": {
+  "menuTimePresetCloseFutureItemHours2Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "Jetzt in einer Stunde"
+    "message": "In zwei Stunden"
   },
   "menuTimePresetCloseFutureItemHours4": {
     "description": "One of the options in the predefined time presets",
@@ -125,7 +121,7 @@
   },
   "menuTimePresetCloseFutureItemHours4Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "Jetzt in vier Stunden"
+    "message": "In vier Stunden"
   },
   "menuTimePresetCloseFutureItemMinutes1": {
     "description": "One of the options in the predefined time presets",
@@ -170,16 +166,6 @@
   "menuTimePresetSpecifiedDate": {
     "description": "This is the menu item for selecting a time from the calendar",
     "message": "Zum gewählten Zeitpunkt"
-  },
-  "menuTimePresetSpecifiedDateOnDate": {
-    "description": "The text that replaces the 'menuTimePresetSpecifiedDate' text after selecting a date from the calendar",
-    "message": "Am $date$",
-    "placeholders": {
-      "date": {
-        "content": "$1",
-        "example": "Montag, 21/21/2121"
-      }
-    }
   },
   "notificationScheduleError": {
     "description": "This gets displayed within a notification if anything within the scheduling process went wrong",

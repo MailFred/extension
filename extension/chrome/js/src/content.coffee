@@ -10,88 +10,6 @@
 	#	ret
 	__msg = chrome.i18n.getMessage
 
-	class GMailUI
-		@Breadcrumbs: class
-			@LIST_SEL: 'ol.gbtc'
-			@markup: _.template """
-								<li class="gbt">
-									<a href="#" class="gbgt">
-									<span class="gbts">
-										<span><%- label %></span>
-										<% if(isMenu) { %>
-										<span class="gbma"></span>
-										<% } %>
-									</span>
-									</a>
-								</li>
-								"""
-			@add: (label, onClick, isMenu = false) ->
-				obj =
-					label: label
-					isMenu: !!isMenu
-				item = 	$ @markup obj
-				(item.find '.gbgt').on 'click', onClick if onClick
-				item.prependTo $ @LIST_SEL
-				item
-
-
-		@ModalDialog: class
-			@BG: 	$ 	"""
-						<div class="Kj-JD-Jh" style="opacity: 0.75; width: 2560px; height: 2560px; margin-left: -230px; margin-top: -64px;"></div>
-						"""
-			@dialog: _.template """
-								<div class="Kj-JD" tabindex="0" style="left: 50%; top: 40%; width: 460px; overflow: visible; margin-left: -230px; margin-top: -64px;" role="dialog" aria-labelledby="<%= id %>">
-									<div class="Kj-JD-K7 Kj-JD-K7-GIHV4" id="<%= id %>">
-										<span class="Kj-JD-K7-K0"><%- title %></span>
-										<span class="Kj-JD-K7-Jq" act="close"></span>
-									</div>
-									<!--
-									<div class="Kj-JD-Jz">
-										<div id="ri_selecttimezone_invalid" style="margin-bottom: 15px;display:none">
-											<div class="asl T-I-J3 J-J5-Ji" style="margin-bottom: -5px;"></div>
-											Invalid Date
-										</div>
-										<div style="float:left;padding-right:10px">
-											<label for="ri_selectdate" class="el">Select date</label>
-											<br><input id="ri_selectdate" class="rbx nr">
-										</div>
-										<div style="float:left;padding-right:10px">
-											<label for="ri_selecttime" class="el">
-												time <span class="font-gray">(24h format)</span>
-											</label>
-											<br><input id="ri_selecttime" class="rbx nr" style="width:120px" autocomplete="OFF">
-										</div>
-										<div style="float:left">
-											<label for="ri_selecttimezone" class="el">timezone (optional)</label>
-											<br><input id="ri_selecttimezone" class="rbx nr" style="width:120px" autocomplete="OFF">
-										</div> 
-										<div style="clear:both;"></div>
-									</div>
-									<div class="Kj-JD-Jl">
-										<button id="ri_b2" class="J-at1-atl"> Add reminder </button>
-										<button id="ri_b1" class="J-at1-auR"> Cancel </button>
-									</div>
-									-->
-								</div>
-								"""
-			@open: (title, onClose) ->
-				body = $ 'body'
-				@BG.appendTo body
-				obj =
-					id: 	_.uniqueId 'modalDialog-'
-					title: 	title
-
-				dialog = $ @dialog obj
-				closeButton = dialog.find "[act='close']"
-				closeButton.on 'click', (e) =>
-					@BG.detach()
-					dialog.remove()
-					onClose?()
-					return
-				dialog.appendTo body
-				dialog
-
-
 	class M
 		debug: 	false
 		dev: 	false
@@ -202,513 +120,206 @@
 			return
 
 		composeButton: (type) =>
-			cls = [M.CLS]
 
-			switch type
-				when M.TYPE_THREAD
-					cls.push M.CLS_THREAD
-				when M.TYPE_NAV
-					cls.push M.CLS_NAV
+			props =
+				noanswer: 	false
+				unread:		false
+				star:		false
+				inbox:		false
+				archive:	false
+				#when:		_delta _1m
 
-			div = $ "<div class='G-Ni J-J5-Ji #{cls.join ' '}'>"
+			schedule = =>
+				loading = ->
+					button.addClass M.CLS_LOADER
+					return
+				reset = ->
+					button.removeClass M.CLS_LOADER
+					return
 
-			item = $	"""
-						<div class="T-I J-J5-Ji T-I-Js-IF ar7 ns T-I-ax7 L3" data-tooltip="#{__msg 'extName'}" aria-label="#{__msg 'extName'}" role="button" tabindex="0" aria-expanded="false" aria-haspopup="true" style="-webkit-user-select: none;">
-							<div class="asa">
-								<span class="J-J5-Ji ask">&nbsp;</span>
-								<div class="ase T-I-J3 J-J5-Ji"></div>
-							</div>
-							<div class="G-asx T-I-J3 J-J5-Ji">&nbsp;</div>
-						</div>
-						"""
-
-			div.append item
-
-			item.hover ((e) ->
-							$(@).addClass 'T-I-JW'
-							return),
-						((e) ->
-							$(@).removeClass 'T-I-JW'
-							return)
-
-			popup = null
-			menu  = null
-			picker = null
-			close = null
-			self  = @
-			
-
-			# Don't focus the item when clicking on it
-			item.on 'mousedown', (e) ->
-				e.preventDefault()
+				@onSchedule props, loading, reset
 				return
 
-			item.on 'click', (e) ->
-				e.stopPropagation()
-				t = $ @
+			_.each props, (v, op) ->
+				selected = !! store.get "selection_act_#{op}"
+				props[op] = selected
+				return
 
-				unless popup
+			propStoreFn = (checkbox, propName) ->
+				checkbox.addOnChange (e, checked) ->
+					props[propName] = checked
+					store.set "selection_act_#{propName}", checked
+					isValid()
+				return
 
-					toggle = (target, selectedClass, selected, exclusive) ->
-						target.toggleClass selectedClass, selected
-						target.attr 'aria-checked', if selected then 'true' else 'false'
-						if exclusive
-							toggle target.siblings(), selectedClass, false, false
-						return
+			_delta = (offset) ->
+				"delta:#{offset}"
 
-					# Toggling checkboxes
-					boxToggle = (target, selectedClass, exclusive, onChange) ->
-						target.on 'click', (e) ->
-							e = $ @
-							checked = e.hasClass selectedClass
+			_specified = (time) ->
+				"specified:#{time}"
 
-							# We can't deselect the selected item if we are in exclusive mode
-							return if exclusive and checked
-							
-							toggle e, selectedClass, !checked, exclusive
-							onChange? e, !checked
-							return
-						return
-					
-					
-					delay = 300
-					menuBase = 	"""
-								<div class="J-M J-M-ayU" style="-webkit-user-select: none; display: none; " role="menu" aria-haspopup="true" aria-activedescendant="">
-								</div>
-								"""
-					menu = 	$ menuBase
-					menu.addClass M.CLS_MENU
-					menu.inMenu = false
-
-					# Clicks on menu do not close the popup
-					menu.on 'click', (e) ->
-						e.stopPropagation()
-						return
-
-					hideMenu = ->
-						return if menu.inMenu
-						menu.hide()
-						return
-
-
-					menu.hover ((e) -> 
-									menu.inMenu = true
-									return),
-								((e) ->
-									menu.inMenu = false
-									_.delay hideMenu, delay
-									return)
-
-					addMenuElement = (text, checked, parentMenuItem, onChange) ->
-						selectedClass = 'J-Ks-KO'
-						element = $ """	
-									<div class="J-N J-Ks" role="menuitemcheckbox" style="-webkit-user-select: none; " aria-checked="true">
-										<div class="J-N-Jz" style="-webkit-user-select: none; ">
-											<div class="J-N-Jo" style="-webkit-user-select: none; "></div>
-											<div style="-webkit-user-select: none; ">#{text}</div>
-										</div>
-									</div>
-									"""
-						element.attr 'id', _.uniqueId M.ID_PREFIX
-
-						toggle element, selectedClass, checked, false
-
-						addHovering element, ((e) ->
-												menu.attr 'aria-activedescendant', element.attr 'id'
-												return),
-											((e) ->
-												menu.attr 'aria-activedescendant', null
-												return)
-
-						boxToggle element, selectedClass, true, (e, checked) ->
-							toggle parentMenuItem, selectedClass, true, true
-							onChange e, checked
-							return
-						menu.append element
-						element
-
-					picker = $ menuBase
-					picker.inMenu = false
-					picker.addClass M.CLS_PICKER
-
-					# Clicks on menu do not close the popup
-					picker.on 'click', (e) ->
-						e.stopPropagation()
-						return
-
-					datePicker = $ '<div act="picker"></div>'
-					picker.append datePicker
-
-					hidePicker = ->
-						return if picker.inMenu
-						picker.hide()
-						return
-
-					picker.hover ((e) -> 
-									picker.inMenu = true
-									return),
-								((e) ->
-									picker.inMenu = false
-									_.delay hidePicker, delay
-									return)
-
-
-					popup = $ 	"""
-								<div class="J-M agd jQjAxd J-M-ayU aCP" style="display: none; -webkit-user-select: none;" role="menu" aria-haspopup="true" aria-activedescendant="">
-									<div class="SK AX" style="-webkit-user-select: none;">
-
-
-										<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">#{__msg 'menuMailActions'}</div>
-
-										<div style="-webkit-user-select: none;">
-											<div act="unread" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionMarkUnreadTitle'}">
-												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'mailActionMarkUnread'}
-												</div>
-											</div>
-
-											<div act="star" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionStarTitle'}">
-												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_star" style="display: none">#{__msg 'mailActionAndPrefix'}</span> #{__msg 'mailActionStar'}
-												</div>
-											</div>
-
-											<div act="inbox" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'mailActionMoveToInboxTitle'}">
-												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div><span act="and_inbox" style="display: none">#{__msg 'mailActionAndPrefix'}</span> #{__msg 'mailActionMoveToInbox'}
-												</div>
-											</div>
-
-											<div style="-webkit-user-select: none;"></div>
-										</div>
-
-
-										<div act="when_section" style="display: none">
-											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-											<div class="J-awr J-awr-JE" aria-disabled="true" style="-webkit-user-select: none; ">#{__msg 'menuTime'}</div>
-
-											<div>
-												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="presets">
-													<div class="J-N-Jz">
-														<div class="J-N-Jo"></div>
-														<span class="default">#{__msg 'menuTimePresetCloseFuture'}</span><span class="selected"></span>
-														<span class="J-Ph-hFsbo"></span>
-													</div>
-												</div>
-												<div class="J-N J-Ks" role="menuitem" style="-webkit-user-select: none; " act="manual">
-													<div class="J-N-Jz">
-														<div class="J-N-Jo"></div>
-														<span class="default">#{__msg 'menuTimePresetSpecifiedDate'}</span><span class="selected"></span>
-														<span class="J-Ph-hFsbo"></span>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div act="noanswer_section" style="display: none">
-											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-
-											<div act="noanswer" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'menuConstraintsNoAnswerTitle'}">
-												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'menuConstraintsNoAnswer'}
-												</div>
-											</div>
-											<div act="archive" class="J-LC" aria-checked="false" role="menuitem" style="-webkit-user-select: none;" title="#{__msg 'menuAdditionalActionsArchiveTitle'}">
-												<div class="J-LC-Jz" style="-webkit-user-select: none;">
-													<div class="J-LC-Jo J-J5-Ji" style="-webkit-user-select: none;"></div>#{__msg 'menuAdditionalActionsArchive'}
-												</div>
-											</div>
-										</div>
-
-										<div act="error" class="b7o7Ic" style="-webkit-user-select: none;">
-											<div class="J-Kh" style="-webkit-user-select: none; "></div>
-											<div class="asd ja" style="-webkit-user-select: none; ">
-												<span act="when" style="display: none;">#{__msg 'errorNoTimeSpecified'}</span>
-												<span act="what">#{__msg 'errorNoActionSpecified'}</span>
-											</div>
-										</div>
-										<div act="submit" style="display: none;">
-											<div class="J-Kh" style="-webkit-user-select: none;" role="separator"></div>
-
-											<div act="schedule" class="J-JK" role="menuitem" style="-webkit-user-select: none;">
-												<div class="J-JK-Jz" style="-webkit-user-select: none;" title="#{__msg 'buttonScheduleTitle'}">
-													#{__msg 'buttonSchedule'}
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								"""
-
-					# Clicks on popup itself do not close it either
-					popup.on 'click', (e) ->
-						e.stopPropagation()
-						return
-
-					popup.addClass M.CLS_POPUP
-					t.parent().parent().append popup
-
-					# Hovering
-					addHovering = (target, over, out) ->
-						for cls in ['J-N','J-LC','J-JK']
-							hoverClass = cls+'-JT'
-							target.find('.'+cls).hover 	((e) ->
-															$(@).addClass hoverClass
-															over? e
-															return),
-														((e) ->
-															$(@).removeClass hoverClass
-															out? e
-															return)
-						return
-
-					addHovering popup
-
-
-					actionOps = [
+			actionOps = [
 						'unread'
 						'star'
 						'inbox'
-					]
-
-					manual 				= popup.find "[act='manual']"
-					presets 			= popup.find "[act='presets']"
-					submit 				= popup.find "[act='submit']"
-					error 				= popup.find "[act='error']"
-					ands 				= {}
-					for op in actionOps
-						ret = popup.find "[act='and_#{op}']"
-						ands[op] = ret if ret.length > 0
-
-					noanswer_section 	= popup.find "[act='noanswer_section']"
-					when_section 		= popup.find "[act='when_section']"
-					error_when 		 	= popup.find "[act='when']"
-					error_what 		 	= popup.find "[act='what']"
-
-					reposition = (menuElement, target) ->
-						ppos = popup.position()
-						target.css
-							top: 	menuElement.position().top + ppos.top
-							left: 	ppos.left + popup.outerWidth()
-						return
-
-					_delta = (offset) ->
-						"delta:#{offset}"
-
-					_specified = (time) ->
-						"specified:#{time}"
-
-					# Picker
-					popup.parent().append picker
-					locale = window.navigator.language
-					$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
-
-					datePicker.datepicker
-									minDate: '+1d'
-									dateFormat: __msg 'dateFormat'
-									showOtherMonths: true
-									selectOtherMonths: true
-									changeMonth: true
-									changeYear: true
-									onSelect: (dateText, inst) ->
-														date = datePicker.datepicker 'getDate'
-														if date
-															props.when = _specified date.getTime()
-															toggle manual, 'J-Ks-KO', true, true
-															toggle menu.children(), 'J-Ks-KO', false, false
-															(manual.find '.selected').html __msg 'menuTimePresetSpecifiedDateOnDate', dateText
-														isValid()
-														return
-					manual.hover 		((e) ->
-											picker.inMenu = true
-
-											x = =>
-												return unless picker.inMenu
-												reposition $(@), picker
-												picker.show()
-												return
-
-											_.delay x, delay
-
-											return),
-										((e) ->
-											picker.inMenu = false
-
-											_.delay hidePicker, delay
-
-											return)
-
-					# Popup menu
-					popup.parent().append menu
-					presets.hover 		((e) ->
-											menu.inMenu = true
-
-											x = =>
-												return unless menu.inMenu
-												reposition $(@), menu
-												datePicker.datepicker 'hide'
-												datePicker.blur()
-												menu.show()
-												return
-
-											_.delay x, delay
-
-											return),
-										((e) ->
-											menu.inMenu = false
-
-											_.delay hideMenu, delay
-
-											return)
-
-					_1m = 60 * 1000
-					_1h = 60 * _1m
-					_1d = 24 * _1h
-
-					boxSelectedClass = 'J-LC-JR-Jp'
-
-					props =
-						noanswer: 	false
-						unread:		false
-						star:		false
-						inbox:		false
-						archive:	false
-						#when:		_delta _1m
-
-					_.each props, (v, op) ->
-						selected = !! store.get "selection_act_#{op}"
-						props[op] = selected
-						toggle (popup.find "[act='#{op}']"), boxSelectedClass, selected, false
-						return
-
-					# This shows the error message or the submit button
-					boxToggle popup.find('.J-LC'), boxSelectedClass, false, (e, checked) ->
-						op = e.attr 'act'
-						props[op] = checked
-						store.set "selection_act_#{op}", checked
-						isValid()
-						return
-
-					isValid = ->
-						actionToggle = false
-						for op,i in actionOps
-							ands[op].toggle !!actionToggle if i > 0
-							actionToggle |= props[op]
-
-						wat = !! (props.unread or props.star or props.inbox)
-						wen  = !! props.when
-
-						valid = wat and wen
-
-						error_what.toggle not wat
-						error_when.toggle wat and not wen
-						
-						noanswer_section.toggle valid
-						when_section.toggle wat
-						submit.toggle valid
-						error.toggle !valid
-						reposition manual, picker
-						reposition presets, menu
-						return
-
-
-					isValid()
-
-					aME = (keySuffix, x, t) ->
-						key = "menuTimePresetCloseFutureItem#{keySuffix}"
-						addMenuElement (__msg key), false, presets, (e, checked) ->
-							if checked
-								props.when = t x
-								(presets.find '.selected').html __msg "#{key}Selected"
-							isValid()
-							return
-
-					if self.debug
-						for minute in [1,5]
-							aME "Minutes#{minute}", minute, (minute) ->
-								log "in #{minute} minute"
-								_delta (_1m * minute)
-
-					for hour in [2,4]
-						aME "Hours#{hour}", hour, (hour) -> 
-							log "in #{hour} hour"
-							_delta (_1h * hour)
-
-					for hour in [8,14]
-						aME "Tomorrow#{hour}", hour, (hour) ->
-							log "tomorrow, #{hour}h"
-							now = new Date
-							tomorrow = new Date
-							tomorrow.setDate (now.getDate() + 1)
-							tomorrow.setHours hour
-							tomorrow.setMinutes 0
-							tomorrow.setSeconds 0
-							tomorrow.setMilliseconds 0
-							_specified tomorrow.getTime()
-
-					for day in [2,7,14]
-						aME "Days#{day}", day, (day) ->
-							log "in #{day} day"
-							_delta (_1d * day)
-
-					for month in [1]
-						aME "Months#{month}", month, (month) ->
-							log "in #{month} month"
-							now = new Date
-							tomorrow = new Date
-							tomorrow.setMonth (now.getMonth() + month)
-							_specified tomorrow.getTime()
-
-					addHovering menu
-
-
-					# Close the popup
-					close = ->
-						# Disable the body listener
-						$('body').off 'click', close
-
-						# Remove the pushed state from the menu button
-						t.removeClass 'T-I-Kq'
-						t.attr 'aria-expanded', 'false'
-
-						# hide the popup
-						popup.hide()
-
-					popup.find("[act='schedule']").on 'click', (e) ->
-						cls = 'loader'
-						loading = =>
-							div.addClass cls
-							return
-						reset = =>
-							div.removeClass cls
-							return
-							
-						self.onSchedule props, loading, reset
-						close()
-						return
-
-				if popup.is ':visible'
-					# Popup is visible, so close it
-					close()
-				else
-					# As long as the popup is open, clicks anywhere else should close it
-					$('body').on 'click', close
-
-					# Add the pushed state to the button
-					t.addClass 'T-I-Kq'
-					t.attr 'aria-expanded', 'true'
-
-					# Set the position of the popup menu right beneath the menu button (lower left corner)
-					popup.css
-						left: 	t.parent().position().left
-						top:	t.outerHeight()
-
-					# and show it :-)
-					popup.show()
-
+						]
+			isValid = ->
+				valid = false
+				for op in actionOps
+					valid |= props[op]
+				valid = !!valid
+				timeSection.toggle valid
+				constraintSection.toggle valid
+				submitSection.toggle valid
+				errorSection.toggle !valid
 				return
 
-			div
+			
+			
+			_1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
+
+			# UI
+
+			bar = new GMailUI.ButtonBar
+			bar.addClass M.CLS
+			bar.addClass M.CLS_THREAD
+
+			popup = new GMailUI.Popup
+			popup.addClass M.CLS_POPUP
+
+			popup.append new GMailUI.PopupLabel __msg 'menuMailActions'
+			actionSection = popup.append new GMailUI.Section
+			actionSectionCheckboxes =
+				unread: actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMarkUnread'), 	props.unread, 	'', (__msg 'mailActionMarkUnreadTitle'))
+				star:	actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionStar'), 			props.star, 	'', (__msg 'mailActionStarTitle'))
+				inbox:	actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMoveToInbox'), 	props.inbox, 	'', (__msg 'mailActionMoveToInboxTitle'))
+
+			_.each actionSectionCheckboxes, propStoreFn
+
+
+			presetMenu = new GMailUI.PopupMenu popup
+			presetMenu.addClass M.CLS_MENU
+
+			# Date picker
+
+			pickerMenu = new GMailUI.PopupMenu popup
+			pickerMenu.addClass M.CLS_PICKER
+
+			datePicker = (pickerMenu.append new GMailUI.RawHTML '<div>').getElement()
+
+			locale = window.navigator.language
+			$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
+
+			datePicker.datepicker
+							minDate: '+1d'
+							maxDate: '+1y'
+							dateFormat: __msg 'dateFormat'
+							showOtherMonths: true
+							selectOtherMonths: true
+							changeMonth: true
+							changeYear: true
+							onSelect: (dateText, inst) ->
+												if (date = datePicker.datepicker 'getDate')
+													props.when = _specified date.getTime()
+													timeSectionElements.manual.setSelected true, true
+													#schedule()
+													#pickerMenu.close()
+													#button.close()
+												return
+
+			# Time section
+
+			timeSection = popup.append new GMailUI.Section
+			timeSection.append new GMailUI.Separator
+			timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
+			timeSectionElements =
+				presets:	timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
+				manual:		timeSection.append (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),	'',	'',	true)
+
+
+			# Presets
+
+			aME = (keySuffix, x, t) ->
+				key = "menuTimePresetCloseFutureItem#{keySuffix}"
+				item = new GMailUI.PopupMenuItem timeSectionElements.presets, (__msg "#{key}Selected"), (__msg key), '', false
+
+				onChange = (e, checked) ->
+					if checked
+						props.when = t x
+					isValid()
+					return
+				item.addOnChange onChange, true
+				presetMenu.append item
+
+			if mb.debug
+				for minute in [1,5]
+					aME "Minutes#{minute}", minute, (minute) ->
+						log "in #{minute} minute"
+						_delta (_1m * minute)
+
+				presetMenu.append new GMailUI.Separator
+
+			for hour in [2,4]
+				aME "Hours#{hour}", hour, (hour) -> 
+					log "in #{hour} hour"
+					_delta (_1h * hour)
+
+			presetMenu.append new GMailUI.Separator
+
+			for hour in [8,14]
+				aME "Tomorrow#{hour}", hour, (hour) ->
+					log "tomorrow, #{hour}h"
+					now = new Date
+					tomorrow = new Date
+					tomorrow.setDate (now.getDate() + 1)
+					tomorrow.setHours hour
+					tomorrow.setMinutes 0
+					tomorrow.setSeconds 0
+					tomorrow.setMilliseconds 0
+					_specified tomorrow.getTime()
+
+			presetMenu.append new GMailUI.Separator
+
+			for day in [2,7,14]
+				aME "Days#{day}", day, (day) ->
+					log "in #{day} day"
+					_delta (_1d * day)
+
+			presetMenu.append new GMailUI.Separator
+
+			for month in [1]
+				aME "Months#{month}", month, (month) ->
+					log "in #{month} month"
+					now = new Date
+					other = new Date
+					other.setMonth (now.getMonth() + month)
+					_specified other.getTime()
+
+
+			constraintSection = popup.append new GMailUI.Section
+			constraintSection.append new GMailUI.Separator
+			constraintSectionCheckboxes =
+				noanswer:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuConstraintsNoAnswer'),		props.noanswer,	'', (__msg 'menuConstraintsNoAnswerTitle'))
+				archive:	constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuAdditionalActionsArchive'), props.archive,	'', (__msg 'menuAdditionalActionsArchiveTitle'))
+
+			_.each constraintSectionCheckboxes, propStoreFn
+
+			submitSection = popup.append new GMailUI.Section
+			submitSection.append new GMailUI.Separator
+			submitSectionButton = submitSection.append new GMailUI.Button (__msg 'buttonSchedule'), '', (__msg 'buttonScheduleTitle')
+
+			button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
+			
+			submitSectionButton.on 'click', (e) =>
+				schedule()
+				button.close()
+				return
+
+			errorSection = popup.append new GMailUI.ErrorSection __msg 'errorNoActionSpecified' # __msg 'errorNoTimeSpecified'
+
+			isValid()
+
+			bar.getElement()
 
 		getMessageId: ->
 			id = /\/([0-9a-f]{16})/.exec window.location.hash

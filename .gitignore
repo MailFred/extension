@@ -12,3 +12,5 @@ extension/chrome/js/lib/mediator.js
 db.appsscript.js
 options.js
 admin.appsscript.js
+extension/chrome/js/lib/Eventr.js
+extension/chrome/js/lib/GMailUI.js
