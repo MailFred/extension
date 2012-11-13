@@ -24,6 +24,7 @@
 
         "js/lib/store.js/store.min.js",
         
+        "js/lib/Eventr.js",
         "js/lib/content.js"
       ],
       "matches": [
