@@ -411,7 +411,7 @@
 									@onScheduleSuccess data
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
-									log arguments
+									# log arguments
 									@onScheduleError textStatus, data, errorThrown
 									return
 				complete:		(jqXHR, textStatus) ->
