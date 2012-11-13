@@ -424,7 +424,7 @@
 				_.delay (->
 						resetIcon?()
 						return
-						), 400
+						), 600
 			return
 
 
