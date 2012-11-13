@@ -1,29 +1,5 @@
 GMailUI = {}
 
-class GMailUI.Breadcrumbs
-	@LIST_SEL: 'ol.gbtc'
-	@markup: _.template """
-						<li class="gbt">
-							<a href="#" class="gbgt">
-							<span class="gbts">
-								<span><%- label %></span>
-								<% if(isMenu) { %>
-								<span class="gbma"></span>
-								<% } %>
-							</span>
-							</a>
-						</li>
-						"""
-	@add: (label, onClick, isMenu = false) ->
-		obj =
-			label: label
-			isMenu: !!isMenu
-		item = 	$ @markup obj
-		(item.find '.gbgt').on 'click', onClick if onClick
-		item.prependTo $ @LIST_SEL
-		item
-
-
 class GMailUI.ModalDialog
 	@BG: 	$ 	"""
 				<div class="Kj-JD-Jh" style="opacity: 0.75; width: 2560px; height: 2560px; margin-left: -230px; margin-top: -64px;"></div>
@@ -145,6 +121,28 @@ class GMailUI.Container extends GMailUI.UIElement
 		else
 			throw 'Unknown element'
 		e
+
+class GMailUI.Breadcrumbs
+	@LIST_SEL: 'ol.gbtc'
+	@markup: _.template """
+						<li class="gbt">
+							<a href="#" class="gbgt">
+							<span class="gbts">
+								<span><%- label %></span>
+								<% if(isMenu) { %>
+								<span class="gbma"></span>
+								<% } %>
+							</span>
+							</a>
+						</li>
+						"""
+	@add: (label, onClick, isMenu = true) ->
+		item = 	$ @markup
+			label: label
+			isMenu: !!isMenu
+		(item.find '.gbgt').on 'click', onClick if onClick
+		item.prependTo $ @LIST_SEL
+		item
 
 class GMailUI.ButtonBar extends GMailUI.Container
 	constructor: ->
