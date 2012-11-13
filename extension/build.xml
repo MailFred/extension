@@ -59,7 +59,25 @@
             <arg value="--stats"/>
             <arg value="-o"/>
             <arg value="options.js"/>
-        </exec>    
+        </exec> 
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="Eventr.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="Eventr.js"/>
+        </exec>  
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="GMailUI.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="GMailUI.js"/>
+        </exec> 
 
         <echo message="Building Gmailr JS"/>
         <exec executable="cake" dir="chrome/js/lib/gmailr/chrome">
