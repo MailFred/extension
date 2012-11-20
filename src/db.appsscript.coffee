@@ -4,7 +4,7 @@ class Db
 	@TYPE_MAIL:		'mail'
 	@TYPE_USER:		'user'
 
-	@getMails: (user, version, time, processed = null) ->
+	@getMails: (user, version, time, processed = null, messageId = null) ->
 		q =
 			type:		@TYPE_MAIL
 
@@ -12,6 +12,7 @@ class Db
 		q.version = @DB.lessThanOrEqualTo Number version if version
 		q.when = @DB.lessThanOrEqualTo Number time if time
 		q.processed = !! processed if processed isnt null
+		q.messageId = messageId if messageId
 
 		Logger.log 'getting mails with query %s', q
 
@@ -27,6 +28,17 @@ class Db
 		result = result.sortBy 'user'
 		result
 
+	@cancelMails: (user, messageId) ->
+		scheduledMails = @getMails user, null, null, false, messageId
+		modified = while result.hasNext()
+			mail.next().processed = 'canceled'
+
+		if modified.length > 0
+			@DB.saveBatch modified, false
+			@DB.allOk modified
+		else
+			true
+
 	@storeMail: (user, version, props) ->
 		return null if not props or not user or not version
 		props.user = user
@@ -34,6 +46,7 @@ class Db
 		props.type = @TYPE_MAIL
 		props.processed = false
 
+		@cancelMails user, props.messageId
 		@DB.save props
 
 	@removeMail: (mail) ->
