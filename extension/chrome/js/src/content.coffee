@@ -27,9 +27,11 @@
 		@TYPE_THREAD: 	'thread'
 		@TYPE_NAV: 		'nav'
 
-		@STOREJS:
-			LASTUSED: 'lastUsed'
-			BOX_PREFIX: 'selection_act_'
+		@STORE:
+			LASTUSED:		'lastUsed'
+			BOX_SETTING:	'settings'
+			DEBUG:			'debug'
+			EMAIL:			'email'
 
 		@GM_SEL:
 			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
@@ -43,18 +45,34 @@
 
 		# Current GMail address of the logged in user
 		currentGmail: null
+		settingEmail: null
+		settingProps: {}
+		lastUsed: []
 
 		currentView: null
 
 		constructor: ->
 			window.addEventListener "message", @messageListener, false
 			
-			chrome.extension.sendMessage {action: "setting", key: 'debug'}, (debug) =>
-				@debug = debug
-				log 'MailFred debugging is enabled'
+			chrome.storage.local.get null, (items) =>
+				_.each items, (value, key) =>
+					switch key
+						when M.STORE.DEBUG
+							@debug = value
+							log 'MailFred debugging is enabled'
+						when M.STORE.EMAIL
+							@settingEmail = value
+					return
 				return
 
-			
+			chrome.storage.sync.get M.STORE.BOX_SETTING, (items) =>
+				@settingProps = items[M.STORE.BOX_SETTING]
+				return
+
+			M.getLastUsed (lastUsed) =>
+				@lastUsed = lastUsed
+				return
+
 		inConversation: ->
 			@currentView is 'conversation'
 
@@ -64,10 +82,6 @@
 			if button
 				Eventr.simulate button, 'mousedown'
 				Eventr.simulate button, 'mouseup'
-			return
-
-		getSettingEmail: (resp) ->
-			chrome.extension.sendMessage {action: "setting", key: 'email'}, resp
 			return
 
 		messageListener: (e) =>
@@ -97,12 +111,10 @@
 
 		inject: ->
 			return unless @inConversation()
-			@getSettingEmail (settingEmail) =>
-				log 'Email address in settings', settingEmail
-				log 'Current Gmail window', @currentGmail
+			log 'Email address in settings', @settingEmail
+			log 'Current Gmail window', @currentGmail
 
-				@injectThread() if (not settingEmail or not @currentGmail) or @currentGmail.trim() in settingEmail.split /[, ]+/ig
-				return
+			@injectThread() if (not @settingEmail or not @currentGmail) or @currentGmail.trim() in @settingEmail.split /[, ]+/ig
 			return
 
 		getServiceURL: ->
@@ -167,8 +179,8 @@
 
 				return
 
-			_.each props, (v, op) ->
-				selected = !! store.get "#{M.STOREJS.BOX_PREFIX}#{op}"
+			_.each props, (v, op) =>
+				selected = !! @settingProps[op]
 				props[op] = selected
 				return
 
@@ -185,7 +197,11 @@
 			propStoreFn = (checkbox, propName) ->
 				checkbox.addOnChange (e, checked) ->
 					props[propName] = checked
-					store.set "#{M.STOREJS.BOX_PREFIX}#{propName}", checked
+					toStore = {}
+					toStore[M.STORE.BOX_SETTING] = props
+					chrome.storage.sync.set toStore, ->
+						log 'Storing properties finished'
+						return
 					isValid()
 				return
 
@@ -262,11 +278,11 @@
 			timeSection.append new GMailUI.Separator
 			timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
 
-			lastUsed = @getLastUsed()
-			unless _.isEmpty lastUsed
+			
+			unless _.isEmpty @lastUsed
 				lastUsedSection = timeSection.append new GMailUI.Section
 
-				_.each lastUsed, (tuple) =>
+				_.each @lastUsed, (tuple) =>
 					key = tuple.key
 					time = tuple.time
 					# Remove the last used presets from the list
@@ -276,7 +292,7 @@
 					button = lastUsedSection.append new GMailUI.Button label, title
 					timeFn = @generateTimeFn key
 					button.on 'click', (e) =>
-						@storeLastUsed key, time
+						M.storeLastUsed key, time
 						wen = timeFn time
 						log "schedule: #{time}, #{key}: #{wen}"
 						schedule wen
@@ -300,7 +316,7 @@
 						item = new GMailUI.PopupMenuItem presetItem, label, title, '', false
 						onChange = (e, checked) =>
 							if checked
-								@storeLastUsed key, time
+								M.storeLastUsed key, time
 								wen = timeFn time
 								log "schedule: #{time}, #{key}: #{wen}"
 								schedule wen
@@ -319,19 +335,28 @@
 
 			bar.getElement()
 
-		storeLastUsed: (key, time) ->
-			lastUsed = @getLastUsed()
-			entry =
-				key: key
-				time: time
+		@storeLastUsed: (key, time) ->
+			@getLastUsed (lastUsed) =>
+				entry =
+					key: key
+					time: time
 
-			lastUsed = _.reject lastUsed, (item) -> _.isEqual item, entry
+				lastUsed = _.reject lastUsed, (item) -> _.isEqual item, entry
 
-			lastUsed.unshift entry
-			store.set M.STOREJS.LASTUSED, (_.first lastUsed, 3)
+				lastUsed.unshift entry
+				store = {}
+				lastUsed = store[@STORE.LASTUSED] = (_.first lastUsed, 3)
+				chrome.storage.sync.set store, ->
+					log 'Last used items saved', lastUsed
+					return
+				return
+			return
 
-		getLastUsed: ->
-			(store.get M.STOREJS.LASTUSED) ? []
+		@getLastUsed: (resp) ->
+			chrome.storage.sync.get @STORE.LASTUSED, (items) =>
+				resp (items[@STORE.LASTUSED] ? [])
+				return
+			return
 
 		_delta: (offset) ->
 			"delta:#{offset}"

@@ -26,29 +26,33 @@ save_options = ->
     ), 750
     return
 
+  store = {}
   input = document.getElementById Settings.EMAIL
   email = input.value
-  localStorage[Settings.EMAIL] = email ? null
+  store[Settings.EMAIL] = email ? null
 
   input = document.getElementById Settings.DEBUG
   debug = input.checked
-  localStorage[Settings.DEBUG] = debug ? false
+  store[Settings.DEBUG] = debug ? false
 
-  status __msg 'optionsFeedbackOptionsSaved'
+  chrome.storage.local.set store, ->
+    status __msg 'optionsFeedbackOptionsSaved'
+    return
 
   return
 
 # Restores select box state to saved value from localStorage.
 restore_options = ->
-  email = localStorage[Settings.EMAIL]
-  if email
-    input = document.getElementById Settings.EMAIL
-    input.setAttribute 'value', email
-
-  debug = String(localStorage['debug']) is 'true'
-  if debug
-    input = document.getElementById Settings.DEBUG
-    input.setAttribute 'checked', debug
+  chrome.storage.local.get null, (items) ->
+    for key, val of items
+      switch key
+        when Settings.EMAIL
+          input = document.getElementById Settings.EMAIL
+          input.setAttribute 'value', val
+        when Settings.DEBUG
+          input = document.getElementById Settings.DEBUG
+          input.setAttribute 'checked', val if val
+    return
   return
 
 document.addEventListener 'DOMContentLoaded', () ->

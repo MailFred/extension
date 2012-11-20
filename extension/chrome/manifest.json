@@ -21,8 +21,6 @@
 
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",
-
-        "js/lib/store.js/store.min.js",
         
         "js/lib/Eventr.js",
         "js/lib/GMailUI.js",
@@ -48,6 +46,7 @@
   "name": "__MSG_extName__",
   "options_page": "html/options.html",
   "permissions": [
+    "storage",
     "notifications",
     "https://script.google.com/*",
     "https://script.googleusercontent.com/*",

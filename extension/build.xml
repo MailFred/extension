@@ -124,8 +124,6 @@
                 <include name="js/lib/gmailr/chrome/lib/gmailr.js"/>
                 <include name="js/lib/gmailr/chrome/lib/jquery-bbq/jquery.ba-bbq.min.js"/>
                 <include name="js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js"/>
-
-                <include name="js/lib/store.js/store.min.js"/>
 			
     		</fileset>
     	</zip>
