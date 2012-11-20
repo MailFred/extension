@@ -263,6 +263,10 @@
     "description": "The email setting in the options dialog",
     "message": "Your GMail address:"
   },
+  "optionsLinkUninstall": {
+    "description": "The uninstall link in the options dialog",
+    "message": "Uninstall"
+  },
   "optionsPageTitle": {
     "description": "The title of the options page",
     "message": "MailFred options"

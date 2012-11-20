@@ -9,11 +9,17 @@ o =
   "label[for='debug']": 'optionsLabelDebugging'
   'title':              'optionsPageTitle'
   '#save':              'optionsButtonSaveLabel'
+  '#uninstall':         'optionsLinkUninstall'
 
 init = ->
   for sel, key of o
     (document.querySelector sel).innerText = __msg key
 
+  chrome.extension.sendMessage {action: 'url'}, (base) =>
+    target = base.substring 0, base.lastIndexOf '/'
+    a = document.getElementById 'uninstall'
+    a.setAttribute 'href', "#{target}/manage/uninstall"
+    return
   return
 
 save_options = ->

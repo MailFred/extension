@@ -12,7 +12,6 @@
 
 	class M
 		debug: 	false
-		dev: 	false
 		
 		@CLS: 			'mailfred'
 		#@CLS_NAV: 		M.CLS + '-nav'
@@ -37,11 +36,8 @@
 			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
 			THREAD_BUTTON_BAR: 	'.iH > div'
 
-		# production URL
-		prodUrl: "https://script.google.com/macros/s/AKfycbyF_NpRI6dc_xOyOwV5xIIOCgRwsyou2QHSPNcBXO5CM8kIoKA/exec"
-
-		# dev URL
-		devUrl: "https://script.google.com/a/macros/feth.com/s/AKfycbxDfbpvbasFE4IEFnMYwQd49MS7dMrB4efGYCMSTrI/dev"
+		# URL
+		url: null
 
 		# Current GMail address of the logged in user
 		currentGmail: null
@@ -71,6 +67,11 @@
 
 			M.getLastUsed (lastUsed) =>
 				@lastUsed = lastUsed
+				return
+
+			# Get the service URL
+			chrome.extension.sendMessage {action: 'url'}, (url) =>
+				@url = url
 				return
 
 		inConversation: ->
@@ -118,7 +119,7 @@
 			return
 
 		getServiceURL: ->
-			if @dev then @devUrl else @prodUrl
+			@url
 
 		#injectCompose: ->
 		#	navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
