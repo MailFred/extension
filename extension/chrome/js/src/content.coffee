@@ -50,6 +50,7 @@
 		constructor: ->
 			window.addEventListener "message", @messageListener, false
 			
+			# Get the settings
 			chrome.storage.local.get null, (items) =>
 				_.each items, (value, key) =>
 					switch key
@@ -61,10 +62,12 @@
 					return
 				return
 
+			# Get the selected options
 			chrome.storage.sync.get M.STORE.BOX_SETTING, (items) =>
 				@settingProps = items[M.STORE.BOX_SETTING]
 				return
 
+			# Get the last used presets
 			M.getLastUsed (lastUsed) =>
 				@lastUsed = lastUsed
 				return
