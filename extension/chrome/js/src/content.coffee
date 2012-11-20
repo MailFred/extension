@@ -47,7 +47,7 @@
 		currentView: null
 
 		constructor: ->
-			window.addEventListener "message", @gmailrListener, false
+			window.addEventListener "message", @messageListener, false
 			
 			chrome.extension.sendMessage {action: "setting", key: 'debug'}, (debug) =>
 				@debug = debug
@@ -70,7 +70,7 @@
 			chrome.extension.sendMessage {action: "setting", key: 'email'}, resp
 			return
 
-		gmailrListener: (e) =>
+		messageListener: (e) =>
 			if e.source is window
 				# We only accept messages from ourselves
 				#log "event", e
