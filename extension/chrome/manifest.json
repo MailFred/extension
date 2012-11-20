@@ -5,6 +5,7 @@
       "js/lib/background.js"
     ]
   },
+  "minimum_chrome_version": "20",
   "content_scripts": [
     {
       "css": [
