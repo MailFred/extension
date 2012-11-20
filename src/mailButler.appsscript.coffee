@@ -265,9 +265,9 @@ class MailButler
           throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
 
     props =
-      messageId: messageId
-      when: w
-      scheduled: now
+      messageId:  messageId
+      when:       w
+      scheduled:  now
       how:
         star:     String(form.star)     is "true"
         unread:   String(form.unread)   is "true"
