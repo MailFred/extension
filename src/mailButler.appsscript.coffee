@@ -55,6 +55,9 @@ class MailButler
 
   prefix: null
 
+  @getName: ->
+    return "#{@LABEL_BASE} #{@VERSION}"
+
   constructor: (@prefix) ->
 
   scheduleJson: (params) ->
@@ -156,6 +159,8 @@ class MailButler
     unless message
       # Message does not exist or is invalid
       Logger.log "Message with ID '%s' does not exist or is invalid", messageId
+      user = @getEmail()
+      MailApp.sendEmail user, "#{@getName()} - a scheduled message could not be found.", """The following message could not be found: https://mail.google.com/mail?account_id=#{encodeURIComponent user}&message_id=#{messageId}&view=conv&extsrc=atom"""
 
     else
       # Message does exist
