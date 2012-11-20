@@ -21,6 +21,17 @@ class Db
 		result = result.sortBy 'when', @DB.ASCENDING, @DB.NUMERIC
 		result
 
+	@getLastScheduled: (user) ->
+		result = @DB.query
+			type:		@TYPE_MAIL
+			user:		user
+		result = result.sortBy 'scheduled', @DB.DESCENDING, @DB.NUMERIC
+		result = result.limit 1
+		if result.hasNext()
+			result.next().scheduled
+		else
+			-1
+
 	@getUsers: ->
 		q =
 			type: @TYPE_USER

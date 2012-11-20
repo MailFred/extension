@@ -4,6 +4,7 @@ class ErrorCodes
   @INVALID_SCHEDULE_TIME: 'InvalidScheduleTime'
   @NO_ACTION:             'NoActionSpecified'
   @STORE_FAILED:          'StoringFailed'
+  @TRY_LATER:             'TryLater'
 
   @toReadable: (code, map) ->
     i18n.get "error#{code}", map
@@ -34,6 +35,7 @@ class i18n
       errorInvalidScheduleTime:   "Given scheduling time '$time$' is not valid"
       errorNoActionSpecified:     'No action (star, marking unread, move to inbox, etc.) specified'
       errorStoringFailed:         'Storing the scheduling action failed'
+      errorTryLater:              'Too many emails scheduled within a short time - please try again in a few minutes'
 
   @get: (key, map, locale = 'en') ->
     loc = @messages[locale]
@@ -255,51 +257,65 @@ class MailButler
       else null
 
   addButlerMail: (form) ->
-    messageId = form.msgId ? form.messageId
+    now = MailButler.DB.now()
+    user = MailButler.getEmail()
+    lastScheduled = @DB.getLastScheduled user
+    
+    # Get a lock for the current user
+    lock = LockService.getPrivateLock()
+    if lock.tryLock 10000
+      try
+        # last scheduling was less than a second ago - wait a second
+        Utilities.sleep 1000 if lastScheduled isnt -1 and (now - lastScheduled) < 1000
 
-    if not messageId or not (message = GmailApp.getMessageById messageId)
-      Logger.log "Given message ID '%s' is not valid", messageId
-      throw new Error ErrorCodes.INVALID_MESSAGE_ID,
-        email:      encodeURIComponent @getEmail()
-        messageId:  messageId
+        messageId = form.msgId ? form.messageId
 
-    now = new Date().getTime()
-    unless form.when
-      Logger.log 'No scheduling time given'
-      throw new Error ErrorCodes.NO_SCHEDULE_TIME
+        if not messageId or not (message = GmailApp.getMessageById messageId)
+          Logger.log "Given message ID '%s' is not valid", messageId
+          throw new Error ErrorCodes.INVALID_MESSAGE_ID,
+            email:      encodeURIComponent user
+            messageId:  messageId
 
-    unless (w = MailButler.parseTime form.when)
-      Logger.log "Given scheduling time '%s' is not valid", form.when
-      throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
+        unless form.when
+          Logger.log 'No scheduling time given'
+          throw new Error ErrorCodes.NO_SCHEDULE_TIME
 
-    props =
-      messageId:  messageId
-      when:       w
-      scheduled:  now
-      how:
-        star:     String(form.star)     is "true"
-        unread:   String(form.unread)   is "true"
-        inbox:    String(form.inbox)    is "true"
-        noanswer: String(form.noanswer) is "true"
+        unless (w = MailButler.parseTime form.when)
+          Logger.log "Given scheduling time '%s' is not valid", form.when
+          throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
 
-    # clean up the amount of data we store
-    for key, val of props.how
-      delete props.how[key] if val is false
+        props =
+          messageId:  messageId
+          when:       w
+          scheduled:  now
+          how:
+            star:     String(form.star)     is "true"
+            unread:   String(form.unread)   is "true"
+            inbox:    String(form.inbox)    is "true"
+            noanswer: String(form.noanswer) is "true"
 
-    unless props.how.star or props.how.unread or props.how.inbox
-      Logger.log "No action specified"
-      throw new Error ErrorCodes.NO_ACTION
+        # clean up the amount of data we store
+        for key, val of props.how
+          delete props.how[key] if val is false
+
+        unless props.how.star or props.how.unread or props.how.inbox
+          Logger.log "No action specified"
+          throw new Error ErrorCodes.NO_ACTION
 
 
-    stored = MailButler.storeButlerMail props
-    throw new Error ErrorCodes.STORE_FAILED unless stored
+        stored = MailButler.storeButlerMail props
+        throw new Error ErrorCodes.STORE_FAILED unless stored
 
-    thread = GmailApp.getThreadById message.getThread().getId()
-    thread.moveToArchive() if String(form.archive) is "true"
+        thread = GmailApp.getThreadById message.getThread().getId()
+        thread.moveToArchive() if String(form.archive) is "true"
 
-    MailButler.addLabel MailButler.LABEL_BASE, thread
-    MailButler.addLabel MailButler.LABEL_OUTBOX, thread
-
+        MailButler.addLabel MailButler.LABEL_BASE, thread
+        MailButler.addLabel MailButler.LABEL_OUTBOX, thread
+      finally
+        # Always release lock
+        lock.releaseLock()
+    else
+      throw new Error ErrorCodes.TRY_LATER
     return
 
   @isEnabled: ->

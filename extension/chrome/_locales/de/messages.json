@@ -236,6 +236,9 @@
     "description": "The notification title when an error happened",
     "message": "Etwas ging schief!"
   },
+  "notificationScheduleErrorTryLater": {
+    "message": "Es wurden sehr viele E-Mails in einer sehr kurzen Zeit geplant. Bitte versuchen Sie es in Kürze nochmals."
+  },
   "notificationScheduleSuccess": {
     "description": "The notification text when a mail has been scheduled successfully",
     "message": "Ihre Planung war erfolgreich."
