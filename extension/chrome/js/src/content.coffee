@@ -31,6 +31,7 @@
 			BOX_SETTING:	'settings'
 			DEBUG:			'debug'
 			EMAIL:			'email'
+			LAST_VERSION:	'lastVersion'
 
 		@GM_SEL:
 			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
@@ -76,6 +77,45 @@
 			chrome.extension.sendMessage {action: 'url'}, (url) =>
 				@url = url
 				return
+
+			# Get the extension version
+			chrome.extension.sendMessage {action: "version"}, (version) =>
+				M.getLastVersion (lastVersion) =>
+					unless lastVersion
+						M.storeLastVersion version
+						@firstInstall version
+					else if lastVersion < version
+						M.storeLastVersion version
+						@upgradeInstall lastVersion, version
+					else
+						@sameInstall version
+					return
+				return
+
+		@storeLastVersion: (version) ->
+			store = {}
+			store[M.STORE.LAST_VERSION] = version
+			chrome.storage.sync.set store, ->
+				log 'Set the last used version to', version
+				return
+			return
+
+		@getLastVersion: (resp) ->
+			chrome.storage.sync.get M.STORE.LAST_VERSION, (items) =>
+				resp items[M.STORE.LAST_VERSION]
+				return
+			return
+
+		firstInstall: (version) ->
+			log 'first install', version
+			return
+		upgradeInstall: (oldVersion, newVersion) ->
+			log 'upgrade from', oldVersion, newVersion
+			return
+
+		sameInstall: (version) ->
+			log 'no version change', version
+			return
 
 		inConversation: ->
 			@currentView is 'conversation'

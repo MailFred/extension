@@ -13,6 +13,9 @@ chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 			# notification = webkitNotifications.createHTMLNotification 'notification.html'
 			notification.show()
 
+		when 'version'
+			ret = chrome.app.getDetails().version
+
 		else
 			ret = settings[request.action]
 
