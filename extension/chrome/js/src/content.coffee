@@ -76,6 +76,7 @@
 			# Get the service URL
 			chrome.extension.sendMessage {action: 'url'}, (url) =>
 				@url = url
+				@checkVersion()
 				return
 
 		@storeLastVersion: (version) ->
@@ -149,7 +150,6 @@
 						# GMailr is ready
 							@currentGmail = evt.email
 							# GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
-							@checkVersion()
 
 						when 'viewThread'
 						# User moves to previous or next convo
