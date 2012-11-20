@@ -53,7 +53,7 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.134",
+  "version": "1.135",
   "web_accessible_resources": [
     "images/tie21x21black.png",
     "images/tie48x48.png",

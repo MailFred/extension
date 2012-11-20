@@ -359,7 +359,7 @@
 						@_specified tomorrow.getTime()
 				when 'days'
 					(time) => @_delta (_1d * time)
-				when 'month'
+				when 'months'
 					(month) =>
 						now = new Date
 						other = new Date
