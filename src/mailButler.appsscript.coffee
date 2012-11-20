@@ -162,7 +162,7 @@ class MailButler
       # Message does not exist or is invalid
       Logger.log "Message with ID '%s' does not exist or is invalid", messageId
       user = @getEmail()
-      MailApp.sendEmail user, "#{@getName()} - a scheduled message could not be found.", """The following message could not be found: https://mail.google.com/mail?account_id=#{encodeURIComponent user}&message_id=#{messageId}&view=conv&extsrc=atom"""
+      MailApp.sendEmail user, "#{@getName()} - a scheduled message could not be found.", """The following message, scheduled for #{new Date props.when} could not be found: https://mail.google.com/mail?account_id=#{encodeURIComponent user}&message_id=#{messageId}&view=conv&extsrc=atom"""
 
     else
       # Message does exist
