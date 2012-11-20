@@ -5,8 +5,17 @@ class ErrorCodes
   @NO_ACTION:             'NoActionSpecified'
   @STORE_FAILED:          'StoringFailed'
 
-  @toReadable: (code) ->
-    i18n.get "error#{code}"
+  @toReadable: (code, map) ->
+    i18n.get "error#{code}", map
+
+class Error
+  constructor: (@code, @map) ->
+
+  getLocalisedMessage: ->
+    ErrorCodes.toReadable @code, @map
+
+  toString: ->
+    @getLocalisedMessage()
 
 class i18n
   @messages:
@@ -20,9 +29,9 @@ class i18n
       butSomethingWentWrong:      'But something went wrong: $status$'
 
       # The following keys must not be changed - they are "error" + ErrorCodes.KEY
-      errorMessageIdInvalid:      'Given message ID is not valid'
+      errorMessageIdInvalid:      """Given message ID is not valid. Click <a href="https://mail.google.com/mail?account_id=$email$&message_id=$messageId$&view=conv&extsrc=atom">here</a> to open the according email."""
       errorNoScheduleTime:        'No scheduling time given'
-      errorInvalidScheduleTime:   'Given scheduling time is not valid'
+      errorInvalidScheduleTime:   "Given scheduling time '$time$' is not valid"
       errorNoActionSpecified:     'No action (star, marking unread, move to inbox, etc.) specified'
       errorStoringFailed:         'Storing the scheduling action failed'
 
@@ -60,7 +69,7 @@ class MailButler
       @addButlerMail params
       true
     catch e
-      ErrorCodes.toReadable e
+      e.getLocalisedMessage()
 
   @uninstall: (automatic) ->
     if not automatic and (base = ScriptApp.getService().getUrl())
@@ -95,8 +104,6 @@ class MailButler
     if ScriptApp.getScriptTriggers().length is 0
       Logger.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
-
-    
 
     # Get a lock for the current user
     lock = LockService.getPrivateLock()
@@ -240,7 +247,9 @@ class MailButler
 
     if not messageId or not (message = GmailApp.getMessageById messageId)
       Logger.log "Given message ID '%s' is not valid", messageId
-      throw ErrorCodes.INVALID_MESSAGE_ID
+      throw new Error ErrorCodes.INVALID_MESSAGE_ID,
+        email:      encodeURIComponent @getEmail()
+        messageId:  messageId
 
     now = new Date().getTime()
     matches = form.when?.match /^(delta|specified):([0-9]+)/
@@ -250,10 +259,10 @@ class MailButler
       else
         unless form.when
           Logger.log 'No scheduling time given'
-          throw ErrorCodes.NO_SCHEDULE_TIME
+          throw new Error ErrorCodes.NO_SCHEDULE_TIME
         else
           Logger.log "Given scheduling time '%s' is not valid", form.when
-          throw ErrorCodes.INVALID_SCHEDULE_TIME
+          throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
 
     props =
       messageId: messageId
@@ -271,11 +280,11 @@ class MailButler
 
     unless props.how.star or props.how.unread or props.how.inbox
       Logger.log "No action specified"
-      throw ErrorCodes.NO_ACTION
+      throw new Error ErrorCodes.NO_ACTION
 
 
     stored = MailButler.storeButlerMail props
-    throw ErrorCodes.STORE_FAILED unless stored
+    throw new Error ErrorCodes.STORE_FAILED unless stored
 
     thread = GmailApp.getThreadById message.getThread().getId()
     thread.moveToArchive() if String(form.archive) is "true"
@@ -306,8 +315,8 @@ doGet = (request) ->
       out = butler.scheduleJson request.parameter
     when 'setup'
       status = butler.scheduleSetup request.parameter
-      out = ContentService.createTextOutput i18n.get 'setupComplete'
-      out.append "\n"
+      out = HtmlService.createHtmlOutput i18n.get 'setupComplete'
+      out.append "<br />"
       if status is true
         out.append i18n.get 'scheduleSuccessCloseWindow'
       else
