@@ -265,7 +265,7 @@
   },
   "optionsLinkUninstall": {
     "description": "The uninstall link in the options dialog",
-    "message": "Deinstallieren"
+    "message": "GMail-Autorisierung widerrufen"
   },
   "optionsPageTitle": {
     "description": "The title of the options page",

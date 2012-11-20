@@ -265,7 +265,7 @@
   },
   "optionsLinkUninstall": {
     "description": "The uninstall link in the options dialog",
-    "message": "Uninstall"
+    "message": "Revoke GMail authorisation"
   },
   "optionsPageTitle": {
     "description": "The title of the options page",
