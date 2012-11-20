@@ -242,6 +242,13 @@ class MailButler
   @storeButlerMail: (props) ->
     @DB.storeMail @getEmail(), @VERSION, props
 
+  @parseTime: (time, now) ->
+    matches = time.match /^(delta|specified):([0-9]+)/
+    switch matches?[1]
+      when 'delta' then now + Number matches[2]
+      when 'specified' then Number matches[2]
+      else null
+
   addButlerMail: (form) ->
     messageId = form.msgId ? form.messageId
 
@@ -252,17 +259,13 @@ class MailButler
         messageId:  messageId
 
     now = new Date().getTime()
-    matches = form.when?.match /^(delta|specified):([0-9]+)/
-    w = switch matches?[1]
-      when 'delta' then now + Number matches[2]
-      when 'specified' then Number matches[2]
-      else
-        unless form.when
-          Logger.log 'No scheduling time given'
-          throw new Error ErrorCodes.NO_SCHEDULE_TIME
-        else
-          Logger.log "Given scheduling time '%s' is not valid", form.when
-          throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
+    unless form.when
+      Logger.log 'No scheduling time given'
+      throw new Error ErrorCodes.NO_SCHEDULE_TIME
+
+    unless (w = MailButler.parseTime form.when)
+      Logger.log "Given scheduling time '%s' is not valid", form.when
+      throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
 
     props =
       messageId:  messageId
