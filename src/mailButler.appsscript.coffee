@@ -27,6 +27,7 @@ class i18n
       setupComplete:              'Setup complete!'
       statusOK:                   'Service status: OK'
       scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
+      successCloseWindow:         'You can close this window now!'
       butSomethingWentWrong:      'But something went wrong: $status$'
 
       # The following keys must not be changed - they are "error" + ErrorCodes.KEY
@@ -345,6 +346,12 @@ doGet = (request) ->
         out.append i18n.get 'scheduleSuccessCloseWindow'
       else
         out.append (i18n.get 'butSomethingWentWrong', status: status)
+    when 'setupNoSchedule'
+      out = HtmlService.createHtmlOutput i18n.get 'setupComplete'
+      out.append "<br />"
+      out.append i18n.get 'successCloseWindow'
+    when 'status'
+      out = butler.result null, true
     else
       out = ContentService.createTextOutput i18n.get 'statusOK'
   out

@@ -78,20 +78,6 @@
 				@url = url
 				return
 
-			# Get the extension version
-			chrome.extension.sendMessage {action: "version"}, (version) =>
-				M.getLastVersion (lastVersion) =>
-					unless lastVersion
-						M.storeLastVersion version
-						@firstInstall version
-					else if lastVersion < version
-						M.storeLastVersion version
-						@upgradeInstall lastVersion, version
-					else
-						@sameInstall version
-					return
-				return
-
 		@storeLastVersion: (version) ->
 			store = {}
 			store[M.STORE.LAST_VERSION] = version
@@ -106,11 +92,33 @@
 				return
 			return
 
+		@isAuthorisationErrorPage: (contents) ->
+			(contents.indexOf 'requires your authorization') is -1
+
+		isAuthorised: (resp) ->
+			$.ajax
+				url: 			@getServiceURL()
+				dataType: 		'json'
+				data:			action: 'status'
+				success:		(data, textStatus, jqXHR) =>
+									resp true
+									return
+				error:			(jqXHR, textStatus, errorThrown) =>
+									resp M.isAuthorisationErrorPage jqXHR.responseText
+									return
+
 		firstInstall: (version) ->
 			log 'first install', version
+			@gettingStarted action: 'setupNoSchedule'
+			#[dialog, okButton, cancelButton, container] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
+
 			return
+
 		upgradeInstall: (oldVersion, newVersion) ->
 			log 'upgrade from', oldVersion, newVersion
+			@isAuthorised (yesno) =>
+				@gettingStarted action: 'setupNoSchedule' unless yesno
+				return
 			return
 
 		sameInstall: (version) ->
@@ -141,6 +149,7 @@
 						# GMailr is ready
 							@currentGmail = evt.email
 							# GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
+							@checkVersion()
 
 						when 'viewThread'
 						# User moves to previous or next convo
@@ -153,6 +162,22 @@
 
 			return
 
+		checkVersion: ->
+			# Get the extension version
+			chrome.extension.sendMessage {action: "version"}, (version) =>
+				M.getLastVersion (lastVersion) =>
+					unless lastVersion
+						M.storeLastVersion version
+						@firstInstall version
+					else if lastVersion < version
+						M.storeLastVersion version
+						@upgradeInstall lastVersion, version
+					else
+						@sameInstall version
+					return
+				return
+			return
+
 		inject: ->
 			return unless @inConversation()
 			log 'Email address in settings', @settingEmail
@@ -161,8 +186,7 @@
 			@injectThread() if (not @settingEmail or not @currentGmail) or @currentGmail.trim() in @settingEmail.split /[, ]+/ig
 			return
 
-		getServiceURL: ->
-			@url
+		getServiceURL: -> @url
 
 		#injectCompose: ->
 		#	navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
@@ -481,7 +505,7 @@
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
 									# log arguments
-									@onScheduleError textStatus, data, errorThrown
+									@onScheduleError textStatus, data, errorThrown, jqXHR.responseText
 									return
 				complete:		(jqXHR, textStatus) ->
 									resetIcon?() unless data.archive
@@ -509,6 +533,20 @@
 				@onScheduleError data.error, null, data.error
 			return
 
+		createDialog: (title, okButton, cancelButton) ->
+			dialog = new GMailUI.ModalDialog title
+
+			[okButtonLabel, okButtonTooltip] = okButton
+			[cancelButtonLabel, cancelButtonTooltip] = cancelButton
+
+			container = dialog.append new GMailUI.ModalDialog.Container
+
+			footer = dialog.append new GMailUI.ModalDialog.Footer
+			okButton = footer.append new GMailUI.ModalDialog.Button okButtonLabel, okButtonTooltip
+			cancelButton = footer.append new GMailUI.ModalDialog.Button cancelButtonLabel, cancelButtonTooltip, 'cancel'
+
+			[dialog, okButton, cancelButton, container]
+
 		gettingStarted: (params) ->
 			url = @getServiceURL()
 			if params
@@ -516,36 +554,34 @@
 				url += "?#{query}"
 
 			extName = __msg 'extName'
-			dialog = new GMailUI.ModalDialog (__msg 'authorizeDialogTitle', extName)
 
-			container = dialog.append new GMailUI.ModalDialog.Container
+			[dialog, okButton, cancelButton, container] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
+
 			text = __msg 'authorizeDialogText', extName
 			img = chrome.extension.getURL 'images/clickToAuthorize.png'
 			imgHint = __msg 'authorizeDialogImageHint'
 			imgAlt  = __msg 'authorizeDialogImageAlt'
 			container.append 	"""
 								<div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
-								#{text}
+									#{text}
 								</div>
 								<div>
-								<img src="#{img}" data-tooltip="#{imgHint}" alt="#{imgAlt}">
+									<img src="#{img}" data-tooltip="#{imgHint}" alt="#{imgAlt}">
 								</div>
 								"""
 
-			footer = dialog.append new GMailUI.ModalDialog.Footer
-			okButton = footer.append new GMailUI.ModalDialog.Button (__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')
 			okButton.on 'click', ->
 				window.open url, M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 				dialog.close()
 				return
-			cancelButton = footer.append new GMailUI.ModalDialog.Button (__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName), 'cancel'
+
 			cancelButton.on 'click', dialog.close
 
 			dialog.open()
 
-		onScheduleError: (status, params, error) =>
+		onScheduleError: (status, params, error, responseText) =>
 			log 'There was an error', arguments
-			if status is 'parsererror'
+			if status is 'parsererror' and M.isAuthorisationErrorPage responseText
 				params.action = 'setup'
 				delete params.callback if params.callback
 				@gettingStarted params
