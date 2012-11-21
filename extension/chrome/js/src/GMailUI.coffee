@@ -488,6 +488,13 @@ class GMailUI.PopupMenu extends GMailUI.Container
 		@close()
 		return
 
+	show: ->
+		@onShow?()
+		super()
+		return
+
+	onShow: ->
+
 	close: ->
 		@getElement().attr 'aria-activedescendant', null
 		@hide()

@@ -9,17 +9,15 @@
   "content_scripts": [
     {
       "css": [
-        "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.core.css",
-        "js/lib/jquery-ui/development-bundle/themes/base/jquery.ui.datepicker.css",
         "css/styles.css"
       ],
       "js": [
         "js/lib/underscore/underscore-min.js",
         "js/lib/jquery/jquery.min.js",
-
-        "js/lib/jquery-ui/js/jquery-ui-1.8.24.custom.min.js",
-        "js/lib/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-de.js",
-
+        
+        "js/lib/jquery-ui/js/jquery-ui-1.9.1.custom.min.js",
+        "js/lib/jquery-ui/development-bundle/ui/i18n/jquery-ui-i18n.js",
+        
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",
         
@@ -58,14 +56,15 @@
     "images/tie21x21black.png",
     "images/tie48x48.png",
     "images/loader.gif",
-    "images/prev.png",
-    "images/next.png",
     "images/clickToAuthorize.png",
+
 
     "js/lib/jquery/jquery.min.js",
     "js/lib/gmailr/chrome/lib/jquery-bbq/jquery.ba-bbq.min.js",
     "js/lib/gmailr/chrome/lib/gmailr.js",
-    "js/lib/mediator.js"
+    "js/lib/mediator.js",
+    
+    "js/lib/jquery-ui/css/mailfred_theme/*"
   ]
 }
         

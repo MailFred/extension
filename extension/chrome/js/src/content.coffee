@@ -320,25 +320,29 @@
 			pickerMenu = new GMailUI.PopupMenu popup
 			pickerMenu.addClass M.CLS_PICKER
 
-			datePicker = (pickerMenu.append new GMailUI.RawHTML '<div>').getElement()
+			pickerDiv = (pickerMenu.append new GMailUI.RawHTML '<div>').getElement()
 
-			locale = window.navigator.language
-			$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
-
-			datePicker.datepicker
-							minDate: '+1d'
-							maxDate: '+1y'
-							dateFormat: __msg 'dateFormat'
-							showOtherMonths: true
-							selectOtherMonths: true
-							changeMonth: true
-							changeYear: true
-							onSelect: (dateText, inst) =>
-												if (date = datePicker.datepicker 'getDate')
-													#timeSectionElements.manual.setSelected true, true
-													log 'schedule', date
-													schedule @_specified date.getTime()
-												return
+			initPicker = false
+			pickerMenu.onShow = =>
+				unless initPicker
+					locale = window.navigator.language
+					$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
+					pickerDiv.datepicker
+									minDate: '+1d'
+									maxDate: '+1y'
+									dateFormat: __msg 'dateFormat'
+									showOtherMonths: true
+									selectOtherMonths: true
+									changeMonth: true
+									changeYear: true
+									onSelect: (dateText, inst) =>
+														if (date = pickerDiv.datepicker 'getDate')
+															#timeSectionElements.manual.setSelected true, true
+															log 'schedule', date
+															schedule @_specified date.getTime()
+														return
+					initPicker = true
+				return
 
 			# Time section
 
