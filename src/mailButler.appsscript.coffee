@@ -27,7 +27,7 @@ class i18n
       setupComplete:              'Setup complete!'
       statusOK:                   'Service status: OK'
       scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
-      successCloseWindow:         'You can close this window now!'
+      successCloseWindow:         'You can close this window now.'
       butSomethingWentWrong:      'But something went wrong: $status$'
 
       # The following keys must not be changed - they are "error" + ErrorCodes.KEY
