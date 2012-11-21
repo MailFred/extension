@@ -111,8 +111,6 @@
 		firstInstall: (version) ->
 			log 'first install', version
 			@welcome()
-			#[dialog, okButton, cancelButton, container] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
-
 			return
 
 		upgradeInstall: (oldVersion, newVersion) ->
