@@ -233,7 +233,7 @@
 				#when:		_delta _1m
 
 			_.each props, (v, op) =>
-				selected = !! @settingProps[op]
+				selected = !! @settingProps?[op]
 				props[op] = selected
 				return
 
