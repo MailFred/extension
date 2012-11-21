@@ -251,7 +251,7 @@ class MailButler
     @DB.storeMail @getEmail(), @VERSION, props
 
   @parseTime: (time, now) ->
-    matches = time.match /^(delta|specified):([0-9]+)/
+    matches = time.match /^(delta|specified):([0-9]+)$/
     switch matches?[1]
       when 'delta' then now + Number matches[2]
       when 'specified' then Number matches[2]
@@ -260,7 +260,7 @@ class MailButler
   addButlerMail: (form) ->
     now = MailButler.DB.now()
     user = MailButler.getEmail()
-    lastScheduled = @DB.getLastScheduled user
+    lastScheduled = MailButler.DB.getLastScheduled user
     
     # Get a lock for the current user
     lock = LockService.getPrivateLock()
@@ -281,9 +281,9 @@ class MailButler
           Logger.log 'No scheduling time given'
           throw new Error ErrorCodes.NO_SCHEDULE_TIME
 
-        unless (w = MailButler.parseTime form.when)
+        unless (w = MailButler.parseTime form.when, now)
           Logger.log "Given scheduling time '%s' is not valid", form.when
-          throw new Error ErrorCodes.INVALID_SCHEDULE_TIME {time: form.when}
+          throw new Error ErrorCodes.INVALID_SCHEDULE_TIME, {time: form.when}
 
         props =
           messageId:  messageId

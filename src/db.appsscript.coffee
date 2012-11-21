@@ -40,7 +40,7 @@ class Db
 		result
 
 	@cancelMails: (user, messageId) ->
-		scheduledMails = @getMails user, null, null, false, messageId
+		result = @getMails user, null, null, false, messageId
 		modified = while result.hasNext()
 			mail.next().processed = 'canceled'
 
