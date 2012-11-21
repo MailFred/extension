@@ -50,7 +50,7 @@ class i18n
 
 class MailButler
 
-  @VERSION:             1.135
+  @VERSION:             1.136
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
   @FREQUENCY_MINUTES:   1
