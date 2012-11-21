@@ -96,16 +96,20 @@
 		@isAuthorisationErrorPage: (contents) ->
 			/require.*?authorization/i.test contents
 
-		isAuthorised: (resp) ->
+		checkAuthorised: (resp) ->
+			url = @getServiceURL()
+			log 'checking if the user authorised', url
 			$.ajax
-				url: 			@getServiceURL()
+				url: 			url
 				dataType: 		'json'
 				data:			action: 'status'
 				success:		(data, textStatus, jqXHR) =>
+									log '...yes'
 									resp true
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
-									resp M.isAuthorisationErrorPage jqXHR.responseText
+									isError = M.isAuthorisationErrorPage jqXHR.responseText
+									resp !isError
 									return
 
 		firstInstall: (version) ->
@@ -115,8 +119,8 @@
 
 		upgradeInstall: (oldVersion, newVersion) ->
 			log 'upgrade from', oldVersion, newVersion
-			@isAuthorised (yesno) =>
-				@gettingStarted action: 'setupNoSchedule' unless yesno
+			@checkAuthorised (authorised) =>
+				@gettingStarted action: 'setupNoSchedule' unless authorised
 				return
 			return
 
