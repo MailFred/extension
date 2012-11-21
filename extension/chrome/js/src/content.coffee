@@ -94,7 +94,7 @@
 			return
 
 		@isAuthorisationErrorPage: (contents) ->
-			(contents.indexOf 'requires your authorization') is -1
+			(contents.indexOf 'requires your authorization') isnt -1
 
 		isAuthorised: (resp) ->
 			$.ajax
