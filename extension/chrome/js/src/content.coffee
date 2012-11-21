@@ -230,6 +230,11 @@
 				archive:	false
 				#when:		_delta _1m
 
+			_.each props, (v, op) =>
+				selected = !! @settingProps[op]
+				props[op] = selected
+				return
+
 			schedule = (wen) =>
 				pickerMenu.close()
 				presetMenu.close()
@@ -245,11 +250,6 @@
 				props.when = wen
 				@onSchedule props, loading, reset
 
-				return
-
-			_.each props, (v, op) =>
-				selected = !! @settingProps[op]
-				props[op] = selected
 				return
 
 			isValid = =>
