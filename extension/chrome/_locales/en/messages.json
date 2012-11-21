@@ -273,5 +273,48 @@
   "optionsPageTitle": {
     "description": "The title of the options page",
     "message": "MailFred options"
+  },
+  "welcomeDialogButtonCancel": {
+    "message": "Dismiss"
+  },
+  "welcomeDialogButtonCancelTooltip": {
+    "message": "If you don't finish the setup,<br>you can't use $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "welcomeDialogButtonOk": {
+    "message": "Continue"
+  },
+  "welcomeDialogButtonOkTooltip": {
+    "message": "Perform authorisation now"
+  },
+  "welcomeDialogImageAlt": {
+    "message": "Screenshot of the toolbar with the MailFred button"
+  },
+  "welcomeDialogImageHint": {
+    "message": "The MailFred button <br> on the top right in conversation view."
+  },
+  "welcomeDialogText": {
+    "message": "Thank you for installing $name$.<br>You can access all features of $name$ through the button with the bow tie icon on the top right of the page within conversation view.<br><br>In order to use $name$, we need access to your GMail account.<br>Please click on 'Continue' below to perform the necessary steps now and finish the installation.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "welcomeDialogTitle": {
+    "description": "The title of the welcome dialog",
+    "message": "$name$ has been successfully installed!",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
   }
 }

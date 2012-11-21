@@ -273,5 +273,48 @@
   "optionsPageTitle": {
     "description": "The title of the options page",
     "message": "MailFred Einstellungen"
+  },
+  "welcomeDialogButtonCancel": {
+    "message": "Schließen"
+  },
+  "welcomeDialogButtonCancelTooltip": {
+    "message": "Wenn Sie die Installation nicht abschließen,<br>können Sie $name$ nicht verwenden",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "welcomeDialogButtonOk": {
+    "message": "Weiter"
+  },
+  "welcomeDialogButtonOkTooltip": {
+    "message": "Autorisierung jetzt vornehmen"
+  },
+  "welcomeDialogImageAlt": {
+    "message": "Bildschirmschnappschuss des MailFred-Buttons in der GMail-Navigationsleiste"
+  },
+  "welcomeDialogImageHint": {
+    "message": "Das MailFred-Menü oben rechts <br> in der Konversationsansicht."
+  },
+  "welcomeDialogText": {
+    "message": "Vielen Dank, dass Sie $name$ installiert haben.<br>$name$ kann durch das Menü mit dem Fliege-Icon oben rechts in der Konversationsansicht aufgerufen werden.<br><br>Um $name$ verwenden zu können benötigen wir Zugriff auf Ihr GMail-Konto.<br>Klicken Sie bitte auf 'Weiter' um die notwendigen Freigaben jetzt zu erteilen und die Installation abzuschließen.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
+  },
+  "welcomeDialogTitle": {
+    "description": "The title of the welcome dialog",
+    "message": "$name$ wurde erfolgreich installiert!",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "MailFred"
+      }
+    }
   }
 }

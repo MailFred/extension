@@ -49,6 +49,15 @@ class GMailUI.UIElement
 		@element.toggle.apply @element, arguments
 		return
 
+	replaceWith: (e) ->
+		if e instanceof GMailUI.UIElement
+			@element.replaceWith e.getElement()
+		else if _.isElement
+			@element.replaceWith e
+		else
+			throw 'Unknown element'
+		e
+
 class GMailUI.Container extends GMailUI.UIElement
 	constructor: (@container) ->
 
@@ -132,7 +141,7 @@ class GMailUI.ModalDialog extends GMailUI.Container
 	@template: _.template """
 						<div class="Kj-JD" tabindex="0" style="left: 50%; top: 40%; width: 460px; overflow: visible; margin-left: -230px; margin-top: -64px;" role="dialog" aria-labelledby="<%= id %>">
 							<div class="Kj-JD-K7 Kj-JD-K7-GIHV4" id="<%= id %>">
-								<span class="Kj-JD-K7-K0"><%- title %></span>
+								<span class="Kj-JD-K7-K0" act="title"><%- title %></span>
 								<span class="Kj-JD-K7-Jq" act="close"></span>
 							</div>
 							<div act="container">
@@ -171,6 +180,11 @@ class GMailUI.ModalDialog extends GMailUI.Container
 			id: 	_.uniqueId 'modalDialog-'
 			title: 	title
 		super @getElement().find "[act='container']"
+
+	title: (title) ->
+		e = (@getElement().find "[act='title']")
+		e.text.apply e, arguments
+
 	open: ->
 		body = $ 'body'
 		GMailUI.ModalDialog.BG.appendTo body

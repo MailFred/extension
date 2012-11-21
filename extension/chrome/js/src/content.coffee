@@ -110,7 +110,7 @@
 
 		firstInstall: (version) ->
 			log 'first install', version
-			@gettingStarted action: 'setupNoSchedule'
+			@welcome()
 			#[dialog, okButton, cancelButton, container] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
 
 			return
@@ -549,39 +549,72 @@
 			okButton = footer.append new GMailUI.ModalDialog.Button okButtonLabel, okButtonTooltip
 			cancelButton = footer.append new GMailUI.ModalDialog.Button cancelButtonLabel, cancelButtonTooltip, 'cancel'
 
-			[dialog, okButton, cancelButton, container]
+			[dialog, okButton, cancelButton, container, footer]
 
-		gettingStarted: (params) ->
-			url = @getServiceURL()
-			if params
-				query = $.param params
-				url += "?#{query}"
-
+		welcome: ->
 			extName = __msg 'extName'
-
-			[dialog, okButton, cancelButton, container] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
-
-			text = __msg 'authorizeDialogText', extName
-			img = chrome.extension.getURL 'images/clickToAuthorize.png'
-			imgHint = __msg 'authorizeDialogImageHint'
-			imgAlt  = __msg 'authorizeDialogImageAlt'
-			container.append 	"""
-								<div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
-									#{text}
-								</div>
-								<div>
-									<img src="#{img}" data-tooltip="#{imgHint}" alt="#{imgAlt}">
+			[dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'welcomeDialogTitle', extName), [(__msg 'welcomeDialogButtonOk'), (__msg 'welcomeDialogButtonOkTooltip')], [(__msg 'welcomeDialogButtonCancel'), (__msg 'welcomeDialogButtonCancelTooltip', extName)]
+			
+			container.append	"""
+								<div style="text-align: justify;">
+									<img src="#{chrome.extension.getURL 'images/button_example.png'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px;">
+									#{__msg 'welcomeDialogText', extName}
 								</div>
 								"""
 
-			okButton.on 'click', ->
-				window.open url, M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+			okButton.on 'click', =>
+				[authDialog, authOkButton, authCancelButton, authContainer, authFooter] = @gettingStartedDialog()
+				container.replaceWith authContainer
+				okButton.replaceWith authOkButton
+				cancelButton.replaceWith authCancelButton
+				dialog.title authDialog.title()
+
+				authOkButton.on 'click', =>
+					@openAuthWindow action: 'setupNoSchedule'
+					dialog.close()
+					return
+
+				authCancelButton.on 'click', dialog.close
+
+			cancelButton.on 'click', dialog.close
+			dialog.open()
+
+		gettingStartedDialogContent: ->
+			extName = __msg 'extName'
+			"""
+			<div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
+				#{__msg 'authorizeDialogText', extName}
+			</div>
+			<div>
+				<img src="#{chrome.extension.getURL 'images/clickToAuthorize.png'}" data-tooltip="#{__msg 'authorizeDialogImageHint'}" alt="#{__msg 'authorizeDialogImageAlt'}">
+			</div>
+			"""
+
+		gettingStartedDialog: ->
+			extName = __msg 'extName'
+			[dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
+			container.append @gettingStartedDialogContent()
+			[dialog, okButton, cancelButton, container, footer]
+
+		gettingStarted: (params) ->
+			[dialog, okButton, cancelButton, container, footer] = @gettingStartedDialog()
+			
+			okButton.on 'click', =>
+				@openAuthWindow params
 				dialog.close()
 				return
 
 			cancelButton.on 'click', dialog.close
 
 			dialog.open()
+
+		openAuthWindow: (params) ->
+			url = @getServiceURL()
+			if params
+				query = $.param params
+				url += "?#{query}"
+			window.open url, M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+			return
 
 		onScheduleError: (status, params, error, responseText) =>
 			log 'There was an error', arguments
