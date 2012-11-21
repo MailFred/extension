@@ -629,11 +629,7 @@
 					action: 	'notification'
 					icon: 		"images/tie48x48.png"
 					title:		__msg 'notificationScheduleErrorTitle'
-					message:	__msg 'notificationScheduleError', ''+error
-
-				# we get 'InvalidScheduleTime' and we need to add 'notificationScheduleError' to it
-				message = __msg "notificationScheduleError#{error}"
-				notification.message = message if message
+					message:	if 'code' of error then (__msg "notificationScheduleError#{error.code}") else (__msg 'notificationScheduleError', '' + new String error)
 
 				chrome.extension.sendMessage notification
 
