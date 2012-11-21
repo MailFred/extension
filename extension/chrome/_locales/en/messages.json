@@ -267,6 +267,9 @@
     "description": "The uninstall link in the options dialog",
     "message": "Revoke GMail authorisation"
   },
+  "optionsLinkUninstallConfirm": {
+    "message": "After revoking the authorisation, MailFred will stop working.\n\nPlease note that already scheduled emails won't be processed any more either.\n\nTo complete the uninstall process, you can simply remove the browser extension."
+  },
   "optionsPageTitle": {
     "description": "The title of the options page",
     "message": "MailFred options"

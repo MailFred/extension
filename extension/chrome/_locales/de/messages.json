@@ -267,6 +267,9 @@
     "description": "The uninstall link in the options dialog",
     "message": "GMail-Autorisierung widerrufen"
   },
+  "optionsLinkUninstallConfirm": {
+    "message": "Nachdem Sie die Autorisierung widerrufen haben, können Sie MailFred nicht weiter verwenden.\n\nBitte beachten Sie, dass bereits geplante E-Mails ebenfalls nicht mehr bearbeitet werden.\n\nUm die Deinstallation zu vervollständigen, können Sie die Browser-Extension einfach entfernen."
+  },
   "optionsPageTitle": {
     "description": "The title of the options page",
     "message": "MailFred Einstellungen"

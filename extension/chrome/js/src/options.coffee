@@ -19,6 +19,8 @@ init = ->
     target = base.substring 0, base.lastIndexOf '/'
     a = document.getElementById 'uninstall'
     a.setAttribute 'href', "#{target}/manage/uninstall"
+    a.onclick = ->
+      alert __msg 'optionsLinkUninstallConfirm'
     return
   return
 
