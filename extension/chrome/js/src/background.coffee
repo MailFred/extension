@@ -1,5 +1,5 @@
 settings =
-	url: 'https://script.google.com/macros/s/' +'AKfycbwiaMcutoikPEIkO45ETPr6JCv9oz5BGwpatEPwCpEakKgIGdc'+'/exec'
+	url: 'https://script.google.com/macros/s/' +'AKfycbw9V8T6n79IkEUwZJNknuKWxHTvK2f_U66eIIRerEMU6VKmSq0'+'/exec'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 	#console.log(sender.tab "from a content script:" + sender.tab.url :
