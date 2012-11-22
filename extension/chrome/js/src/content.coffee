@@ -635,7 +635,7 @@
 			if params
 				query = $.param params
 				url += "?#{query}"
-			window.open url, M.CLS, 'width=860,height=470,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+			window.open url, M.CLS, 'width=880,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
 			return
 
 		onScheduleError: (status, params, error, responseText) =>
