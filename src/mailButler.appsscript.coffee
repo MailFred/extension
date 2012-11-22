@@ -26,7 +26,7 @@ class i18n
       scriptNotEnabled:           'This script is not enabled'
       setupComplete:              'Setup complete!'
       statusOK:                   'Service status: OK'
-      scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now!'
+      scheduleSuccessCloseWindow: 'Your email has been scheduled, you can close this window now.'
       successCloseWindow:         'You can close this window now.'
       butSomethingWentWrong:      'But something went wrong: $status$'
 
