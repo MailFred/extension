@@ -3,6 +3,7 @@ ProcessingStatus =
 	NOT_FOUND:				'notFound'
 	CANCELED:				'canceled'
 	OUTBOX_LABEL_REMOVED:	'labelRemoved'
+	OK:						'ok'
 
 class Db
 	@DB:			ScriptDb.getMyDb()
