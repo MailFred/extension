@@ -40,7 +40,11 @@ It is now <?= new Date().toUTCString() ?>.<br>
         <?  } ?>
       </td>
       <td>
-        <?= email.status ?>
+        <? if(email.status) { ?>
+            <?= email.status ?>
+        <? } else { ?>
+            &nbsp;
+        <? } ?>
       </td>
       <td><a href="<?= baseUrl ?>?action=remove&amp;id=<?= email.getId() ?>" target="_blank">delete</a></td>
     </tr>
