@@ -18,7 +18,7 @@ It is now <?= new Date() ?>.<br>
   ?>
     <tr>
       <td><?= i++ ?></td>
-      <td><?= email.messageId ?></td>
+      <td><a href="https://mail.google.com/mail?account_id=<?!= encodeURIComponent(user) ?>&amp;message_id=<?= email.messageId ?>&amp;view=conv&amp;extsrc=atom"><?= email.messageId ?></a></td>
       <td><?= new Date(email.scheduled).toUTCString() ?></td>
       <td><?= new Date(email.when).toUTCString() ?></td>
       <td><?= email.version ?></td>
