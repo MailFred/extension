@@ -1,3 +1,9 @@
+ProcessingStatus =
+	ANSWERED:				'answered'
+	NOT_FOUND:				'notFound'
+	CANCELED:				'canceled'
+	OUTBOX_LABEL_REMOVED:	'labelRemoved'
+
 class Db
 	@DB:			ScriptDb.getMyDb()
 
@@ -41,9 +47,16 @@ class Db
 
 	@cancelMails: (user, messageId) ->
 		result = @getMails user, null, null, false, messageId
+		now = @now()
 		modified = while result.hasNext()
 			mail = result.next()
-			mail.processed = 'canceled'
+
+			# set processed
+			mail.processed = now
+
+			# Set the status
+			mail.status = ProcessingStatus.CANCELED
+
 			mail
 
 		if modified.length > 0

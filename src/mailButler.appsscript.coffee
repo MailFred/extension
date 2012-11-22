@@ -9,6 +9,13 @@ class ErrorCodes
   @toReadable: (code, map) ->
     i18n.get "error#{code}", map
 
+ProcessingStatus =
+  ANSWERED:             'answered'
+  NOT_FOUND:            'notFound'
+  CANCELED:             'canceled'
+  OUTBOX_LABEL_REMOVED: 'labelRemoved'
+
+
 class Error
   constructor: (@code, @map) ->
 
@@ -162,6 +169,10 @@ class MailButler
     unless message
       # Message does not exist or is invalid
       Logger.log "Message with ID '%s' does not exist or is invalid", messageId
+
+      # Set the status
+      props.status = ProcessingStatus.NOT_FOUND
+
       user = @getEmail()
       MailApp.sendEmail user, "#{@getName()} - a scheduled message could not be found.", """The following message, scheduled for #{new Date props.when} could not be found: https://mail.google.com/mail?account_id=#{encodeURIComponent user}&message_id=#{messageId}&view=conv&extsrc=atom"""
 
@@ -215,13 +226,22 @@ class MailButler
           # move it to inbox only if not in inbox already and moving is enabled
           GmailApp.moveThreadToInbox thread ? message.getThread()  if props.how.inbox and not thread.isInInbox()
 
+          # Set the status
+          props.status = ProcessingStatus.OK
+
         else
           # There was an answer on this thread
           Logger.log "The message has been answered to already..."
 
+          # Set the status
+          props.status = ProcessingStatus.ANSWERED
+
       else
         # does not have the outbox label
         Logger.log "Label '%s' has been removed from the mail, not processing it", @LABEL_OUTBOX
+
+        # Set the status
+        props.status = ProcessingStatus.OUTBOX_LABEL_REMOVED
     
       Logger.log "Finished processing message with ID '%s'", messageId
 
