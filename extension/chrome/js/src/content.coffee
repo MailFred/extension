@@ -36,6 +36,7 @@
 		@GM_SEL:
 			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
 			THREAD_BUTTON_BAR: 	'.iH > div'
+			INSERT_AFTER: 		'.G-Ni.J-J5-Ji:visible:nth-child(3)'
 
 		# URL
 		url: null
@@ -202,8 +203,11 @@
 			log 'Injecting buttons in thread view'
 			threads = ($ M.GM_SEL.THREAD_BUTTON_BAR).filter (index) ->
 				($ ".#{M.CLS_THREAD}", @).length is 0
-			
-			threads.append @composeButton M.TYPE_THREAD if threads.length > 0
+			if threads.length > 0
+				after = threads.find M.GM_SEL.INSERT_AFTER
+				bar = @composeButton()
+				bar.addClass 'T-I'
+				if after.length > 0 then after.after bar else threads.append bar
 			return
 
 		actionOps: [
