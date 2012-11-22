@@ -52,13 +52,22 @@
 		constructor: ->
 			window.addEventListener "message", @messageListener, false
 			
+			@initSettings()
+
+			# Get the service URL
+			chrome.extension.sendMessage {action: 'url'}, (url) =>
+				@url = url
+				@checkVersion()
+				return
+
+		initSettings: ->
 			# Get the settings
 			chrome.storage.local.get null, (items) =>
 				_.each items, (value, key) =>
 					switch key
 						when M.STORE.DEBUG
 							@debug = value
-							log 'MailFred debugging is enabled'
+							log 'MailFred debugging is enabled' if @debug
 						when M.STORE.EMAIL
 							@settingEmail = value
 					return
@@ -70,15 +79,27 @@
 				return
 
 			# Get the last used presets
-			M.getLastUsed (lastUsed) =>
-				@lastUsed = lastUsed
+			chrome.storage.sync.get M.STORE.LASTUSED, (items) =>
+				@lastUsed = items[M.STORE.LASTUSED] ? []
 				return
 
-			# Get the service URL
-			chrome.extension.sendMessage {action: 'url'}, (url) =>
-				@url = url
-				@checkVersion()
+			# Listen to changes
+			chrome.storage.onChanged.addListener (changes, namespace) =>
+				switch namespace
+					when 'sync'
+						if M.STORE.LASTUSED of changes
+							@lastUsed = changes[M.STORE.LASTUSED].newValue
+						if M.STORE.BOX_SETTING of changes
+							@settingProps = changes[M.STORE.BOX_SETTING].newValue
+					when 'local'
+						if M.STORE.DEBUG of changes
+							@debug = changes[M.STORE.DEBUG].newValue
+							log 'MailFred debugging is enabled' if @debug
+						if M.STORE.EMAIL of changes
+							@settingEmail = changes[M.STORE.EMAIL].newValue
 				return
+
+			return
 
 		@storeLastVersion: (version) ->
 			store = {}
@@ -227,7 +248,7 @@
 				(__msg x)
 			]
 
-		composeButton: (type) =>
+		composeButton: =>
 
 			props =
 				noanswer: 	false
@@ -269,11 +290,12 @@
 				errorSection.toggle !valid
 				return
 
-			propStoreFn = (checkbox, propName) ->
-				checkbox.addOnChange (e, checked) ->
+			propStoreFn = (checkbox, propName) =>
+				checkbox.addOnChange (e, checked) =>
 					props[propName] = checked
 					toStore = {}
 					toStore[M.STORE.BOX_SETTING] = props
+					@settingProps = props
 					chrome.storage.sync.set toStore, ->
 						log 'Storing properties finished'
 						return
@@ -371,7 +393,7 @@
 					button = lastUsedSection.append new GMailUI.Button label, title
 					timeFn = @generateTimeFn key
 					button.on 'click', (e) =>
-						M.storeLastUsed key, time
+						@storeLastUsed key, time
 						wen = timeFn time
 						log "schedule: #{time}, #{key}: #{wen}"
 						schedule wen
@@ -395,7 +417,7 @@
 						item = new GMailUI.PopupMenuItem presetItem, label, title, '', false
 						onChange = (e, checked) =>
 							if checked
-								M.storeLastUsed key, time
+								@storeLastUsed key, time
 								wen = timeFn time
 								log "schedule: #{time}, #{key}: #{wen}"
 								schedule wen
@@ -414,26 +436,19 @@
 
 			bar.getElement()
 
-		@storeLastUsed: (key, time) ->
-			@getLastUsed (lastUsed) =>
-				entry =
-					key: key
-					time: time
+		storeLastUsed: (key, time) =>
+			entry =
+				key: key
+				time: time
 
-				lastUsed = _.reject lastUsed, (item) -> _.isEqual item, entry
+			lastUsed = _.reject @lastUsed, (item) -> _.isEqual item, entry
 
-				lastUsed.unshift entry
-				store = {}
-				lastUsed = store[@STORE.LASTUSED] = (_.first lastUsed, 3)
-				chrome.storage.sync.set store, ->
-					log 'Last used items saved', lastUsed
-					return
-				return
-			return
+			lastUsed.unshift entry
+			store = {}
+			store[M.STORE.LASTUSED] = (_.first lastUsed, 3)
 
-		@getLastUsed: (resp) ->
-			chrome.storage.sync.get @STORE.LASTUSED, (items) =>
-				resp (items[@STORE.LASTUSED] ? [])
+			chrome.storage.sync.set store, ->
+				log 'Last used items saved', store
 				return
 			return
 
