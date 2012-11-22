@@ -30,7 +30,13 @@ User <?= user ?> has <?= emails.getSize() ?> mails
           <?} } ?>
         </ul>
       </td>
-      <td><? if(email.processed) { ?> <?= new Date(email.processed).toUTCString() ?> <? } else { ?> <?= email.processed ?> <? } ?></td>
+      <td>
+        <? if(email.processed && !isNaN(email.processed)) { ?>
+            <?= new Date(email.processed).toUTCString() ?>
+        <?  } else { ?>
+            <?= email.processed ?>
+        <?  } ?>
+      </td>
       <td><a href="<?= baseUrl ?>?action=remove&amp;id=<?= email.getId() ?>" target="_blank">delete</a></td>
     </tr>
   <? } ?>

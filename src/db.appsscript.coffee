@@ -42,7 +42,9 @@ class Db
 	@cancelMails: (user, messageId) ->
 		result = @getMails user, null, null, false, messageId
 		modified = while result.hasNext()
-			mail.next().processed = 'canceled'
+			mail = result.next()
+			mail.processed = 'canceled'
+			mail
 
 		if modified.length > 0
 			@DB.saveBatch modified, false
