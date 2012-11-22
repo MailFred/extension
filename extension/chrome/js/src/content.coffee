@@ -104,11 +104,12 @@
 				dataType: 		'json'
 				data:			action: 'status'
 				success:		(data, textStatus, jqXHR) =>
-									log '...yes'
+									log '...user is still authorised'
 									resp true
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
 									isError = M.isAuthorisationErrorPage jqXHR.responseText
+									log '...user is not authorised' if isError
 									resp !isError
 									return
 
