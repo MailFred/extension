@@ -185,6 +185,9 @@ class MailButler
         # remove the outbox label from the message
         @removeLabel @LABEL_OUTBOX, thread
 
+        # add/readd the base label
+        @addLabel @LABEL_BASE, thread
+
         # By default we assume there was no answer - this is also correct if the user doesn't care about answers
         hasAnswer = false
 
