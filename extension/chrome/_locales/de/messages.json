@@ -12,19 +12,19 @@
     }
   },
   "authorizeDialogButtonOk": {
-    "message": "Autorisierung jetzt vornehmen"
+    "message": "Erlaubnis jetzt erteilen"
   },
   "authorizeDialogButtonOkTooltip": {
     "message": "Ein neues Fenster wird sich öffnen"
   },
   "authorizeDialogImageAlt": {
-    "message": "Stilbild des Authorisationsdialogs"
+    "message": "Stilbild des Autorisierungsdialogs"
   },
   "authorizeDialogImageHint": {
     "message": "So in etwa wird das neue Fenster <br> mit der Abfrage um Erlaubnis aussehen."
   },
   "authorizeDialogText": {
-    "message": "Um $name$ benutzen zu können, müssen Sie zuerst die Erlaubnis erteilen. Ein Dialog von Google Apps Scripts wird sich öffnen, welcher Sie um Erlaubnis zum Zugriff auf Ihre Daten bittet. Sie können diese Erlaubnis jederzeit widerrufen.",
+    "message": "$name$ basiert auf der Google Apps Script Technologie. Deine Daten bleiben also vollständig bei Google und sind dadurch extra sicher. Google Apps Script benötigt die Erlaubnis auf Dein Google Mail Konto zugreifen zu dürfen. Diese Erlaubnis kannst Du jederzeit widerrufen.",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -48,15 +48,15 @@
   },
   "errorNoActionSpecified": {
     "description": "This is displayed if the user did not select an action (mark unread, star, etc.), yet",
-    "message": "Würden Sie mir mitteilen, was ich mit ihrer Korrespondenz tun soll?"
+    "message": "Was soll MailFred mit dieser Konversation machen?"
   },
   "errorNoTimeSpecified": {
     "description": "This is displayed if the user did not select a time yet, when the actions shall be carried out",
-    "message": "Wann soll ich Ihre Aufträge ausführen?"
+    "message": "Wann soll MailFred deine Aufträge ausführen?"
   },
   "errorNotWithinAConversation": {
     "description": "This error is shown if someone tries to use our extension when not being in a conversation view",
-    "message": "Sie müssen sich in der Konversationsansicht befinden um diese Funktion zu verwenden!"
+    "message": "Du musst dich in der Konversationsansicht befinden, um diese Funktion zu verwenden."
   },
   "extName": {
     "description": "Extension name",
@@ -67,7 +67,6 @@
     "message": "Master Your Inbox"
   },
   "mailActionMarkUnread": {
-    "description": "might be prefixed with 'mailActionAndPrefix'",
     "message": "Als ungelesen markiert werden."
   },
   "mailActionMarkUnreadTitle": {
@@ -75,15 +74,13 @@
     "message": "Markiere die momentane Konversation als ungelesen."
   },
   "mailActionMoveToInbox": {
-    "description": "might be prefixed with 'mailActionAndPrefix'",
     "message": "In den Posteingang verschoben werden."
   },
   "mailActionMoveToInboxTitle": {
     "description": "The title attribute of the move to inbox option",
-    "message": "Verschiebe die momentante Konversation in den Posteingang."
+    "message": "Verschiebe die momentane Konversation in den Posteingang."
   },
   "mailActionStar": {
-    "description": "might be prefixed with 'mailActionAndPrefix'",
     "message": "Mit einer Markierung versehen werden."
   },
   "mailActionStarTitle": {
@@ -96,7 +93,7 @@
   },
   "menuAdditionalActionsArchiveTitle": {
     "description": "The title attribute of the archive option",
-    "message": "Archiviere diese Konversation nach der Terminierung. Dies entfernt die Konversation aus dem Posteingang."
+    "message": "Archiviere diese Konversation nach der Planung. Dies entfernt die Konversation aus dem Posteingang."
   },
   "menuConstraintsNoAnswer": {
     "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
@@ -208,7 +205,7 @@
     "placeholders": {
       "error": {
         "content": "$1",
-        "example": "Konte die URL nicht finden"
+        "example": "Ich konnte die URL nicht finden"
       }
     }
   },
@@ -230,7 +227,7 @@
   },
   "notificationScheduleErrorStoringFailed": {
     "description": "Error if the mail could not be persisted",
-    "message": "Es tut uns sehr leid aber ihre Anfrage konnte nicht erfolgreich bearbeitet werden. Bitte versuchen Sie es noch einmal oder wenden Sie sich an den Support."
+    "message": "Es tut uns sehr leid aber ihre Anfrage konnte nicht erfolgreich bearbeitet werden. Bitte versuchen Sie es noch einmal oder wenden Sie sich an support@mailfred.de."
   },
   "notificationScheduleErrorTitle": {
     "description": "The notification title when an error happened",
@@ -265,7 +262,7 @@
   },
   "optionsLinkUninstall": {
     "description": "The uninstall link in the options dialog",
-    "message": "GMail-Autorisierung widerrufen"
+    "message": "Google Mail-Autorisierung widerrufen"
   },
   "optionsLinkUninstallConfirm": {
     "message": "Nachdem Sie die Autorisierung widerrufen haben, können Sie MailFred nicht weiter verwenden.\n\nBitte beachten Sie, dass bereits geplante E-Mails ebenfalls nicht mehr bearbeitet werden.\n\nUm die Deinstallation zu vervollständigen, können Sie die Browser-Extension einfach entfernen."
@@ -299,7 +296,7 @@
     "message": "Das MailFred-Menü oben rechts <br> in der Konversationsansicht."
   },
   "welcomeDialogText": {
-    "message": "Vielen Dank, dass Sie $name$ installiert haben.<br>$name$ kann durch das Menü mit dem Fliege-Icon oben rechts in der Konversationsansicht aufgerufen werden.<br><br>Um $name$ verwenden zu können benötigen wir Zugriff auf Ihr GMail-Konto.<br>Klicken Sie bitte auf 'Weiter' um die notwendigen Freigaben jetzt zu erteilen und die Installation abzuschließen.",
+    "message": "Vielen Dank, dass Du $name$ installiert hast. $name$ kannst Du über den Button mit dem “Fliege”-Symbol aufrufen. Dazu musst Du in der Konversationsansicht sein.<br><br>Um $name$ verwenden zu können musst Du dem Plugin einmalig Zugriff auf dein GMail-Konto geben. Klicke auf “Weiter”, um die zwei Freigabefenster aufzurufen und die Installation abzuschließen. Viel Spaß mit $name$.",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -309,7 +306,7 @@
   },
   "welcomeDialogTitle": {
     "description": "The title of the welcome dialog",
-    "message": "$name$ wurde erfolgreich installiert!",
+    "message": "Die $name$-Erweiterung wurde erfolgreich installiert",
     "placeholders": {
       "name": {
         "content": "$1",
