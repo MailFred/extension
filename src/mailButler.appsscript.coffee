@@ -51,8 +51,8 @@ class i18n
     loc = @messages.en if !loc
     str = loc[key]
     if map and str
-      for k,v in map
-        rgx = new RegExp "\\$#{key}\\$", 'g'
+      for k,v of map
+        rgx = new RegExp "\\$#{k}\\$", 'g'
         str = str.replace rgx, v
     str
 
