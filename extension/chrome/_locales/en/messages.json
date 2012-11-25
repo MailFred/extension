@@ -15,16 +15,16 @@
     "message": "Grant permission now"
   },
   "authorizeDialogButtonOkTooltip": {
-    "message": "A new window will be opened"
+    "message": "A new window will open"
   },
   "authorizeDialogImageAlt": {
     "message": "Icon of the authorization dialog"
   },
   "authorizeDialogImageHint": {
-    "message": "That's how the new dialog <br> with the request for permission <br> will look like"
+    "message": "That's what the new dialog <br> with the request for permission <br> will look like."
   },
   "authorizeDialogText": {
-    "message": "$name has been built using Google Apps Script technology. This means that your data remains at Google thus keeping your data extra safe. Google Apps Script needs permission to access your Google Mail account. You can always choose to revoke this access.",
+    "message": "$name$ has been built using Google Apps Script technology. This means that your data remains at Google, thus keeping your data extra secure. Google Apps Script needs permission to access your Google Mail account. You can revoke this access at any time.",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -48,11 +48,11 @@
   },
   "errorNoActionSpecified": {
     "description": "This is displayed if the user did not select an action (mark unread, star, etc.), yet",
-    "message": "What shall MailFred do with this conversation?"
+    "message": "What should MailFred do with this conversation?"
   },
   "errorNoTimeSpecified": {
     "description": "This is displayed if the user did not select a time yet, when the actions shall be carried out",
-    "message": "When shall MailFred carry out the action?"
+    "message": "When should MailFred execute the action(s)?"
   },
   "errorNotWithinAConversation": {
     "description": "This error is shown if someone tries to use our extension when not being in a conversation view",
@@ -67,21 +67,21 @@
     "message": "Master Your Inbox"
   },
   "mailActionMarkUnread": {
-    "message": "Mark as unread."
+    "message": "Marked as unread."
   },
   "mailActionMarkUnreadTitle": {
     "description": "The title attribute of the mark unread option",
     "message": "Mark the current conversation as unread."
   },
   "mailActionMoveToInbox": {
-    "message": "Move to the inbox."
+    "message": "Moved to the inbox."
   },
   "mailActionMoveToInboxTitle": {
     "description": "The title attribute of the move to inbox option",
     "message": "Move the current conversation to the inbox."
   },
   "mailActionStar": {
-    "message": "Star it."
+    "message": "Starred."
   },
   "mailActionStarTitle": {
     "description": "The title attribute of the starring option",
@@ -89,15 +89,15 @@
   },
   "menuAdditionalActionsArchive": {
     "description": "The option to archive the scheduled conversation after scheduling",
-    "message": "Archive this conversation when scheduling."
+    "message": "Archive this conversation."
   },
   "menuAdditionalActionsArchiveTitle": {
     "description": "The title attribute of the archive option",
-    "message": "Archive this conversation right after scheduling, thus removing it from your inbox"
+    "message": "Archive this conversation right after scheduling, thus removing it from your inbox."
   },
   "menuConstraintsNoAnswer": {
     "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
-    "message": "Only if no one answered."
+    "message": "Only if there's no activity."
   },
   "menuConstraintsNoAnswerTitle": {
     "description": "The title attribute of the noanswer constraint option",
@@ -105,7 +105,7 @@
   },
   "menuMailActions": {
     "description": "The headline for the menu of selecting what action shall be done to the scheduled mail (mark unread, move to inbox, etc.)",
-    "message": "This conversation shall be:"
+    "message": "This conversation should be:"
   },
   "menuTime": {
     "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
@@ -128,7 +128,7 @@
     "message": "In 2 days"
   },
   "menuTimePresetCloseFutureItemDays2Selected": {
-    "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
+    "description": "The/ text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
     "message": "The day after tomorrow"
   },
   "menuTimePresetCloseFutureItemDays7": {
@@ -141,19 +141,19 @@
   },
   "menuTimePresetCloseFutureItemHours2": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 2 hours"
   },
   "menuTimePresetCloseFutureItemHours2Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 2 hours"
+    "message": "In two hours"
   },
   "menuTimePresetCloseFutureItemHours4": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 4 hours"
   },
   "menuTimePresetCloseFutureItemHours4Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 4 hours"
+    "message": "In four hours"
   },
   "menuTimePresetCloseFutureItemMinutes1": {
     "description": "One of the options in the predefined time presets",
@@ -161,15 +161,15 @@
   },
   "menuTimePresetCloseFutureItemMinutes1Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In about a minute"
+    "message": "In a minute"
   },
   "menuTimePresetCloseFutureItemMinutes5": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 5 minutes"
   },
   "menuTimePresetCloseFutureItemMinutes5Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 5 minutes"
+    "message": "In five minutes"
   },
   "menuTimePresetCloseFutureItemMonths1": {
     "description": "One of the options in the predefined time presets",
@@ -197,7 +197,7 @@
   },
   "menuTimePresetSpecifiedDate": {
     "description": "This is the menu item for selecting a time from the calendar",
-    "message": "On a specified date"
+    "message": "On a specific date"
   },
   "notificationScheduleError": {
     "description": "This gets displayed within a notification if anything within the scheduling process went wrong",
@@ -211,19 +211,19 @@
   },
   "notificationScheduleErrorInvalidScheduleTime": {
     "description": "Error message in case the given time could not be parsed",
-    "message": "The time or format of the schedule given is invalid"
+    "message": "The time or format of the schedule given is invalid."
   },
   "notificationScheduleErrorMessageIdInvalid": {
     "description": "The error message when a given message ID was invalid",
-    "message": "The conversation you tried scheduling the actions for could not be found - did you sign up with a different GMail address maybe?"
+    "message": "The conversation you tried scheduling the actions for could not be found - did you sign up with a different GMail address?"
   },
   "notificationScheduleErrorNoActionSpecified": {
     "description": "Error message if there was no action given",
-    "message": "For a successful scheduling an action is needed"
+    "message": "For a successful scheduling, an action is needed."
   },
   "notificationScheduleErrorNoScheduleTime": {
     "description": "Error message when there was no schedule time given",
-    "message": "For a successful scheduling a schedule time is needed"
+    "message": "For a successful scheduling, a time is needed."
   },
   "notificationScheduleErrorStoringFailed": {
     "description": "Error if the mail could not be persisted",
@@ -234,7 +234,7 @@
     "message": "Something went wrong!"
   },
   "notificationScheduleErrorTryLater": {
-    "message": "Too many emails scheduled within a very short time - please try again in a few minutes!"
+    "message": "Too many emails scheduled within a very short time - please try again in a few minutes."
   },
   "notificationScheduleSuccess": {
     "description": "The notification text when a mail has been scheduled successfully",
@@ -265,7 +265,7 @@
     "message": "Revoke Google Mail authorization"
   },
   "optionsLinkUninstallConfirm": {
-    "message": "After revoking the authorization, MailFred will stop working.\n\nPlease note that already scheduled emails won't be processed any more either.\n\nTo complete the uninstall process, you can simply remove the browser extension."
+    "message": "After revoking the authorization, MailFred will stop working.\n\nPlease note that already scheduled emails won't be processed any more either.\n\nTo complete the uninstallment process, you can simply remove the browser extension."
   },
   "optionsPageTitle": {
     "description": "The title of the options page",
@@ -275,7 +275,7 @@
     "message": "Dismiss"
   },
   "welcomeDialogButtonCancelTooltip": {
-    "message": "If you don't finish the setup,<br>you can't use $name$",
+    "message": "If you don't complete the setup,<br>you can't use $name$",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -290,13 +290,13 @@
     "message": "Perform authorization now"
   },
   "welcomeDialogImageAlt": {
-    "message": "Screenshot of the toolbar with the MailFred button"
+    "message": "Screenshot of the toolbar with the MailFred button."
   },
   "welcomeDialogImageHint": {
     "message": "The MailFred button <br> on the top right in conversation view."
   },
   "welcomeDialogText": {
-    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.<br><br>In order for $name$ to work you have to grant access to your GMail account once. Click “Continue” to access the two authorization windows. Enjoy MailFred.",
+    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.<br><br>In order for $name$ to work you have to grant access to your GMail account. Click "�Continue" to access the two authorization windows. Enjoy MailFred.",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -306,7 +306,7 @@
   },
   "welcomeDialogTitle": {
     "description": "The title of the welcome dialog",
-    "message": "The $name$ Extension was installed successfully",
+    "message": "The $name$ extension was installed successfully",
     "placeholders": {
       "name": {
         "content": "$1",

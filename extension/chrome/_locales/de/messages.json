@@ -141,19 +141,19 @@
   },
   "menuTimePresetCloseFutureItemHours2": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 2 Stunden"
   },
   "menuTimePresetCloseFutureItemHours2Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 2 Stunden"
+    "message": "In zwei Stunden"
   },
   "menuTimePresetCloseFutureItemHours4": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 4 Stunden"
   },
   "menuTimePresetCloseFutureItemHours4Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 4 Stunden"
+    "message": "In vier Stunden"
   },
   "menuTimePresetCloseFutureItemMinutes1": {
     "description": "One of the options in the predefined time presets",
@@ -161,15 +161,15 @@
   },
   "menuTimePresetCloseFutureItemMinutes1Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In etwa einer Minute"
+    "message": "In einer Minute"
   },
   "menuTimePresetCloseFutureItemMinutes5": {
     "description": "One of the options in the predefined time presets",
-    "message": ""
+    "message": "In 5 Minuten"
   },
   "menuTimePresetCloseFutureItemMinutes5Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In 5 Minuten"
+    "message": "In fünf Minuten"
   },
   "menuTimePresetCloseFutureItemMonths1": {
     "description": "One of the options in the predefined time presets",
@@ -315,5 +315,4 @@
     }
   }
 }
-
         
