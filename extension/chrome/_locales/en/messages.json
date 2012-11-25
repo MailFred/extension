@@ -141,19 +141,19 @@
   },
   "menuTimePresetCloseFutureItemHours2": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 2 hours"
+    "message": ""
   },
   "menuTimePresetCloseFutureItemHours2Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In two hours"
+    "message": "In 2 hours"
   },
   "menuTimePresetCloseFutureItemHours4": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 4 hours"
+    "message": ""
   },
   "menuTimePresetCloseFutureItemHours4Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In four hours"
+    "message": "In 4 hours"
   },
   "menuTimePresetCloseFutureItemMinutes1": {
     "description": "One of the options in the predefined time presets",
@@ -165,19 +165,19 @@
   },
   "menuTimePresetCloseFutureItemMinutes5": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 5 minutes"
+    "message": ""
   },
   "menuTimePresetCloseFutureItemMinutes5Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In five minutes"
+    "message": "In 5 minutes"
   },
   "menuTimePresetCloseFutureItemMonths1": {
     "description": "One of the options in the predefined time presets",
-    "message": "In 1 month"
+    "message": "Same time next month"
   },
   "menuTimePresetCloseFutureItemMonths1Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "Same time next month"
+    "message": "Next month"
   },
   "menuTimePresetCloseFutureItemTomorrow14": {
     "description": "One of the options in the predefined time presets",
@@ -315,3 +315,5 @@
     }
   }
 }
+
+        
