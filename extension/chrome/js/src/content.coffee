@@ -354,8 +354,7 @@
 			initPicker = false
 			pickerMenu.onShow = =>
 				unless initPicker
-					locale = window.navigator.language
-					$.datepicker.setDefaults $.datepicker.regional[ if locale isnt 'en' then locale else '' ]
+					$.datepicker.setDefaults $.datepicker.regional[ __msg 'calendarLanguage' ]
 					pickerDiv.datepicker
 									minDate: '+1d'
 									maxDate: '+1y'

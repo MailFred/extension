@@ -42,6 +42,9 @@
       }
     }
   },
+  "calendarLanguage": {
+    "message": "de"
+  },
   "dateFormat": {
     "description": "The date format for the calendar",
     "message": "dd.mm.yy"
@@ -315,4 +318,3 @@
     }
   }
 }
-        

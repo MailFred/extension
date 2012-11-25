@@ -46,6 +46,9 @@
     "description": "The date format for the calendar",
     "message": "mm/dd/yy"
   },
+    "calendarLanguage": {
+      "message": ""
+    },
   "errorNoActionSpecified": {
     "description": "This is displayed if the user did not select an action (mark unread, star, etc.), yet",
     "message": "What should MailFred do with this conversation?"
@@ -316,3 +319,4 @@
   }
 }
                 
+        
