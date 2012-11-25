@@ -23,6 +23,9 @@
   "authorizeDialogImageHint": {
     "message": "That's what the new dialog <br> with the request for permission <br> will look like."
   },
+  "authorizeDialogImageLanguage": {
+    "message": "en"
+  },
   "authorizeDialogText": {
     "message": "$name$ has been built using Google Apps Script technology. This means that your data remains at Google, thus keeping your data extra secure. Google Apps Script needs permission to access your Google Mail account. You can revoke this access at any time.",
     "placeholders": {
@@ -42,13 +45,13 @@
       }
     }
   },
+  "calendarLanguage": {
+    "message": ""
+  },
   "dateFormat": {
     "description": "The date format for the calendar",
     "message": "mm/dd/yy"
   },
-    "calendarLanguage": {
-      "message": ""
-    },
   "errorNoActionSpecified": {
     "description": "This is displayed if the user did not select an action (mark unread, star, etc.), yet",
     "message": "What should MailFred do with this conversation?"
@@ -318,5 +321,3 @@
     }
   }
 }
-                
-        

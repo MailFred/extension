@@ -116,7 +116,7 @@
 			return
 
 		@isAuthorisationErrorPage: (contents) ->
-			/require.*?authorization/i.test contents
+			/http?:\/\/www.google.com\/accounts\/OAuthAuthorizeToken/i.test contents
 
 		checkAuthorised: (resp) ->
 			url = @getServiceURL()
@@ -602,12 +602,13 @@
 
 		gettingStartedDialogContent: ->
 			extName = __msg 'extName'
+			img = chrome.extension.getURL "images/#{__msg 'authorizeDialogImageLanguage'}/clickToAuthorize.png"
 			"""
 			<div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
 				#{__msg 'authorizeDialogText', extName}
 			</div>
 			<div>
-				<img src="#{chrome.extension.getURL 'images/clickToAuthorize.png'}" data-tooltip="#{__msg 'authorizeDialogImageHint'}" alt="#{__msg 'authorizeDialogImageAlt'}">
+				<img src="#{img}" data-tooltip="#{__msg 'authorizeDialogImageHint'}" alt="#{__msg 'authorizeDialogImageAlt'}">
 			</div>
 			"""
 
