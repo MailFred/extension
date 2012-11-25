@@ -118,7 +118,7 @@
 			return
 
 		@isAuthorisationErrorPage: (contents) ->
-			/http?:\/\/www.google.com\/accounts\/OAuthAuthorizeToken/i.test contents
+			/https?:\/\/www\.google\.com\/accounts\/OAuthAuthorizeToken/i.test contents
 
 		checkAuthorised: (resp) ->
 			url = @getServiceURL()
