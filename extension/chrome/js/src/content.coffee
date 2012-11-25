@@ -1,7 +1,9 @@
 (($, window) ->
 
 	log = (args...) ->
-		console.log.apply console, args if console?.log and mb?.debug is true
+		if console?.log and mb?.debug is true
+			args.unshift "[#{M.CLS}]"
+			console.log.apply console, args
 		return
 
 	#__msg = (args...) ->
