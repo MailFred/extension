@@ -67,21 +67,21 @@
     "message": "Master Your Inbox"
   },
   "mailActionMarkUnread": {
-    "message": "Marked as unread."
+    "message": "Marked as unread"
   },
   "mailActionMarkUnreadTitle": {
     "description": "The title attribute of the mark unread option",
     "message": "Mark the current conversation as unread."
   },
   "mailActionMoveToInbox": {
-    "message": "Moved to the inbox."
+    "message": "Moved to the inbox"
   },
   "mailActionMoveToInboxTitle": {
     "description": "The title attribute of the move to inbox option",
     "message": "Move the current conversation to the inbox."
   },
   "mailActionStar": {
-    "message": "Starred."
+    "message": "Starred"
   },
   "mailActionStarTitle": {
     "description": "The title attribute of the starring option",
@@ -89,7 +89,7 @@
   },
   "menuAdditionalActionsArchive": {
     "description": "The option to archive the scheduled conversation after scheduling",
-    "message": "Archive this conversation."
+    "message": "Archive this conversation"
   },
   "menuAdditionalActionsArchiveTitle": {
     "description": "The title attribute of the archive option",
@@ -97,7 +97,7 @@
   },
   "menuConstraintsNoAnswer": {
     "description": "The option to constraint any scheduled action to only happen when there was no activity on the conversation",
-    "message": "Only if there's no activity."
+    "message": "Only if there's no activity"
   },
   "menuConstraintsNoAnswerTitle": {
     "description": "The title attribute of the noanswer constraint option",
@@ -109,7 +109,7 @@
   },
   "menuTime": {
     "description": "The headline for the menu of selecting when the action shall be made (1 minute, next week, etc.)",
-    "message": "At the given time:"
+    "message": "Choose when to schedule:"
   },
   "menuTimePresetCloseFuture": {
     "description": "This is the menu item for selecting time that opens a submenu with predefined times (next week, 2 hours, etc.)",
@@ -296,7 +296,7 @@
     "message": "The MailFred button <br> on the top right in conversation view."
   },
   "welcomeDialogText": {
-    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.<br><br>In order for $name$ to work you have to grant access to your GMail account. Click "œContinue" to access the two authorization windows. Enjoy MailFred.",
+    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.<br><br>In order for $name$ to work you have to grant access to your GMail account. Click 'Continue' to access the two authorization windows. Enjoy MailFred.",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -315,5 +315,4 @@
     }
   }
 }
-
-        
+                
