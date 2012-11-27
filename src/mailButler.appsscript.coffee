@@ -380,32 +380,31 @@ doGet = (request) ->
 }`
 
 _process = (e) ->
-  if MailButler.isEnabled()
-    # Get a lock for the current user
-    lock = LockService.getPrivateLock()
-    if lock.tryLock 10000
-      try
-        # wait 10 seconds at most
-        Logger.log 'We have the lock...'
-        
-        # Get the time this scheduled execution started
-        d = new Date()
-        if e
-          d.setUTCDate e["day-of-month"]
-          d.setUTCFullYear e.year
-          d.setUTCMonth (e.month - 1)
-          d.setUTCHours e.hour
-          d.setUTCMinutes e.minute
-          d.setUTCSeconds e.second
+  # Get a lock for the current user
+  lock = LockService.getPrivateLock()
+  if lock.tryLock 10000
+    # wait 10 seconds at most
+    Logger.log 'We have the lock...'
+    try
+      if MailButler.isEnabled()
+            # Get the time this scheduled execution started
+            d = new Date()
+            if e
+              d.setUTCDate e["day-of-month"]
+              d.setUTCFullYear e.year
+              d.setUTCMonth (e.month - 1)
+              d.setUTCHours e.hour
+              d.setUTCMinutes e.minute
+              d.setUTCSeconds e.second
 
-        MailButler.processButlerMails d
-      finally
-        # release our lock
-        lock.releaseLock()
-        Logger.log '...lock released'
-  else if MailButler.isOutdated()
-    # Automatic uninstall
-    MailButler.uninstall true
+            MailButler.processButlerMails d
+      else if MailButler.isOutdated()
+        # Automatic uninstall
+        MailButler.uninstall true
+    finally
+      # release our lock
+      lock.releaseLock()
+      Logger.log '...lock released'
   return
 
 #`function onInstall() {
