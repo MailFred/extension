@@ -119,17 +119,11 @@ class MailButler
       Logger.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
 
-    # Get a lock for the current user
-    lock = LockService.getPrivateLock()
-    if lock.tryLock 10000
-      try
-        Logger.log 'Setting version'
-        @DB.setCurrentVersion @getEmail(), @VERSION
-        Logger.log 'Setting last used date'
-        @DB.setLastUsed @getEmail()
-      finally
-        # Always release lock
-        lock.releaseLock()
+    email = @getEmail()
+    Logger.log 'Setting version'
+    @DB.setCurrentVersion email, @VERSION
+    Logger.log 'Setting last used date'
+    @DB.setLastUsed email
     return
 
   @getEmail: ->
