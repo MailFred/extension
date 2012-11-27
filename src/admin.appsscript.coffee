@@ -29,7 +29,7 @@ doGet = (request) ->
 			t = HtmlService.createTemplateFromFile 'admin_mailtable'
 			t.baseUrl = url
 			t.user = u
-			t.emails = a.getMails u, null, null
+			t.emails = a.getMails u
 			t.evaluate()
 		when Admin.ACTIONS.REMOVE
 			id = request.parameter.id
