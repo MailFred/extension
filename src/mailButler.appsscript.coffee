@@ -59,6 +59,7 @@ class i18n
 class MailButler
 
   @VERSION:             1.137
+  @SUPPORT_EMAIL:       'support@mailfred.de'
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
   @FREQUENCY_MINUTES:   1
@@ -401,6 +402,8 @@ _process = (e) ->
       else if MailButler.isOutdated()
         # Automatic uninstall
         MailButler.uninstall true
+    catch e
+      MailApp.sendEmail MailButler.SUPPORT_EMAIL, "#{MailButler.getName()} - Exception", Utilities.jsonStringify e
     finally
       # release our lock
       lock.releaseLock()
