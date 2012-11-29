@@ -62,7 +62,7 @@ class MailButler
   @SUPPORT_EMAIL:       'support@mailfred.de'
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
-  @FREQUENCY_MINUTES:   1
+  @FREQUENCY_MINUTES:   2
   @DB:                  MailButlerDBLibrary.Db
 
   prefix: null
