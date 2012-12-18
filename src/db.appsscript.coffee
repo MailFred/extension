@@ -88,33 +88,23 @@ class Db
 		(new Date()).getTime()
 
 	@getOrCreateUser: (user) ->
-		# Get a lock for the current user
-		lock = LockService.getPrivateLock()
-		if lock.tryLock 10000
-			try
-				entity =
-					type: @TYPE_USER
-					user: user
+		entity =
+			type: @TYPE_USER
+			user: user
 
-				result = @DB.query entity
-				if result.hasNext()
-					entity = result.next()
-				else
-					now = @now()
-
-					entity.active	= true
-					entity.until	= -1
-					entity.signup	= now
-					entity.lastUsed	= now
-					entity.version	= 0
-					
-					entity = @DB.save entity
-				entity
-			finally
-				# Always release lock
-				lock.releaseLock()
+		result = @DB.query entity
+		if result.hasNext()
+			entity = result.next()
 		else
-			throw 'Could not create/access user'
+			now = @now()
+
+			entity.active	= true
+			entity.until	= -1
+			entity.signup	= now
+			entity.lastUsed	= now
+			entity.version	= 0
+			
+			entity = @DB.save entity
 		entity
 
 	@setCurrentVersion: (user, version) ->
