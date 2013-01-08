@@ -47,6 +47,7 @@
   "permissions": [
     "storage",
     "notifications",
+    "http://localhost:3000/rest/*",
     "https://script.google.com/*",
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"

@@ -506,7 +506,7 @@
 			loadingIcon?() unless archive
 
 			data = 
-				action:		'schedule'
+				# action:		'schedule'
 				messageId:	messageId
 				when:		props.when
 				unread:		!!props.unread
@@ -514,6 +514,7 @@
 				noanswer:	!!props.noanswer
 				inbox:		!!props.inbox
 				archive:	archive
+				email:		@currentGmail
 				#callback:	'alert'
 
 			# remove false values to transmit less data over the wire
@@ -527,37 +528,28 @@
 				url: 			@getServiceURL()
 				dataType: 		'json'
 				data:			data
-				success:		(data, textStatus, jqXHR) =>
-									@onScheduleSuccess data
-									return
+				type:			'POST'
+				success:		@onScheduleSuccess
 				error:			(jqXHR, textStatus, errorThrown) =>
 									# log arguments
 									@onScheduleError textStatus, data, errorThrown, jqXHR.responseText
 									return
 				complete:		(jqXHR, textStatus) ->
-									resetIcon?() unless data.archive
+									resetIcon?() unless archive
 									return
 
-			if archive
-				@activateArchiveButton()
-			else
-				_.delay (->
-						resetIcon?()
-						return
-						), 600
+			
+			@activateArchiveButton() if archive
 			return
 
 
-		onScheduleSuccess: (data) =>
-			log 'Scheduling success', data
-			if data.success
-				chrome.extension.sendMessage
-					action: 	'notification'
-					icon: 		"images/tie48x48.png"
-					title: 		__msg 'notificationScheduleSuccessTitle'
-					message: 	__msg 'notificationScheduleSuccess'
-			else
-				@onScheduleError data.error, null, data.error
+		onScheduleSuccess: (data, textStatus, jqXHR) ->
+			log 'Scheduling success'
+			chrome.extension.sendMessage
+				action: 	'notification'
+				icon: 		"images/tie48x48.png"
+				title: 		__msg 'notificationScheduleSuccessTitle'
+				message: 	__msg 'notificationScheduleSuccess'
 			return
 
 		createDialog: (title, okButton, cancelButton) ->

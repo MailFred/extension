@@ -1,5 +1,5 @@
 settings =
-	url: 'https://script.google.com/macros/s/' +'AKfycbxVIKKGvX6hOaN-stzX939cvlBqVzXWz2aA0vUbzvzoYwBvNSX7'+'/exec'
+	url: 'http://localhost:3000/rest/mails'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 	#console.log(sender.tab "from a content script:" + sender.tab.url :
