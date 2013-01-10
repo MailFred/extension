@@ -64,6 +64,7 @@ class MailButler
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
   @FREQUENCY_MINUTES:   5
   @DB:                  MailButlerDBLibrary.Db
+  @SPREADSHEET_KEY:     '0Av57s24WBhpmdHRPVU9UQkx6bXhoMzlXWVJNVzJGT0E'
 
   prefix: null
 
@@ -71,6 +72,17 @@ class MailButler
     return "#{@LABEL_BASE} #{@VERSION}"
 
   constructor: (@prefix) ->
+
+
+  @logException: (message) ->
+    SpreadsheetApp.openById(@SPREADSHEET_KEY).appendRow [
+                                                        new Date().toUTCString()
+                                                        @getName()
+                                                        @getEmail()
+                                                        message?.toString()
+                                                        ]
+    return
+
 
   scheduleJson: (params) ->
     try
@@ -383,31 +395,34 @@ doGet = (request) ->
 _process = (e) ->
   # Get a lock for the current user
   lock = LockService.getPrivateLock()
-  if lock.tryLock 10000
-    # wait 10 seconds at most
-    Logger.log 'We have the lock...'
-    try
-      if MailButler.isEnabled()
-            # Get the time this scheduled execution started
-            d = new Date()
-            if e
-              d.setUTCDate e["day-of-month"]
-              d.setUTCFullYear e.year
-              d.setUTCMonth (e.month - 1)
-              d.setUTCHours e.hour
-              d.setUTCMinutes e.minute
-              d.setUTCSeconds e.second
+  try
+    if lock.tryLock 10000
+      # wait 10 seconds at most
+      Logger.log 'We have the lock...'
+      try
+        if MailButler.isEnabled()
+              # Get the time this scheduled execution started
+              d = new Date()
+              if e
+                d.setUTCDate e["day-of-month"]
+                d.setUTCFullYear e.year
+                d.setUTCMonth (e.month - 1)
+                d.setUTCHours e.hour
+                d.setUTCMinutes e.minute
+                d.setUTCSeconds e.second
 
-            MailButler.processButlerMails d
-      else if MailButler.isOutdated()
-        # Automatic uninstall
-        MailButler.uninstall true
-    catch e
-      MailApp.sendEmail MailButler.SUPPORT_EMAIL, "#{MailButler.getName()} - Exception", Utilities.jsonStringify e
-    finally
-      # release our lock
-      lock.releaseLock()
-      Logger.log '...lock released'
+              MailButler.processButlerMails d
+        else if MailButler.isOutdated()
+          # Automatic uninstall
+          MailButler.uninstall true
+      catch e
+        MailButler.logException e
+      finally
+        # release our lock
+        lock.releaseLock()
+        Logger.log '...lock released'
+  catch e
+    MailButler.logException e
   return
 
 #`function onInstall() {
