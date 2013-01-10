@@ -369,7 +369,7 @@
 														if (date = pickerDiv.datepicker 'getDate')
 															#timeSectionElements.manual.setSelected true, true
 															log 'schedule', date
-															schedule @_specified date.getTime()
+															schedule @_specified date
 														return
 					initPicker = true
 				return
@@ -456,7 +456,8 @@
 		_delta: (offset) ->
 			"delta:#{offset}"
 
-		_specified: (time) ->
+		_specified: (d) ->
+			time = d.getTime() + d.getTimezoneOffset()*60*1000
 			"specified:#{time}"
 
 		generateTimeFn: (unit) ->
@@ -476,7 +477,7 @@
 						tomorrow.setMinutes 0
 						tomorrow.setSeconds 0
 						tomorrow.setMilliseconds 0
-						@_specified tomorrow.getTime()
+						@_specified tomorrow
 				when 'days'
 					(time) => @_delta (_1d * time)
 				when 'months'
@@ -484,7 +485,7 @@
 						now = new Date
 						other = new Date
 						other.setMonth (now.getMonth() + month)
-						@_specified other.getTime()
+						@_specified other
 		
 		getMessageId: ->
 			id = /\/([0-9a-f]{16})/.exec window.location.hash
