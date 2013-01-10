@@ -74,13 +74,18 @@ class MailButler
   constructor: (@prefix) ->
 
 
-  @logException: (message) ->
-    SpreadsheetApp.openById(@SPREADSHEET_KEY).appendRow [
-                                                        new Date().toUTCString()
-                                                        @getName()
-                                                        @getEmail()
-                                                        message?.toString()
-                                                        ]
+  @log: (message, type = 'log') ->
+    spreadsheet = SpreadsheetApp.openById @SPREADSHEET_KEY
+    user = @getEmail()
+    sheet = spreadsheet.getSheetByName user
+    sheet = spreadsheet.insertSheet user unless sheet
+
+    sheet.appendRow [
+                    new Date().toUTCString()
+                    @VERSION
+                    type
+                    message?.toString()
+                    ]
     return
 
 
@@ -129,13 +134,13 @@ class MailButler
 
   @setup: ->
     if ScriptApp.getScriptTriggers().length is 0
-      Logger.log "Installing trigger"
+      MailButler.log "Installing trigger"
       ScriptApp.newTrigger("process").timeBased().everyMinutes(MailButler.FREQUENCY_MINUTES).create()
 
     email = @getEmail()
-    Logger.log 'Setting version'
+    MailButler.log 'Setting version'
     @DB.setCurrentVersion email, @VERSION
-    Logger.log 'Setting last used date'
+    MailButler.log 'Setting last used date'
     @DB.setLastUsed email
     return
 
@@ -144,39 +149,39 @@ class MailButler
 
   @getScheduledMails: ->
     user = @getEmail()
-    Logger.log 'Get scheduled mails for %s', user
+    MailButler.log "Get scheduled mails for #{user}"
     result = @DB.getMails user, null, null, false
     result.next() while result.hasNext()
 
   @processButlerMails: (d) ->
-    Logger.log "Checking for scheduled mails on %s", d
+    MailButler.log "Checking for scheduled mails on #{d.toUTCString()}"
 
     user = @getEmail()
     time = d.getTime()
-    Logger.log "With user '%s', version '%s' and time %s", user, @VERSION, time
+    MailButler.log "With user '#{user}', version '#{@VERSION}' and time #{time}"
     result = @DB.getMails user, @VERSION, time, false
 
     if (s = result.getSize()) > 0
       # yep there are some
-      Logger.log "... found %s candidates", s
+      MailButler.log "... found #{s} candidates"
 
       while result.hasNext()
         @processButlerMail result.next(), time
 
     else
       # No scheduled messages available
-      Logger.log "... none found."
+      MailButler.log "... none found."
     return
 
   @processButlerMail: (props, time) ->
-    Logger.log "Process mail with props: %s", props
+    MailButler.log "Process mail with props: #{JSON.stringify(props)}"
 
     messageId = props.messageId
     message = GmailApp.getMessageById messageId if messageId
 
     unless message
       # Message does not exist or is invalid
-      Logger.log "Message with ID '%s' does not exist or is invalid", messageId
+      MailButler.log "Message with ID '#{messageId}' does not exist or is invalid"
 
       # Set the status
       props.status = ProcessingStatus.NOT_FOUND
@@ -199,7 +204,7 @@ class MailButler
 
       if @hasLabel @LABEL_OUTBOX, thread
         # Has the outbox label
-        Logger.log "Start processing message with ID '%s'", messageId
+        MailButler.log "Start processing message with ID '#{messageId}'"
         
         # remove the outbox label from the message
         @removeLabel @LABEL_OUTBOX, thread
@@ -215,7 +220,7 @@ class MailButler
 
           # find the date of the last message
           dateOfLastMessage = thread.getLastMessageDate()
-          Logger.log "Action was scheduled on '%s' and date of last message was %s ", new Date(props.scheduled).toUTCString(), dateOfLastMessage.toUTCString()
+          MailButler.log "Action was scheduled on '#{new Date(props.scheduled).toUTCString()}' and date of last message was #{dateOfLastMessage.toUTCString()} "
           
           # check if that message was sent after or on the scheduling date
           hasAnswer = dateOfLastMessage.getTime() >= props.scheduled
@@ -239,19 +244,19 @@ class MailButler
 
         else
           # There was an answer on this thread
-          Logger.log "The message has been answered to already..."
+          MailButler.log "The message has been answered to already..."
 
           # Set the status
           props.status = ProcessingStatus.ANSWERED
 
       else
         # does not have the outbox label
-        Logger.log "Label '%s' has been removed from the mail, not processing it", @LABEL_OUTBOX
+        MailButler.log "Label '#{@LABEL_OUTBOX}' has been removed from the mail, not processing it"
 
         # Set the status
         props.status = ProcessingStatus.OUTBOX_LABEL_REMOVED
     
-      Logger.log "Finished processing message with ID '%s'", messageId
+      MailButler.log "Finished processing message with ID '#{messageId}'"
 
     # update the scheduled butler mail, because we couldn't find the real message
     props.processed = time
@@ -303,17 +308,17 @@ class MailButler
         messageId = form.msgId ? form.messageId
 
         if not messageId or not (message = GmailApp.getMessageById messageId)
-          Logger.log "Given message ID '%s' is not valid", messageId
+          MailButler.log "Given message ID '#{messageId}' is not valid"
           throw new Error ErrorCodes.INVALID_MESSAGE_ID,
             email:      encodeURIComponent user
             messageId:  messageId
 
         unless form.when
-          Logger.log 'No scheduling time given'
+          MailButler.log 'No scheduling time given'
           throw new Error ErrorCodes.NO_SCHEDULE_TIME
 
         unless (w = MailButler.parseTime form.when, now)
-          Logger.log "Given scheduling time '%s' is not valid", form.when
+          MailButler.log "Given scheduling time '#{form.when}' is not valid"
           throw new Error ErrorCodes.INVALID_SCHEDULE_TIME, {time: form.when}
 
         props =
@@ -331,7 +336,7 @@ class MailButler
           delete props.how[key] if val is false
 
         unless props.how.star or props.how.unread or props.how.inbox
-          Logger.log "No action specified"
+          MailButler.log "No action specified"
           throw new Error ErrorCodes.NO_ACTION
 
 
@@ -398,7 +403,7 @@ _process = (e) ->
   try
     if lock.tryLock 10000
       # wait 10 seconds at most
-      Logger.log 'We have the lock...'
+      MailButler.log 'We have the lock...'
       try
         if MailButler.isEnabled()
               # Get the time this scheduled execution started
@@ -416,13 +421,13 @@ _process = (e) ->
           # Automatic uninstall
           MailButler.uninstall true
       catch e
-        MailButler.logException e
+        MailButler.log e, 'exception'
       finally
         # release our lock
         lock.releaseLock()
-        Logger.log '...lock released'
+        MailButler.log '...lock released'
   catch e
-    MailButler.logException e
+    MailButler.log e, 'exception'
   return
 
 #`function onInstall() {
@@ -457,7 +462,7 @@ _test = ->
 #  return
 
 #getTriggers = ->
-#  Logger.log "triggers: %s", ScriptApp.getScriptTriggers()
+#  Logger.log "triggers: #{}", ScriptApp.getScriptTriggers()
 #  return
 
 `function dump() {
