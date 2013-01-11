@@ -21,7 +21,7 @@
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",
         
-        "js/lib/Eventr.js",
+        "js/lib/eventr/lib/Eventr.js",
         "js/lib/GMailUI.js",
         "js/lib/content.js"
       ],

@@ -61,7 +61,7 @@
             <arg value="options.js"/>
         </exec> 
 
-        <exec executable="uglifyjs2" dir="chrome/js/lib">
+        <exec executable="uglifyjs2" dir="chrome/js/lib/eventr/lib">
             <arg value="Eventr.js"/>
             <arg value="-m"/>
             <arg value="-c"/>
@@ -111,6 +111,8 @@
 
     		<fileset dir="chrome">
     			<include name="js/lib/*.js"/>
+
+                <include name="js/lib/eventr/lib/Eventr.js"/>
 
 				<include name="js/lib/underscore/underscore-min.js"/>
 				<include name="js/lib/jquery/jquery.min.js"/>
