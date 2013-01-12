@@ -58,7 +58,7 @@ class i18n
 
 class MailButler
 
-  @VERSION:             1.140
+  @VERSION:             1.141
   @SUPPORT_EMAIL:       'support@mailfred.de'
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
@@ -158,7 +158,7 @@ class MailButler
 
     user = @getEmail()
     time = d.getTime()
-    MailButler.log "With user '#{user}', version '#{@VERSION}' and time #{time}"
+    #MailButler.log "With user '#{user}', version '#{@VERSION}' and time #{time}"
     result = @DB.getMails user, @VERSION, time, false
 
     if (s = result.getSize()) > 0
@@ -170,7 +170,7 @@ class MailButler
 
     else
       # No scheduled messages available
-      MailButler.log "... none found."
+      # MailButler.log "... none found."
     return
 
   @processButlerMail: (props, time) ->
@@ -297,6 +297,8 @@ class MailButler
     now = MailButler.DB.now()
     user = MailButler.getEmail()
     lastScheduled = MailButler.DB.getLastScheduled user
+
+    MailButler.log "Trying to schedule: #{JSON.stringify(form)}"
     
     # Get a lock for the current user
     lock = LockService.getPrivateLock()
@@ -403,7 +405,7 @@ _process = (e) ->
   try
     if lock.tryLock 10000
       # wait 10 seconds at most
-      MailButler.log 'We have the lock...'
+      # MailButler.log 'We have the lock...'
       try
         if MailButler.isEnabled()
               # Get the time this scheduled execution started
@@ -425,7 +427,7 @@ _process = (e) ->
       finally
         # release our lock
         lock.releaseLock()
-        MailButler.log '...lock released'
+        # MailButler.log '...lock released'
   catch e
     MailButler.log e, 'exception'
   return
