@@ -113,7 +113,7 @@
     			<include name="js/lib/*.js"/>
 
                 <include name="js/lib/eventr/lib/Eventr.js"/>
-                <include name="js/lib/gmailui/lib/GMailUI.js"
+                <include name="js/lib/gmailui/lib/GMailUI.js"/>
 				<include name="js/lib/underscore/underscore-min.js"/>
 				<include name="js/lib/jquery/jquery.min.js"/>
 
