@@ -22,7 +22,7 @@
         "js/lib/bootstrap.js",
         
         "js/lib/eventr/lib/Eventr.js",
-        "js/lib/GMailUI.js",
+        "js/lib/gmailui/lib/GMailUI.js",
         "js/lib/content.js"
       ],
       "matches": [
@@ -51,7 +51,7 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.140",
+  "version": "1.141",
   "web_accessible_resources": [
     "images/*",
 
