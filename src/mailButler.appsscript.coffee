@@ -1,3 +1,8 @@
+###
+Key for DistributedLogger: MeiWjDt8ns0U17CEPqQUkwimssCXKU93B
+Key for DB Library: MXolJ1HVObsF5Ro_gAHGN1raEnKguDlaw
+###
+
 class ErrorCodes
   @INVALID_MESSAGE_ID:    'MessageIdInvalid'
   @NO_SCHEDULE_TIME:      'NoScheduleTime'
@@ -58,6 +63,7 @@ class i18n
 
 class MailButler
 
+  @LOG_KEY:             'log'
   @VERSION:             1.141
   @SUPPORT_EMAIL:       'support@mailfred.de'
   @LABEL_BASE:          'MailFred'
@@ -75,19 +81,16 @@ class MailButler
 
 
   @log: (message, type = 'log') ->
-    spreadsheet = SpreadsheetApp.openById @SPREADSHEET_KEY
-    user = @getEmail()
-    sheet = spreadsheet.getSheetByName user
-    sheet = spreadsheet.insertSheet user unless sheet
-
-    sheet.appendRow [
-                    new Date().toUTCString()
+    switch type
+      when 'exception'
+        DistributedLogger.log @LOG_KEY, [
+                    @getEmail()
                     @VERSION
-                    type
                     message?.toString()
+                    Logger.getLog()
                     ]
+      else Logger.log message
     return
-
 
   scheduleJson: (params) ->
     try
@@ -376,6 +379,9 @@ doGet = (request) ->
       out = butler.result null, MailButler.getScheduledMails()
     when 'schedule'
       out = butler.scheduleJson request.parameter
+    when 'logtest'
+      MailButler.log 'TEST','exception'
+      out = ContentService.createTextOutput 'log written'
     when 'setup'
       status = butler.scheduleSetup request.parameter
       out = HtmlService.createHtmlOutput i18n.get 'setupComplete'
@@ -451,22 +457,10 @@ _test = ->
 # This is just a helper until the Google Apps Script Code Editor can deal with bla = function assignments
 `function test() {
   _test.apply(this, arguments);
-}`
+};
 
-#testLastMessageDate = ->
-#  message = GmailApp.getMessageById("13a1a6948cb7471f")
-#  thread = GmailApp.getThreadById(message.getThread().getId())
-#  Logger.log thread.getLastMessageDate().toUTCString()
-#  Logger.log thread.getMessageCount()
-#  msgs = thread.getMessages()
-#  for msg in msgs
-#    Logger.log msg.getDate().toUTCString()
-#  return
-
-#getTriggers = ->
-#  Logger.log "triggers: #{}", ScriptApp.getScriptTriggers()
-#  return
-
-`function dump() {
+function dump() {
   Logger.log(doGet({parameter: {action: 'dump'}}));
 }`
+
+
