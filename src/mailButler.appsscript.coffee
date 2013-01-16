@@ -409,34 +409,22 @@ doGet = (request) ->
 }`
 
 _process = (e) ->
-  # Get a lock for the current user
-  lock = LockService.getPrivateLock()
   try
-    if lock.tryLock 10000
-      # wait 10 seconds at most
-      # MailButler.log 'We have the lock...'
-      try
-        if MailButler.isEnabled()
-              # Get the time this scheduled execution started
-              d = new Date()
-              if e
-                d.setUTCDate e["day-of-month"]
-                d.setUTCFullYear e.year
-                d.setUTCMonth (e.month - 1)
-                d.setUTCHours e.hour
-                d.setUTCMinutes e.minute
-                d.setUTCSeconds e.second
+    if MailButler.isEnabled()
+      # Get the time this scheduled execution started
+      d = new Date()
+      if e
+        d.setUTCDate e["day-of-month"]
+        d.setUTCFullYear e.year
+        d.setUTCMonth (e.month - 1)
+        d.setUTCHours e.hour
+        d.setUTCMinutes e.minute
+        d.setUTCSeconds e.second
 
-              MailButler.processButlerMails d
-        else if MailButler.isOutdated()
-          # Automatic uninstall
-          MailButler.uninstall true
-      catch e
-        MailButler.log e, 'exception'
-      finally
-        # release our lock
-        lock.releaseLock()
-        # MailButler.log '...lock released'
+      MailButler.processButlerMails d
+    else if MailButler.isOutdated()
+      # Automatic uninstall
+      MailButler.uninstall true
   catch e
     MailButler.log e, 'exception'
   return
