@@ -159,7 +159,7 @@
   },
   "menuTimePresetCloseFutureItemHours4Selected": {
     "description": "The text that replaces the 'menuTimePresetCloseFuture' text in the main menu after selecting the according option",
-    "message": "In four hours"
+    "message": "Later today"
   },
   "menuTimePresetCloseFutureItemMinutes1": {
     "description": "One of the options in the predefined time presets",
