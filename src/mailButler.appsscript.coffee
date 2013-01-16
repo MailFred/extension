@@ -354,7 +354,11 @@ class MailButler
         MailButler.addLabel MailButler.LABEL_OUTBOX, thread
       finally
         # Always release lock
-        lock.releaseLock()
+        try
+          lock.releaseLock()
+        catch e
+          MailButler.log e, 'exception'
+          throw new Error ErrorCodes.TRY_LATER
     else
       throw new Error ErrorCodes.TRY_LATER
     return
