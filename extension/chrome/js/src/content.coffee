@@ -29,7 +29,7 @@
 		@TYPE_NAV: 		'nav'
 
 		@STORE:
-			LASTUSED:		'lastUsed'
+			# LASTUSED:		'lastUsed'
 			BOX_SETTING:	'settings'
 			DEBUG:			'debug'
 			EMAIL:			'email'
@@ -47,7 +47,7 @@
 		currentGmail: null
 		settingEmail: null
 		settingProps: {}
-		lastUsed: []
+		# lastUsed: []
 
 		currentView: null
 
@@ -81,16 +81,16 @@
 				return
 
 			# Get the last used presets
-			chrome.storage.sync.get M.STORE.LASTUSED, (items) =>
-				@lastUsed = items[M.STORE.LASTUSED] ? []
-				return
+			# chrome.storage.sync.get M.STORE.LASTUSED, (items) =>
+			#	@lastUsed = items[M.STORE.LASTUSED] ? []
+			#	return
 
 			# Listen to changes
 			chrome.storage.onChanged.addListener (changes, namespace) =>
 				switch namespace
 					when 'sync'
-						if M.STORE.LASTUSED of changes
-							@lastUsed = changes[M.STORE.LASTUSED].newValue
+						#if M.STORE.LASTUSED of changes
+						#	@lastUsed = changes[M.STORE.LASTUSED].newValue
 						if M.STORE.BOX_SETTING of changes
 							@settingProps = changes[M.STORE.BOX_SETTING].newValue
 					when 'local'
@@ -254,15 +254,15 @@
 
 			props =
 				noanswer: 	false
-				unread:		false
+				unread:		true
 				star:		false
-				inbox:		false
-				archive:	false
+				inbox:		true
+				archive:	true
 				#when:		_delta _1m
 
 			_.each props, (v, op) =>
-				selected = !! @settingProps?[op]
-				props[op] = selected
+				hasSetting = @settingProps and typeof @settingProps[op] isnt 'undefined'
+				props[op] = !! @settingProps?[op] if hasSetting
 				return
 
 			schedule = (wen) =>
@@ -306,10 +306,11 @@
 
 			presets = {}
 			presets.minutes 	= [1,5] if @debug
-			presets.hours 		= [2,4]
+			presets.hours 		= [4]
+			presets.hours.unshift 2 if @debug
 			presets.tomorrow 	= [8,14]
 			presets.days 		= [2,7,14]
-			presets.months 		= [1]
+			presets.months 		= [1] if @debug
 
 			# UI
 
@@ -381,53 +382,51 @@
 			timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
 
 			
-			unless _.isEmpty @lastUsed
-				lastUsedSection = timeSection.append new GMailUI.Section
+			#unless _.isEmpty @lastUsed
+			#	lastUsedSection = timeSection.append new GMailUI.Section
 
-				_.each @lastUsed, (tuple) =>
-					key = tuple.key
-					time = tuple.time
-					# Remove the last used presets from the list
-					presets[key] = _.without presets[key], time if presets[key]
+			#	_.each @lastUsed, (tuple) =>
+			#		key = tuple.key
+			#		time = tuple.time
+			#		# Remove the last used presets from the list
+			#		presets[key] = _.without presets[key], time if presets[key]
 
-					[label, title] = @getTexts key, time
-					button = lastUsedSection.append new GMailUI.Button label, title
-					timeFn = @generateTimeFn key
-					button.on 'click', (e) =>
-						@storeLastUsed key, time
-						wen = timeFn time
-						log "schedule: #{time}, #{key}: #{wen}"
-						schedule wen
-						return
-					return
-				lastUsedSection.append new GMailUI.Separator
+			#		[label, title] = @getTexts key, time
+			#		button = lastUsedSection.append new GMailUI.Button label, title
+			#		timeFn = @generateTimeFn key
+			#		button.on 'click', (e) =>
+			#			@storeLastUsed key, time
+			#			wen = timeFn time
+			#			log "schedule: #{time}, #{key}: #{wen}"
+			#			schedule wen
+			#			return
+			#		return
+			#	lastUsedSection.append new GMailUI.Separator
 
-			timeSection.append 				(new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),	'',	'',	true)
-			presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
-
+			
+			#presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
 
 			# Presets
 
 			sep = null
 			_.each presets, (times, key) =>
 				unless _.isEmpty times
-					presetMenu.append sep if sep
+					timeSection.append sep if sep
 					_.each times, (time) =>
 						timeFn = @generateTimeFn key
 						[label, title] = @getTexts key, time
-						item = new GMailUI.PopupMenuItem presetItem, label, title, '', false
-						onChange = (e, checked) =>
-							if checked
-								@storeLastUsed key, time
+						item = timeSection.append new GMailUI.Button label, title
+						item.on 'click', =>
 								wen = timeFn time
 								log "schedule: #{time}, #{key}: #{wen}"
 								schedule wen
 							return
-						item.addOnChange onChange, true
-						presetMenu.append item
 						return
 					sep = new GMailUI.Separator
 				return
+
+			timeSection.append new GMailUI.Separator
+			timeSection.append 	(new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),	'',	'',	true)
 
 			button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
 
