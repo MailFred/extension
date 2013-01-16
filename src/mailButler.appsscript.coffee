@@ -70,7 +70,6 @@ class MailButler
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
   @FREQUENCY_MINUTES:   5
   @DB:                  MailButlerDBLibrary.Db
-  @SPREADSHEET_KEY:     '0Av57s24WBhpmdHRPVU9UQkx6bXhoMzlXWVJNVzJGT0E'
 
   prefix: null
 
