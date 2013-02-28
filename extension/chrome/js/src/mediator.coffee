@@ -1,19 +1,30 @@
 # Gmailr.debug = true
-Gmailr.init (G) ->
-	message =
-		from: "GMAILR"
-		event:
-			type: 'init'
-			email: G.emailAddress()
-	window.postMessage message, "*"
+receiveMessage = (e) ->
+	# console.log 'GMAILR receiveMessage', e.data
+	if e.data?.from is 'MAILFRED'
+		switch e.data?.type
+			when 'debug.enable'
+				Gmailr.debug = true
+	return
 
-	G.observe Gmailr.EVENT_ANY, (type, args) ->
-		console.log '[mailfred] (Gmailr)', type, args if Gmailr.debug
+window.addEventListener "message", receiveMessage, false
+
+Gmailr.init (G) ->
+	sendMessage = (payload) ->
 		message =
 			from: "GMAILR"
-			event: 
+			event: payload
+		window.postMessage message, "*"
+		return
+
+	sendMessage
+		type: 'init'
+		email: G.emailAddress()
+
+	G.observe Gmailr.EVENT_ANY, (type, args) ->
+		console.log '[mailfred] [Gmailr]', type, args if Gmailr.debug
+		sendMessage
 				type: type
 				args: args
-		window.postMessage message, "*"
 		return
 	return

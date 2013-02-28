@@ -178,6 +178,13 @@
 							@currentGmail = evt.email
 							# GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
 
+							# kick GMailr into debug mode?
+							if @debug
+								message =
+									from: 'MAILFRED'
+									type: 'debug.enable'
+								window.postMessage message, "*"	
+
 						when 'viewThread'
 						# User moves to previous or next convo
 							@inject()
