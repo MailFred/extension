@@ -13,6 +13,12 @@ chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 			# notification = webkitNotifications.createHTMLNotification 'notification.html'
 			notification.show()
 
+			autoHide = ->
+				notification.cancel()
+				return
+
+			setTimeout autoHide, 2000
+
 		when 'version'
 			ret = chrome.app.getDetails().version
 
