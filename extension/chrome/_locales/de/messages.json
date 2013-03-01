@@ -3,7 +3,7 @@
     "message": "Jetzt nicht"
   },
   "authorizeDialogButtonCancelTooltip": {
-    "message": "Wenn Sie diesen Vorgang abbrechen,<br>können Sie $name$ nicht verwenden",
+    "message": "Wenn Sie diesen Vorgang abbrechen,&#10;können Sie $name$ nicht verwenden",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -21,7 +21,7 @@
     "message": "Stilbild des Autorisierungsdialogs"
   },
   "authorizeDialogImageHint": {
-    "message": "So in etwa wird das neue Fenster <br> mit der Abfrage um Erlaubnis aussehen."
+    "message": "So in etwa wird das neue Fenster &#10; mit der Abfrage um Erlaubnis aussehen."
   },
   "authorizeDialogImageLanguage": {
     "message": "de"
@@ -281,7 +281,7 @@
     "message": "Schließen"
   },
   "welcomeDialogButtonCancelTooltip": {
-    "message": "Wenn Sie die Installation nicht abschließen,<br>können Sie $name$ nicht verwenden",
+    "message": "Wenn Sie die Installation nicht abschließen,&#10;können Sie $name$ nicht verwenden",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -299,10 +299,10 @@
     "message": "Bildschirmschnappschuss des MailFred-Buttons in der GMail-Navigationsleiste"
   },
   "welcomeDialogImageHint": {
-    "message": "Das MailFred-Menü oben rechts <br> in der Konversationsansicht."
+    "message": "Das MailFred-Menü oben rechts &#10; in der Konversationsansicht."
   },
   "welcomeDialogText": {
-    "message": "Vielen Dank, dass Du $name$ installiert hast. $name$ kannst Du über den Button mit dem “Fliege”-Symbol aufrufen. Dazu musst Du in der Konversationsansicht sein.<br><br>Um $name$ verwenden zu können musst Du dem Plugin einmalig Zugriff auf dein GMail-Konto geben. Klicke auf “Weiter”, um die zwei Freigabefenster aufzurufen und die Installation abzuschließen. Viel Spaß mit $name$.",
+    "message": "Vielen Dank, dass Du $name$ installiert hast. $name$ kannst Du über den Button mit dem “Fliege”-Symbol aufrufen. Dazu musst Du in der Konversationsansicht sein.&#10;&#10;Um $name$ verwenden zu können musst Du dem Plugin einmalig Zugriff auf dein GMail-Konto geben. Klicke auf “Weiter”, um die zwei Freigabefenster aufzurufen und die Installation abzuschließen. Viel Spaß mit $name$.",
     "placeholders": {
       "name": {
         "content": "$1",

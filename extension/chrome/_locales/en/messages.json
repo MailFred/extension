@@ -3,7 +3,7 @@
     "message": "Not now"
   },
   "authorizeDialogButtonCancelTooltip": {
-    "message": "If you cancel this,<br>you can't use $name$",
+    "message": "If you cancel this,&#10;you can't use $name$",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -21,7 +21,7 @@
     "message": "Icon of the authorization dialog"
   },
   "authorizeDialogImageHint": {
-    "message": "That's what the new dialog <br> with the request for permission <br> will look like."
+    "message": "That's what the new dialog &#10; with the request for permission &#10; will look like."
   },
   "authorizeDialogImageLanguage": {
     "message": "en"
@@ -281,7 +281,7 @@
     "message": "Dismiss"
   },
   "welcomeDialogButtonCancelTooltip": {
-    "message": "If you don't complete the setup,<br>you can't use $name$",
+    "message": "If you don't complete the setup,&#10;you can't use $name$",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -299,10 +299,10 @@
     "message": "Screenshot of the toolbar with the MailFred button."
   },
   "welcomeDialogImageHint": {
-    "message": "The MailFred button <br> on the top right in conversation view."
+    "message": "The MailFred button &#10; on the top right in conversation view."
   },
   "welcomeDialogText": {
-    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.<br><br>In order for $name$ to work you have to grant access to your GMail account. Click 'Continue' to access the two authorization windows. Enjoy MailFred.",
+    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.&#10;&#10;In order for $name$ to work you have to grant access to your GMail account. Click 'Continue' to access the two authorization windows. Enjoy MailFred.",
     "placeholders": {
       "name": {
         "content": "$1",
