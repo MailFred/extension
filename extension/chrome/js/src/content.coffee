@@ -312,7 +312,7 @@
 				return
 
 			presets = {}
-			presets.minutes 	= [1,5] if @debug
+			presets.minutes 	= [5] if @debug
 			presets.hours 		= [4]
 			presets.hours.unshift 2 if @debug
 			presets.tomorrow 	= [8,14]
