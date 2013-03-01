@@ -51,7 +51,7 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.142.2",
+  "version": "1.142.5",
   "web_accessible_resources": [
     "images/*",
 
