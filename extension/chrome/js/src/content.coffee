@@ -36,9 +36,11 @@
 			LAST_VERSION:	'lastVersion'
 
 		@GM_SEL:
-			ARCHIVE_BUTTON: 	'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
-			THREAD_BUTTON_BAR: 	'.iH > div'
-			INSERT_AFTER: 		'.G-Ni.J-J5-Ji:visible:nth-child(3)'
+			ARCHIVE_BUTTON: 				'.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
+			THREAD_BUTTON_BAR: 				'.iH > div'
+			INSERT_AFTER: 					'.G-Ni.J-J5-Ji:visible:nth-child(3)'
+			PREVIEW_PANE_ENABLED:			'.apF .apJ'
+			PREVIEW_PANE_THREAD_BUTTON_BAR:	"[gh='mtb'] > div > div"
 
 		# URL
 		url: null
@@ -47,6 +49,7 @@
 		currentGmail: null
 		settingEmail: null
 		settingProps: {}
+		selectedConversationId: null
 		# lastUsed: []
 
 		currentView: null
@@ -187,6 +190,7 @@
 
 						when 'viewThread'
 						# User moves to previous or next convo
+							@selectedConversationId = evt.args[0]
 							@inject()
 						when 'viewChanged'
 						# User switches view (conversation <-> threads)
@@ -229,10 +233,22 @@
 		#	navs.append @composeButton M.TYPE_NAV if navs.length > 0
 		#	return
 
+		isPreviewPaneEnabled: ->
+			($ M.GM_SEL.PREVIEW_PANE_ENABLED).length > 0
+
 		injectThread: ->
 			log 'Injecting buttons in thread view'
-			threads = ($ M.GM_SEL.THREAD_BUTTON_BAR).filter (index) ->
+
+			if @isPreviewPaneEnabled()
+				# Preview pane is enabled
+				sel = M.GM_SEL.PREVIEW_PANE_THREAD_BUTTON_BAR
+			else
+				# Preview pane is not enabled
+				sel = M.GM_SEL.THREAD_BUTTON_BAR
+
+			threads = ($ sel).filter (index) ->
 				($ ".#{M.CLS_THREAD}", @).length is 0
+
 			if threads.length > 0
 				after = threads.find M.GM_SEL.INSERT_AFTER
 				bar = @composeButton()
@@ -494,18 +510,21 @@
 						@_specified other
 		
 		getMessageId: ->
-			id = /\/([0-9a-f]{16})/.exec window.location.hash
+			if @isPreviewPaneEnabled()
+				id = @selectedConversationId
+			else 
+				id = /\/([0-9a-f]{16})/.exec window.location.hash
+				id = id?[1]
+			
 			if id is null
 				throw __msg 'errorNotWithinAConversation'
-			else
-				id[1]
+			id
 
 		onSchedule: (props, loadingIcon, resetIcon) =>
 			try
 				messageId = @getMessageId()
 			catch e
-				chrome.extension.sendMessage
-					error: e.toString()
+				@onScheduleError null, null, e.toString()
 				return
 
 			archive = !!props.archive
