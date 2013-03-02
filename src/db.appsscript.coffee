@@ -42,6 +42,7 @@ class Db
 	@getUsers: ->
 		q =
 			type: @TYPE_USER
+			version: @DB.not 0
 		result = @DB.query q
 		result = result.sortBy 'user'
 		result

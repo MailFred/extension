@@ -8,6 +8,7 @@
 		<th>Signed up</th>
 		<th>Last used</th>
 		<th>On version</th>
+		<th># mails</th>
 		<th>Actions</th>
 	<tr>
   <? 
@@ -23,10 +24,11 @@
         <td><?= new Date(user.signup).toUTCString() ?></td>
         <td><?= new Date(user.lastUsed).toUTCString() ?></td>
         <td><?= user.version ?></td>
+        <td><?= f.getMails(user.user) ?></td>
         <td>
           <ul>
             <li>
-              <a href="<?= baseUrl ?>?action=mails&amp;user=<?= user.user ?>">Show mails</a>
+              <a href="<?= baseUrl ?>?action=mails&amp;user=<?= user.user ?>">Manage mails</a>
             </li>
             <li>
               <a href="<?= baseUrl ?>?action=remove&amp;id=<?= user.getId() ?>" target="_blank">delete</a>

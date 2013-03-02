@@ -20,6 +20,8 @@ doGet = (request) ->
 	switch request.parameter.action
 		when Admin.ACTIONS.OVERVIEW
 			t = HtmlService.createTemplateFromFile 'admin_usertable'
+			t.f =
+				getMails: (u) -> (a.getMails u).getSize()
 			t.users = a.getUsers()
 			t.baseUrl = url
 			t.evaluate()
