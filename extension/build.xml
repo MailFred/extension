@@ -16,11 +16,6 @@
             <arg value="build"/>
         </exec>
 
-        <echo message="Building Gmailr JS"/>
-        <exec executable="cake" dir="chrome/js/lib/gmailr/chrome">
-            <arg value="build"/>
-        </exec>  
-
         <echo message="Minifying main JS"/>
         <exec executable="uglifyjs2" dir="chrome/js/lib">
             <arg value="background.js"/>
@@ -50,6 +45,15 @@
         </exec>    
 
         <exec executable="uglifyjs2" dir="chrome/js/lib">
+            <arg value="mediator.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="mediator.js"/>
+        </exec>  
+
+        <exec executable="uglifyjs2" dir="chrome/js/lib">
             <arg value="options.js"/>
             <arg value="-m"/>
             <arg value="-c"/>
@@ -76,6 +80,19 @@
             <arg value="GMailUI.js"/>
         </exec> 
 
+        <echo message="Building Gmailr JS"/>
+        <exec executable="cake" dir="chrome/js/lib/gmailr/chrome">
+            <arg value="build"/>
+        </exec>  
+        <echo message="Minifying Gmailr JS"/>
+        <exec executable="uglifyjs2" dir="chrome/js/lib/gmailr/chrome/lib">
+            <arg value="gmailr.js"/>
+            <arg value="-m"/>
+            <arg value="-c"/>
+            <arg value="--stats"/>
+            <arg value="-o"/>
+            <arg value="gmailr.js"/>
+        </exec>    
 
         <echo message="Generating CSS"/>
         <exec executable="lessc" dir="chrome/css">
@@ -85,15 +102,8 @@
             <arg value="styles.css"/>
         </exec>
 
-        <echo message="Minifying combining JS"/>
-        <exec executable="uglifyjs2" dir="chrome/js/lib">
-            <arg value="combined.js"/>
-            <arg value="-m"/>
-            <arg value="-c"/>
-            <arg value="--stats"/>
-            <arg value="-o"/>
-            <arg value="combined.js"/>
-        </exec>  
+        <echo message="Generating combined dist JS"/>
+        <exec executable="./distCombined.sh" dir="."/>
 
     	<zip destfile="chrome.zip" update="true" basedir="chrome" filesonly="true" excludes="
     		**/*.less,
