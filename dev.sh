@@ -5,3 +5,5 @@ cd "$BASE/extension/chrome/js/lib/gmailr/chrome"
 cake watch &
 cd "$BASE/extension/chrome/js"
 cake watch &
+cd "$BASE/extension/chrome/js/lib/gmailui"
+cake watch &

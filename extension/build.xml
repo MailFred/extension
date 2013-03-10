@@ -71,6 +71,10 @@
             <arg value="Eventr.js"/>
         </exec>  
 
+        <echo message="Building GmailUI JS"/>
+        <exec executable="cake" dir="chrome/js/lib/gmailui">
+            <arg value="build"/>
+        </exec> 
         <exec executable="uglifyjs2" dir="chrome/js/lib/gmailui/lib">
             <arg value="GMailUI.js"/>
             <arg value="-m"/>
