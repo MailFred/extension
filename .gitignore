@@ -13,6 +13,5 @@ db.appsscript.js
 options.js
 admin.appsscript.js
 extension/chrome/js/lib/Eventr.js
-extension/chrome/js/lib/GMailUI.js
 loggerMaintenance.js
 extension/chrome/js/lib/combined.js
