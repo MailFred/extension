@@ -123,6 +123,9 @@
 		@isAuthorisationErrorPage: (contents) ->
 			/https?:\/\/www\.google\.com\/accounts\/OAuthAuthorizeToken/i.test contents
 
+		@isAuthorisationErrorResponse: (resp) ->
+			resp?.toLowerCase().indexOf "authorization" isnt -1
+
 		checkAuthorised: (resp) ->
 			url = @getServiceURL()
 			log 'checking if the user authorised', url
@@ -554,8 +557,8 @@
 				url: 			@getServiceURL()
 				dataType: 		'json'
 				data:			data
-				success:		(data, textStatus, jqXHR) =>
-									@onScheduleSuccess data
+				success:		(resp, textStatus, jqXHR) =>
+									@onScheduleSuccess resp, data
 									return
 				error:			(jqXHR, textStatus, errorThrown) =>
 									# log arguments
@@ -575,7 +578,7 @@
 			return
 
 
-		onScheduleSuccess: (data) =>
+		onScheduleSuccess: (data, params) =>
 			log 'Scheduling success', data
 			if data.success
 				chrome.extension.sendMessage
@@ -584,7 +587,7 @@
 					title: 		__msg 'notificationScheduleSuccessTitle'
 					message: 	__msg 'notificationScheduleSuccess'
 			else
-				@onScheduleError data.error, null, data.error
+				@onScheduleError data.error, params, data.error
 			return
 
 		createDialog: (title, okButton, cancelButton) ->
@@ -669,7 +672,8 @@
 
 		onScheduleError: (status, params, error, responseText) =>
 			log 'There was an error', arguments
-			if status is 'parsererror' and M.isAuthorisationErrorPage responseText
+			if (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or (M.isAuthorisationErrorResponse status)
+				params ?= {}
 				params.action = 'setup'
 				delete params.callback if params.callback
 				@gettingStarted params
