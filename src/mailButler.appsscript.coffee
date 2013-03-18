@@ -103,7 +103,7 @@ class MailButler
       @addButlerMail params
       true
     catch e
-      e.getLocalisedMessage()
+      e.toString()
 
   @uninstall: (automatic) ->
     if not automatic and (base = ScriptApp.getService().getUrl())
