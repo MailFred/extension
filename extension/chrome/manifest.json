@@ -51,7 +51,7 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.142.9",
+  "version": "1.144",
   "web_accessible_resources": [
     "images/*",
     "js/lib/combined.js",

@@ -3,7 +3,6 @@ extension/chrome/css/styles.css
 extension/chrome/js/lib/background.js
 extension/chrome/js/lib/content.js
 lib/mailButler.appsscript.js
-chrome.zip
 chrome.crx
 mailbutler.sublime-project
 mailbutler.sublime-workspace
