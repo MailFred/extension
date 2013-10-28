@@ -64,7 +64,7 @@ class i18n
 class MailButler
 
   @LOG_KEY:             'log'
-  @VERSION:             1.144
+  @VERSION:             1.145
   @SUPPORT_EMAIL:       'support@mailfred.de'
   @LABEL_BASE:          'MailFred'
   @LABEL_OUTBOX:        MailButler.LABEL_BASE + '/' + 'Scheduled'
