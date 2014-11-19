@@ -17,10 +17,10 @@
 
         "js/lib/jquery-ui/js/jquery-ui-1.10.3.custom.min.js",
         "js/lib/jquery-ui/development-bundle/ui/i18n/jquery-ui-i18n.js",
-        
+
         "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
         "js/lib/bootstrap.js",
-        
+
         "js/lib/eventr/lib/Eventr.js",
         "js/lib/gmailui/lib/GMailUI.js",
         "js/lib/content.js"
@@ -52,11 +52,10 @@
     "https://script.googleusercontent.com/*",
     "https://www.google.com/*"
   ],
-  "version": "1.145",
+  "version": "2.0.0",
   "web_accessible_resources": [
     "images/*",
     "js/lib/combined.js",
     "js/lib/jquery-ui/css/mailfred_theme/*"
   ]
 }
-        
