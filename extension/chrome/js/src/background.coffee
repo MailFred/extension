@@ -1,10 +1,10 @@
 settings =
-	url: 'https://script.google.com/macros/s/' +'AKfycbwW4T9cFEn8TbXcg-psMMvKW_T_08HlgsUZYdCNRcqWC4_-Uhw'+'/exec'
+	url: 'http://localhost:8080/schedule'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 	#console.log(sender.tab "from a content script:" + sender.tab.url :
 	#	"from the extension");
-	
+
 	switch request.action
 		when 'notification'
 			notification = webkitNotifications.createNotification request.icon, request.title, request.message
