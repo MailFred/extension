@@ -14,7 +14,7 @@
 
 	class M
 		debug: 	false
-		
+
 		@CLS: 			'mailfred'
 		#@CLS_NAV: 		M.CLS + '-nav'
 		@CLS_THREAD: 	M.CLS + '-thread'
@@ -56,7 +56,7 @@
 
 		constructor: ->
 			window.addEventListener "message", @messageListener, false
-			
+
 			@initSettings()
 
 			# Get the service URL
@@ -120,9 +120,6 @@
 				return
 			return
 
-		@isAuthorisationErrorPage: (contents) ->
-			/https?:\/\/www\.google\.com\/accounts\/OAuthAuthorizeToken/i.test contents
-
 		@isAuthorisationErrorResponse: (resp) ->
 			resp?.toLowerCase().indexOf "authorization" isnt -1
 
@@ -133,14 +130,13 @@
 				url: 			url
 				dataType: 		'json'
 				data:			action: 'status'
-				success:		(data, textStatus, jqXHR) =>
+				success:		(data, textStatus, jqXHR) ->
 									log '...user is still authorised'
 									resp true
 									return
-				error:			(jqXHR, textStatus, errorThrown) =>
-									isError = M.isAuthorisationErrorPage jqXHR.responseText
-									log '...user is not authorised' if isError
-									resp !isError
+				error:			(jqXHR, textStatus, errorThrown) ->
+									log '...user is not authorised'
+									resp false
 									return
 
 		firstInstall: (version) ->
@@ -189,7 +185,7 @@
 								message =
 									from: 'MAILFRED'
 									type: 'debug.enable'
-								window.postMessage message, "*"	
+								window.postMessage message, "*"
 
 						when 'viewThread'
 						# User moves to previous or next convo
@@ -407,7 +403,7 @@
 			timeSection.append new GMailUI.Separator
 			timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
 
-			
+
 			#unless _.isEmpty @lastUsed
 			#	lastUsedSection = timeSection.append new GMailUI.Section
 
@@ -429,7 +425,7 @@
 			#		return
 			#	lastUsedSection.append new GMailUI.Separator
 
-			
+
 			#presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'), 	'', '',	true)
 
 			# Presets
@@ -466,7 +462,6 @@
 			entry =
 				key: key
 				time: time
-
 			lastUsed = _.reject @lastUsed, (item) -> _.isEqual item, entry
 
 			lastUsed.unshift entry
@@ -511,14 +506,14 @@
 						other = new Date
 						other.setMonth (now.getMonth() + month)
 						@_specified other
-		
+
 		getMessageId: ->
 			if @isPreviewPaneEnabled()
 				id = @selectedConversationId
-			else 
+			else
 				id = /\/([0-9a-f]{16})/.exec window.location.hash
 				id = id?[1]
-			
+
 			if id is null
 				throw __msg 'errorNotWithinAConversation'
 			id
@@ -534,17 +529,14 @@
 
 			loadingIcon?() unless archive
 
-			data = 
-				action:		'schedule'
-				messageId:	messageId
+			data =
+				msgId:	messageId
 				when:		props.when
-				unread:		!!props.unread
-				star:		!!props.star
-				noanswer:	!!props.noanswer
-				inbox:		!!props.inbox
-				archive:	archive
-				email:		@currentGmail
-				#callback:	'alert'
+				markUnread:		!!props.unread
+				starIt:		!!props.star
+				onlyIfNoAnswer:	!!props.noanswer
+				moveToInbox:		!!props.inbox
+				archiveAfterScheduling:	archive
 
 			# remove false values to transmit less data over the wire
 			_.each data, (val, key) ->
@@ -552,9 +544,10 @@
 				return
 
 			log 'scheduling mail...', data
-			
+
 			$.ajax
 				url: 			@getServiceURL()
+				type: 		'POST'
 				dataType: 		'json'
 				data:			data
 				success:		(resp, textStatus, jqXHR) =>
@@ -565,7 +558,7 @@
 									@onScheduleError textStatus, data, errorThrown, jqXHR.responseText
 									return
 				complete:		(jqXHR, textStatus) ->
-									resetIcon?() unless data.archive
+									resetIcon?() unless data.archiveAfterScheduling
 									return
 
 			if archive
@@ -607,7 +600,7 @@
 		welcome: ->
 			extName = __msg 'extName'
 			[dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'welcomeDialogTitle', extName), [(__msg 'welcomeDialogButtonOk'), (__msg 'welcomeDialogButtonOkTooltip')], [(__msg 'welcomeDialogButtonCancel'), (__msg 'welcomeDialogButtonCancelTooltip', extName)]
-			
+
 			container.append	"""
 								<div style="text-align: justify;">
 									<img src="#{chrome.extension.getURL 'images/button_example.png'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px;">
@@ -652,7 +645,7 @@
 
 		gettingStarted: (params) ->
 			[dialog, okButton, cancelButton, container, footer] = @gettingStartedDialog()
-			
+
 			okButton.on 'click', =>
 				@openAuthWindow params
 				dialog.close()
