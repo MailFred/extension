@@ -1,5 +1,5 @@
 settings =
-	url: 'http://localhost:8080/schedule'
+	url: 'https://sodium-hue-766.appspot.com'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
 	#console.log(sender.tab "from a content script:" + sender.tab.url :

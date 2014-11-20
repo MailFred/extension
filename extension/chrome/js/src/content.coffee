@@ -15,6 +15,9 @@
   class M
     debug:   false
 
+    @SCHEDULE_SUFFIX: '/schedule'
+    @SETUP_URL_SUFFIX: '/setup'
+
     @CLS:       'mailfred'
     #@CLS_NAV:     M.CLS + '-nav'
     @CLS_THREAD:   M.CLS + '-thread'
@@ -124,7 +127,7 @@
       resp?.toLowerCase().indexOf "authorization" isnt -1
 
     checkAuthorised: (resp) ->
-      url = @getServiceURL()
+      url = @getServiceURL() + M.SETUP_URL_SUFFIX
       log 'checking if the user authorised', url
       $.ajax
         url:       url
@@ -546,8 +549,8 @@
       log 'scheduling mail...', data
 
       $.ajax
-        url:       @getServiceURL()
-        type:     'POST'
+        url:       @getServiceURL() + M.SCHEDULE_SUFFIX
+        #type:     'POST'
         dataType:     'json'
         data:      data
         success:    (resp, textStatus, jqXHR) =>
@@ -656,7 +659,7 @@
       dialog.open()
 
     openAuthWindow: (params) ->
-      url = @getServiceURL()
+      url = @getServiceURL() + M.SETUP_URL_SUFFIX
       if params
         query = $.param params
         url += "?#{query}"
