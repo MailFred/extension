@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'js/build',
-          src: '*.js',
+          src: '*.coffee.js',
           dest: 'js/build',
           ext: '.min.js'
         }]
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
         cwd: 'js/src',
         src: ['*.coffee'],
         dest: 'js/build',
-        ext: '.js'
+        ext: '.coffee.js'
       }
     },
 
@@ -91,7 +91,7 @@ module.exports = function(grunt) {
     'less:build',
     'compress:main'
   ]);
-  
+
   grunt.registerTask('travis', ['coffee:compile', 'less:build']);
 
 };
