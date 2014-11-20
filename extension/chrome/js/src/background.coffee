@@ -1,5 +1,9 @@
 settings =
-	url: 'https://sodium-hue-766.appspot.com'
+  url: 'https://sodium-hue-766.appspot.com'
+  # use the following with
+  # --allow-running-insecure-content
+  # to allow non-HTTPS calls
+  #url: 'http://localhost:8080'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
   #console.log(sender.tab "from a content script:" + sender.tab.url :
