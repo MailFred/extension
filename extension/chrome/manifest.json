@@ -38,7 +38,8 @@
     "16" : "images/tie16x16.png",
     "32" : "images/tie32x32.png",
     "48" : "images/tie48x48.png",
-    "128": "images/tie128x128.png"
+    "128": "images/tie128x128.png",
+    "256": "images/tie256x256.png"
   },
   "manifest_version": 2,
   "name": "__MSG_extName__",
