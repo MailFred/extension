@@ -38,14 +38,60 @@ module.exports = function(grunt) {
           "css/styles.css": "css/styles.less"
         }
       }
+    },
+
+    compress: {
+      main: {
+        options: {
+          level: 9,
+          pretty: true,
+          archive: '../chrome.zip'
+        },
+        files: [
+          {
+            src:  [
+                    '_locales/**',
+                    'css/*.css',
+                    'html/*.html',
+                    'manifest.json',
+                    'js/build/*.min.js',
+                    'images/**/*.png',
+                    'images/loader.gif'
+            ],
+            dest: '/',
+            filter: 'isFile'
+          },
+          {
+            src: [
+              'bower_components/eventr/build/eventr.min.js',
+              'bower_components/gmailr/build/gmailr.min.js',
+              'bower_components/gmailui/build/gmailui.min.js',
+              'bower_components/jquery/dist/jquery.min.js',
+              'bower_components/jquery-deparam/jquery.ba-deparam.min.js',
+              'bower_components/jquery-ui/jquery-ui.min.js',
+              'bower_components/lodash/dist/lodash.min.js',
+              'bower_components/yepnope/yepnope.1.5.4-min.js',
+            ],
+            dest: '/',
+            filter: 'isFile'
+          },
+        ]
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-compress');
 
-  grunt.registerTask('default', ['coffee:compile', 'uglify:build', 'less:build']);
+  grunt.registerTask('default', [
+    'coffee:compile',
+    'uglify:build',
+    'less:build',
+    'compress:main'
+  ]);
+  
   grunt.registerTask('travis', ['coffee:compile', 'less:build']);
 
 };
