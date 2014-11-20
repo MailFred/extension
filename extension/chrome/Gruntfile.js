@@ -76,8 +76,7 @@ module.exports = function(grunt) {
                     'html/*.html',
                     'manifest.json',
                     'js/build/*.min.js',
-                    'images/**/*.png',
-                    'images/loader.gif'
+                    'images/**'
             ],
             dest: '/',
             filter: 'isFile'
