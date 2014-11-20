@@ -5,7 +5,7 @@
       "js/build/background.min.js"
     ]
   },
-  "minimum_chrome_version": "20",
+  "minimum_chrome_version": "28",
   "content_scripts": [
     {
       "css": [

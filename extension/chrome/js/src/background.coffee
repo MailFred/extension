@@ -2,28 +2,23 @@ settings =
 	url: 'https://sodium-hue-766.appspot.com'
 
 chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
-	#console.log(sender.tab "from a content script:" + sender.tab.url :
-	#	"from the extension");
+  #console.log(sender.tab "from a content script:" + sender.tab.url :
+  #  "from the extension");
 
-	switch request.action
-		when 'notification'
-			notification = webkitNotifications.createNotification request.icon, request.title, request.message
+  switch request.action
+    when 'notification'
+      opt =
+        type: "basic"
+        title: request.title
+        message: request.message
+        iconUrl: request.icon
+      chrome.notifications.create 'mailfred.scheduled', opt, ->
 
-			# Or create an HTML notification:
-			# notification = webkitNotifications.createHTMLNotification 'notification.html'
-			notification.show()
+    when 'version'
+      ret = chrome.app.getDetails().version
 
-			autoHide = ->
-				notification.cancel()
-				return
+    else
+      ret = settings[request.action]
 
-			setTimeout autoHide, 2000
-
-		when 'version'
-			ret = chrome.app.getDetails().version
-
-		else
-			ret = settings[request.action]
-
-	sendResponse? ret
-	false # we don't want to message back anything after the script finished
+  sendResponse? ret
+  false # we don't want to message back anything after the script finished

@@ -579,7 +579,7 @@
       if data.success
         chrome.extension.sendMessage
           action:   'notification'
-          icon:     "images/tie48x48.png"
+          icon:     "images/tie.svg"
           title:     __msg 'notificationScheduleSuccessTitle'
           message:   __msg 'notificationScheduleSuccess'
       else
