@@ -40,6 +40,27 @@ module.exports = function(grunt) {
       }
     },
 
+    watch: {
+      scripts: {
+        files: [
+          'js/src/*.coffee'
+        ],
+        tasks: ['coffee:compile', 'uglify:build'],
+        options: {
+          interrupt: true,
+        },
+      },
+      styles: {
+        files: [
+        'css/*.less'
+        ],
+        tasks: ['less:build'],
+        options: {
+          interrupt: true,
+        },
+      },
+    },
+
     compress: {
       main: {
         options: {
@@ -84,11 +105,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', [
+  grunt.registerTask('build', [
     'coffee:compile',
     'uglify:build',
-    'less:build',
+    'less:build'
+  ]);
+
+  grunt.registerTask('release', [
+    'build',
     'compress:main'
   ]);
 
