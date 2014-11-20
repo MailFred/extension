@@ -16,11 +16,12 @@
     "tests"
   ],
   "dependencies": {
-    "eventr": "~0.2.0",
-    "gmailui": "~0.2.0",
+    "eventr": "0.2.8",
+    "gmailui": "0.2.4",
     "gmailr": "~0.0.2",
     "lodash": "~2.4.1",
     "jquery": "1.11.1",
-    "jquery-ui": "1.11.2"
+    "jquery-ui": "1.11.2",
+    "yepnope": "1.5.4"
   }
 }

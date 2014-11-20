@@ -2,7 +2,7 @@
   "background": {
     "persistent": false,
     "scripts": [
-      "js/lib/background.js"
+      "js/build/background.min.js"
     ]
   },
   "minimum_chrome_version": "20",
@@ -12,18 +12,17 @@
         "css/styles.css"
       ],
       "js": [
-        "js/lib/underscore/underscore-min.js",
-        "js/lib/jquery/jquery.min.js",
+        "bower_components/lodash/dist/lodash.min.js",
+        "bower_components/jquery/dist/jquery.min.js",
 
-        "js/lib/jquery-ui/js/jquery-ui-1.10.3.custom.min.js",
-        "js/lib/jquery-ui/development-bundle/ui/i18n/jquery-ui-i18n.js",
+        "bower_components/jquery-ui/jquery-ui.min.js",
 
-        "js/lib/gmailr/chrome/lib/yepnope.js/yepnope.1.5.4-min.js",
-        "js/lib/bootstrap.js",
+        "bower_components/yepnope/yepnope.1.5.4-min.js",
+        "js/build/bootstrap.min.js",
 
-        "js/lib/eventr/lib/Eventr.js",
-        "js/lib/gmailui/lib/GMailUI.js",
-        "js/lib/content.js"
+        "bower_components/eventr/build/eventr.min.js",
+        "bower_components/gmailui/build/gmailui.min.js",
+        "js/build/content.min.js"
       ],
       "matches": [
         "*://mail.google.com/*"
@@ -55,7 +54,12 @@
   "version": "2.0.0",
   "web_accessible_resources": [
     "images/*",
-    "js/lib/combined.js",
-    "js/lib/jquery-ui/css/mailfred_theme/*"
+    "bower_components/jquery/dist/jquery.min.js",
+    "bower_components/jquery-deparam/jquery.ba-deparam.min.js",
+    "bower_components/gmailr/build/gmailr.min.js",
+    "js/build/mediator.min.js",
+    "bower_components/*.map",
+    "js/build/*.map",
+    "bower_components/*.coffee"
   ]
 }
