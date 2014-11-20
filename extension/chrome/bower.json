@@ -1,0 +1,26 @@
+{
+  "name": "mailfred-chrome-extension",
+  "version": "1.142.9",
+  "authors": [
+    "Joscha Feth <joscha@feth.com>"
+  ],
+  "description": "MailFred Chrome extension",
+  "license": "MIT",
+  "homepage": "http://www.mailfred.de",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eventr": "~0.2.0",
+    "gmailui": "~0.2.0",
+    "gmailr": "~0.0.2",
+    "lodash": "~2.4.1",
+    "jquery": "1.11.1",
+    "jquery-ui": "1.11.2"
+  }
+}
