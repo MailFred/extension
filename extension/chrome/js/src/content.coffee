@@ -548,6 +548,7 @@
 
       log 'scheduling mail...', data
 
+
       $.ajax
         url:       @getServiceURL() + M.SCHEDULE_SUFFIX
         #type:     'POST'
@@ -557,11 +558,10 @@
           @onScheduleSuccess resp, data
           return
         error:      (jqXHR, textStatus, errorThrown) =>
-          # log arguments
           @onScheduleError textStatus, data, errorThrown, jqXHR.responseText
           return
         complete:    (jqXHR, textStatus) ->
-          resetIcon?() unless data.archiveAfterScheduling
+          resetIcon?() unless archive
           return
 
       if archive
