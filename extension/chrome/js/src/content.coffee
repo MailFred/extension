@@ -480,8 +480,7 @@
       "delta:#{offset}"
 
     _specified: (d) ->
-      time = d.getTime() + d.getTimezoneOffset()*60*1000
-      "specified:#{time}"
+      d.getTime() + d.getTimezoneOffset()*60*1000
 
     generateTimeFn: (unit) ->
       _1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
