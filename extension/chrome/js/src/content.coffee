@@ -479,12 +479,10 @@
         data:      data
         success:   (resp, textStatus, jqXHR) =>
           @onScheduleSuccess resp, data
+          resetIcon?() unless archive
           return
         error:     (jqXHR, textStatus, errorThrown) =>
           @onScheduleError textStatus, data, errorThrown, jqXHR.responseText
-          return
-        complete:  (jqXHR, textStatus) ->
-          resetIcon?() unless archive
           return
 
       if archive
