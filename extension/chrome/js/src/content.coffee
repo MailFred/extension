@@ -114,6 +114,8 @@
         return
       return
 
+    @isAuthorisationErrorPage: (contents) -> /reauth/i.test contents
+
     @isAuthorisationErrorResponse: (resp) ->
       resp?.toLowerCase().indexOf "authorization" isnt -1
 
@@ -540,7 +542,7 @@
         dialog.title authDialog.title()
 
         authOkButton.on 'click', =>
-          @openAuthWindow action: 'setupNoSchedule'
+          @openAuthWindow {}
           dialog.close()
           return
 
@@ -590,10 +592,7 @@
     onScheduleError: (status, params, error, responseText) =>
       log 'There was an error', arguments
       if (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or (M.isAuthorisationErrorResponse status)
-        params ?= {}
-        params.action = 'setup'
-        delete params.callback if params.callback
-        @gettingStarted params
+        @gettingStarted params ? {}
       else
         notification =
           action:   'notification'
