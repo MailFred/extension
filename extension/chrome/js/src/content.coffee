@@ -6,10 +6,6 @@
       console.log.apply console, args
     return
 
-  #__msg = (args...) ->
-  #  ret = chrome.i18n.getMessage.apply chrome.i18n, args
-  #  log args, ret
-  #  ret
   __msg = chrome.i18n.getMessage
 
   class M
@@ -86,11 +82,6 @@
         @settingProps = items[M.STORE.BOX_SETTING]
         return
 
-      # Get the last used presets
-      # chrome.storage.sync.get M.STORE.LASTUSED, (items) =>
-      #  @lastUsed = items[M.STORE.LASTUSED] ? []
-      #  return
-
       # Listen to changes
       chrome.storage.onChanged.addListener (changes, namespace) =>
         switch namespace
@@ -130,14 +121,14 @@
       url = @getServiceURL() + M.SETUP_URL_SUFFIX
       log 'checking if the user authorised', url
       $.ajax
-        url:       url
-        dataType:     'json'
-        data:      action: 'status'
-        success: (data, textStatus, jqXHR) ->
+        url:      url
+        dataType: 'json'
+        data:     action: 'status'
+        success:  (data, textStatus, jqXHR) ->
           log '...user is still authorised'
           resp true
           return
-        error:      (jqXHR, textStatus, errorThrown) ->
+        error:    (jqXHR, textStatus, errorThrown) ->
           log '...user is not authorised'
           resp false
           return
@@ -228,13 +219,6 @@
 
     getServiceURL: -> @url
 
-    #injectCompose: ->
-    #  navs = ($ ".dW.E[role=navigation] > .J-Jw").filter (index) ->
-    #    ($ ".#{M.CLS_NAV}", @).length is 0
-    #
-    #  navs.append @composeButton M.TYPE_NAV if navs.length > 0
-    #  return
-
     isPreviewPaneEnabled: ->
       ($ M.GM_SEL.PREVIEW_PANE_ENABLED).length > 0
 
@@ -278,12 +262,11 @@
     composeButton: =>
 
       props =
-        noanswer:   false
-        unread:    true
-        star:    false
+        noanswer: false
+        unread:   true
+        star:     false
         inbox:    true
         archive:  true
-        #when:    _delta _1m
 
       _.each props, (v, op) =>
         hasSetting = @settingProps and typeof @settingProps[op] isnt 'undefined'
@@ -330,11 +313,11 @@
         return
 
       presets = {}
-      presets.minutes   = [5] if @debug
-      presets.hours     = [4]
+      presets.minutes    = [5] if @debug
+      presets.hours      = [4]
       presets.hours.unshift 2 if @debug
       presets.tomorrow   = [8,14]
-      presets.days     = [2,7,14]
+      presets.days       = [2,7,14]
       presets.months     = [1] if @debug
 
       # UI
@@ -398,30 +381,6 @@
       timeSection.append new GMailUI.Separator
       timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
 
-
-      #unless _.isEmpty @lastUsed
-      #  lastUsedSection = timeSection.append new GMailUI.Section
-
-      #  _.each @lastUsed, (tuple) =>
-      #    key = tuple.key
-      #    time = tuple.time
-      #    # Remove the last used presets from the list
-      #    presets[key] = _.without presets[key], time if presets[key]
-
-      #    [label, title] = @getTexts key, time
-      #    button = lastUsedSection.append new GMailUI.Button label, title
-      #    timeFn = @generateTimeFn key
-      #    button.on 'click', (e) =>
-      #      @storeLastUsed key, time
-      #      wen = timeFn time
-      #      log "schedule: #{time}, #{key}: #{wen}"
-      #      schedule wen
-      #      return
-      #    return
-      #  lastUsedSection.append new GMailUI.Separator
-
-
-      #presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'),   '', '',  true)
       timeSection.append   (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),  '',  '',  true)
       timeSection.append new GMailUI.Separator
 
@@ -451,21 +410,6 @@
       isValid()
 
       bar.getElement()
-
-    storeLastUsed: (key, time) =>
-      entry =
-        key: key
-        time: time
-      lastUsed = _.reject @lastUsed, (item) -> _.isEqual item, entry
-
-      lastUsed.unshift entry
-      store = {}
-      store[M.STORE.LASTUSED] = (_.first lastUsed, 3)
-
-      chrome.storage.sync.set store, ->
-        log 'Last used items saved', store
-        return
-      return
 
     _delta: (offset) ->
       "delta:#{offset}"
@@ -529,15 +473,15 @@
       $.ajax
         url:       @getServiceURL() + M.SCHEDULE_SUFFIX
         #type:     'POST'
-        dataType:     'json'
+        dataType:  'json'
         data:      data
-        success:    (resp, textStatus, jqXHR) =>
+        success:   (resp, textStatus, jqXHR) =>
           @onScheduleSuccess resp, data
           return
-        error:      (jqXHR, textStatus, errorThrown) =>
+        error:     (jqXHR, textStatus, errorThrown) =>
           @onScheduleError textStatus, data, errorThrown, jqXHR.responseText
           return
-        complete:    (jqXHR, textStatus) ->
+        complete:  (jqXHR, textStatus) ->
           resetIcon?() unless archive
           return
 
