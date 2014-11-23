@@ -1,5 +1,5 @@
 settings =
-  url: 'https://sodium-hue-766.appspot.com'
+  url: 'https://mailfred-app.appspot.com'
   # use the following with
   # --allow-running-insecure-content
   # to allow non-HTTPS calls

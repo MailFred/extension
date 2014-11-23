@@ -50,8 +50,11 @@
   "permissions": [
     "storage",
     "notifications",
+
     "https://www.google.com/accounts/*",
     "https://accounts.google.com/*",
+    "https://mailfred-app.appspot.com/*",
+
     "https://sodium-hue-766.appspot.com/*",
     "http://localhost:8080/*"
   ],
