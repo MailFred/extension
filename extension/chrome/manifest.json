@@ -1,4 +1,5 @@
 {
+  "version": "2.0.3",
   "background": {
     "persistent": false,
     "scripts": [
@@ -58,7 +59,6 @@
     "https://sodium-hue-766.appspot.com/*",
     "http://localhost:8080/*"
   ],
-  "version": "2.0.0",
   "web_accessible_resources": [
     "images/*",
     "bower_components/jquery/dist/jquery.min.js",
