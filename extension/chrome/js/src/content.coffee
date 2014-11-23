@@ -109,7 +109,7 @@
       return
 
     @getLastVersion: (resp) ->
-      chrome.storage.sync.get M.STORE.LAST_VERSION, (items) =>
+      chrome.storage.sync.get M.STORE.LAST_VERSION, (items) ->
         resp items[M.STORE.LAST_VERSION]
         return
       return
