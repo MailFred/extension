@@ -2,5 +2,5 @@ npm-debug.log
 bower_components
 node_modules
 extension/chrome/js/build
-styles.css
-chrome.zip
+extension/chrome/css/styles.css
+extension/build
