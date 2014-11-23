@@ -102,6 +102,33 @@ module.exports = function(grunt) {
       }
     },
 
+    bump: {
+      options: {
+        files: [
+          'package.json',
+          'chrome/bower.json',
+          'chrome/manifest.json'
+        ],
+        updateConfigs: ['pkg', 'chrome_manifest'],
+        commit: true,
+        commitMessage: 'Release v%VERSION%',
+        commitFiles: [
+          'package.json',
+          'chrome/bower.json',
+          'chrome/manifest.json',
+          'chrome/js/build/**',
+          'chrome/css/build/**'
+        ],
+        createTag: true,
+        tagName: 'v%VERSION%',
+        tagMessage: 'Version %VERSION%',
+        push: true,
+        pushTo: 'origin',
+        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
+        globalReplace: false
+      }
+    },
+
     crx: {
       dev: {
         "src": "./chrome",
@@ -150,6 +177,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-crx');
+  grunt.loadNpmTasks('grunt-bump');
 
   grunt.registerTask('build', [
     'coffee:compile',
@@ -161,6 +189,14 @@ module.exports = function(grunt) {
     'build',
     'compress:main'
   ]);
+
+  grunt.registerTask('release', 'Bump, build and release.', function(type) {
+    grunt.task.run([
+      'bump-only:' + (type || 'patch'),
+      'build',
+      'bump-commit'
+    ]);
+  });
 
   grunt.registerTask('travis', ['coffee:compile', 'less:build']);
 
