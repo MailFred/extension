@@ -9,13 +9,15 @@
   "content_scripts": [
     {
       "css": [
-        "css/styles.css"
+        "css/styles.css",
+        "bower_components/pikaday/css/pikaday.css"
       ],
       "js": [
         "bower_components/lodash/dist/lodash.min.js",
         "bower_components/jquery/dist/jquery.min.js",
 
-        "bower_components/jquery-ui/jquery-ui.min.js",
+        "bower_components/moment/min/moment.min.js",
+        "bower_components/pikaday/pikaday.js",
 
         "bower_components/yepnope/yepnope.1.5.4-min.js",
         "js/build/bootstrap.min.js",

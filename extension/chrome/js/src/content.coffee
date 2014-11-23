@@ -373,31 +373,23 @@
       presetMenu.addClass M.CLS_MENU
 
       # Date picker
-
       pickerMenu = new GMailUI.PopupMenu popup
       pickerMenu.addClass M.CLS_PICKER
 
-      pickerDiv = (pickerMenu.append new GMailUI.RawHTML '<div>').getElement()
-
-      initPicker = false
-      pickerMenu.onShow = =>
-        unless initPicker
-          $.datepicker.setDefaults $.datepicker.regional[ __msg 'calendarLanguage' ]
-          pickerDiv.datepicker
-                  minDate: '+1d'
-                  maxDate: '+1y'
-                  dateFormat: __msg 'dateFormat'
-                  showOtherMonths: true
-                  selectOtherMonths: true
-                  changeMonth: true
-                  changeYear: true
-                  onSelect: (dateText, inst) =>
-                    if (date = pickerDiv.datepicker 'getDate')
-                      #timeSectionElements.manual.setSelected true, true
-                      log 'schedule', date
-                      schedule @_specified date
-                    return
-          initPicker = true
+      picker = null
+      pickerMenu.onShow = ->
+        unless picker
+          picker = new Pikaday
+            bound: false
+            format: __msg 'dateFormat'
+            minDate: moment().add(1, 'day').toDate()
+            maxDate: moment().add(1, 'year').toDate()
+            onSelect: ->
+              date = @getMoment()
+              log 'schedule', date.format()
+              schedule date.utc().valueOf()
+              return
+          pickerMenu.getElement().append picker.el
         return
 
       # Time section
@@ -430,6 +422,8 @@
 
 
       #presetItem = timeSection.append (new GMailUI.PopupMenuItem presetMenu, (__msg 'menuTimePresetCloseFuture'),   '', '',  true)
+      timeSection.append   (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),  '',  '',  true)
+      timeSection.append new GMailUI.Separator
 
       # Presets
 
@@ -449,9 +443,6 @@
             return
           sep = new GMailUI.Separator
         return
-
-      timeSection.append new GMailUI.Separator
-      timeSection.append   (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),  '',  '',  true)
 
       button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
 
@@ -479,9 +470,6 @@
     _delta: (offset) ->
       "delta:#{offset}"
 
-    _specified: (d) ->
-      d.getTime() + d.getTimezoneOffset()*60*1000
-
     generateTimeFn: (unit) ->
       _1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
 
@@ -491,23 +479,13 @@
         when 'hours'
           (time) => @_delta (_1h * time)
         when 'tomorrow'
-          (hour) =>
-            now = new Date
-            tomorrow = new Date
-            tomorrow.setDate (now.getDate() + 1)
-            tomorrow.setHours hour
-            tomorrow.setMinutes 0
-            tomorrow.setSeconds 0
-            tomorrow.setMilliseconds 0
-            @_specified tomorrow
+          (hour) ->
+            moment().add(1, 'day').hourse(hour).utc().valueOf()
         when 'days'
           (time) => @_delta (_1d * time)
         when 'months'
-          (month) =>
-            now = new Date
-            other = new Date
-            other.setMonth (now.getMonth() + month)
-            @_specified other
+          (month) ->
+            moment().add(month, 'months').utc().valueOf()
 
     getMessageId: ->
       if @isPreviewPaneEnabled()
