@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    manifest: grunt.file.readJSON('manifest.json'),
     uglify: {
       options: {
         sourceMap: true,
@@ -99,6 +100,20 @@ module.exports = function(grunt) {
           },
         ]
       }
+    },
+
+    crx: {
+      dev: {
+        "src": ".",
+        "dest": "../<%= pkg.name %>-<%= manifest.version %>-dev.crx",
+        "privateKey": "../chrome.pem",
+        "exclude": [
+          "js/src/*",
+          "js/build/*.coffee.js",
+          "**/*.map",
+          "node_modules/**"
+        ]
+      }
     }
   });
 
@@ -107,6 +122,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-crx');
 
   grunt.registerTask('build', [
     'coffee:compile',
