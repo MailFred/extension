@@ -478,8 +478,9 @@
         dataType:  'json'
         data:      data
         success:   (resp, textStatus, jqXHR) =>
-          @onScheduleSuccess resp, data
-          resetIcon?() unless archive
+          success = @onScheduleSuccess resp, data
+          if success
+            resetIcon?() unless archive
           return
         error:     (jqXHR, textStatus, errorThrown) =>
           @onScheduleError textStatus, data, errorThrown, jqXHR.responseText
@@ -505,7 +506,7 @@
           message:   __msg 'notificationScheduleSuccess'
       else
         @onScheduleError data.error, params, data.error
-      return
+      data.success
 
     createDialog: (title, okButton, cancelButton) ->
       dialog = new GMailUI.ModalDialog title
@@ -589,7 +590,10 @@
 
     onScheduleError: (status, params, error, responseText) =>
       log 'There was an error', arguments
-      if (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or (M.isAuthorisationErrorResponse status)
+
+      if error is'authMissing' or
+      (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or
+      (M.isAuthorisationErrorResponse status)
         @gettingStarted params ? {}
       else
         notification =
