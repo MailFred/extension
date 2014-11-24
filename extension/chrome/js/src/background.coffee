@@ -1,5 +1,5 @@
 settings =
-  url: 'https://mailfred-app.appspot.com'
+  url: 'https://api.mailfred.de'
   # use the following with
   # --allow-running-insecure-content
   # to allow non-HTTPS calls
