@@ -67,7 +67,7 @@ module.exports = function(grunt) {
         options: {
           level: 9,
           pretty: true,
-          archive: 'build/chrome.zip'
+          archive: 'build/<%= pkg.name %>-<%= chrome_manifest.version %>.zip'
         },
         files: [
           {
@@ -193,15 +193,11 @@ module.exports = function(grunt) {
     'less:build'
   ]);
 
-  grunt.registerTask('release', [
-    'build',
-    'compress:main'
-  ]);
-
   grunt.registerTask('release', 'Bump, build and release.', function(type) {
     grunt.task.run([
       'bump-only:' + (type || 'patch'),
       'build',
+      'compress:main',
       'bump-commit'
     ]);
   });
