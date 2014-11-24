@@ -285,17 +285,11 @@
         pickerMenu.close()
         presetMenu.close()
         button.close()
-
-        loading = ->
-          button.addClass M.CLS_LOADER
-          return
-        reset = ->
+        button.addClass M.CLS_LOADER
+        props.when = wen
+        (@onSchedule props).always ->
           button.removeClass M.CLS_LOADER
           return
-
-        props.when = wen
-        @onSchedule props, loading, reset
-
         return
 
       isValid = =>
@@ -455,69 +449,51 @@
         throw __msg 'errorNotWithinAConversation'
       id
 
-    onSchedule: (props, loadingIcon, resetIcon) =>
+    onSchedule: (props) =>
       try
         messageId = @getMessageId()
       catch e
-        @onScheduleError null, null, e.toString()
+        @onScheduleError null, null, e.toString(), ''
         return
-
-      archive = !!props.archive
-
-      loadingIcon?() unless archive
 
       data =
-        msgId:  messageId
-        when:    props.when
-        markUnread:    !!props.unread
-        starIt:    !!props.star
-        onlyIfNoAnswer:  !!props.noanswer
-        moveToInbox:    !!props.inbox
-        archiveAfterScheduling:  archive
+        msgId: messageId
+        when:  props.when
 
-      # remove false values to transmit less data over the wire
-      _.each data, (val, key) ->
-        delete data[key] if val is false
-        return
+      data.markUnread = true              if !!props.unread
+      data.starIt = true                  if !!props.star
+      data.onlyIfNoAnswer = true          if !!props.noanswer
+      data.moveToInbox = true             if !!props.inbox
+      data.archiveAfterScheduling = true  if !!props.archive
 
       log 'scheduling mail...', data
 
+      url = @getServiceURL() + M.SCHEDULE_SUFFIX
 
-      $.ajax
-        url:       @getServiceURL() + M.SCHEDULE_SUFFIX
-        #type:     'POST'
-        dataType:  'json'
-        data:      data
-        success:   (resp, textStatus, jqXHR) =>
-          success = @onScheduleSuccess resp, data
-          if success
-            resetIcon?() unless archive
-          return
-        error:     (jqXHR, textStatus, errorThrown) =>
-          @onScheduleError textStatus, data, errorThrown, jqXHR.responseText
-          return
-
-      if archive
-        @activateArchiveButton()
-      else
-        _.delay (->
-          resetIcon?()
-          return
-          ), 600
-      return
-
-
-    onScheduleSuccess: (data, params) =>
-      log 'Scheduling success', data
-      if data.success
+      success = =>
         chrome.extension.sendMessage
           action:   'notification'
-          icon:     "images/tie.svg"
+          icon:     'images/tie.svg'
           title:     __msg 'notificationScheduleSuccessTitle'
           message:   __msg 'notificationScheduleSuccess'
-      else
-        @onScheduleError data.error, params, data.error
-      data.success
+        @activateArchiveButton() if data.archiveAfterScheduling
+        return
+
+      error = (status, error, responseText) =>
+        @onScheduleError status, data, error, responseText
+        return
+
+      ($.post url, data, null, 'json')
+      .done (resp, textStatus, jqXHR) ->
+        if resp.success
+          success()
+        else
+          error textStatus, resp.error, jqXHR.responseText
+        return
+      .fail (jqXHR, textStatus, reason) ->
+        error textStatus, reason, jqXHR.responseText
+        return
+      .promise()
 
     createDialog: (title, okButton, cancelButton) ->
       dialog = new GMailUI.ModalDialog title
@@ -616,7 +592,7 @@
       if (errorCodeAvailable and error.code is'authMissing') or
       (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or
       (M.isAuthorisationErrorResponse status)
-        @gettingStarted params ? {}
+        @gettingStarted params
       else
         getMessage = ->
           if errorCodeAvailable
