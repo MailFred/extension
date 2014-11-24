@@ -54,6 +54,8 @@
 
     "https://www.google.com/accounts/*",
     "https://accounts.google.com/*",
+    "https://appengine.google.com/*",
+    
     "https://mailfred-app.appspot.com/*",
 
     "https://sodium-hue-766.appspot.com/*",
