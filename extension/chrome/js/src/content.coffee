@@ -585,7 +585,17 @@
       if params
         query = $.param params
         url += "?#{query}"
-      window.open url, M.CLS, 'width=880,height=500,location=0,menubar=0,scrollbars=0,status=0,toolbar=0,resizable=1'
+      windowOptions =
+        width: 500
+        height: 500
+        location: 0
+        menubar: 0
+        scrollbars: 0
+        status: 0
+        toolbar: 0
+        resizable: 1
+      w = window.open url, M.CLS, (($.param windowOptions).replace '&', ',')
+      w.focus()
       return
 
     onScheduleError: (status, params, error, responseText) =>
