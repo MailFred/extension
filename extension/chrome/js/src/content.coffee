@@ -606,14 +606,11 @@
       (M.isAuthorisationErrorResponse status)
         @gettingStarted params ? {}
       else
-        notification =
+        chrome.extension.sendMessage
           action:   'notification'
-          icon:     "images/tie48x48.png"
+          icon:     "images/tie.svg"
           title:    __msg 'notificationScheduleErrorTitle'
           message:  if (_.isObject error) and ('code' of error) then (__msg "notificationScheduleError#{error.code}") else (__msg 'notificationScheduleError', '' + new String error)
-
-        chrome.extension.sendMessage notification
-
       return
 
   mb = new M
