@@ -5,18 +5,21 @@ settings =
   # to allow non-HTTPS calls
   #url: 'http://localhost:8080'
 
-chrome.extension.onMessage.addListener (request, sender, sendResponse) ->
-  #console.log(sender.tab "from a content script:" + sender.tab.url :
-  #  "from the extension");
+NOTIFICATION_ID = 'mailfred.notification'
+
+chrome.runtime.onMessage.addListener (request, sender, sendResponse) ->
+  console.log 'got message', request
 
   switch request.action
     when 'notification'
+      chrome.notifications.clear NOTIFICATION_ID, ->
+
       opt =
         type: "basic"
         title: request.title
         message: request.message
         iconUrl: request.icon
-      chrome.notifications.create 'mailfred.scheduled', opt, ->
+      chrome.notifications.create NOTIFICATION_ID, opt, ->
 
     when 'version'
       ret = chrome.app.getDetails().version

@@ -57,7 +57,7 @@
       @initSettings()
 
       # Get the service URL
-      chrome.extension.sendMessage {action: 'url'}, (url) =>
+      chrome.runtime.sendMessage {action: 'url'}, (url) =>
         @url = url
         @checkVersion()
         return
@@ -203,7 +203,7 @@
 
     checkVersion: ->
       # Get the extension version
-      chrome.extension.sendMessage {action: "version"}, (version) =>
+      chrome.runtime.sendMessage {action: "version"}, (version) =>
         M.getLastVersion (lastVersion) =>
           unless lastVersion
             M.storeLastVersion version
@@ -471,7 +471,7 @@
       url = @getServiceURL() + M.SCHEDULE_SUFFIX
 
       success = =>
-        chrome.extension.sendMessage
+        chrome.runtime.sendMessage
           action:   'notification'
           icon:     'images/tie.svg'
           title:     __msg 'notificationScheduleSuccessTitle'
@@ -600,9 +600,9 @@
           else
             (__msg 'notificationScheduleError', '' + new String error)
 
-        chrome.extension.sendMessage
+        chrome.runtime.sendMessage
           action:   'notification'
-          icon:     "images/tie.svg"
+          icon:     'images/tie.svg'
           title:    __msg 'notificationScheduleErrorTitle'
           message:  getMessage()
       return
