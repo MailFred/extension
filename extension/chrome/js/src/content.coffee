@@ -426,7 +426,7 @@
           (time) => @_delta (_1h * time)
         when 'tomorrow'
           (hour) ->
-            moment().add(1, 'day').hourse(hour).utc().valueOf()
+            moment().add(1, 'day').hours(hour).utc().valueOf()
         when 'days'
           (time) => @_delta (_1d * time)
         when 'months'
