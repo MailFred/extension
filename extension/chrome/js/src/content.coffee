@@ -448,7 +448,7 @@
       if @isPreviewPaneEnabled()
         id = @selectedConversationId
       else
-        id = /\/([0-9a-f]{16})/.exec window.location.hash
+        id = /\/([0-9a-f]{16})/i.exec window.location.hash
         id = id?[1]
 
       if id is null
