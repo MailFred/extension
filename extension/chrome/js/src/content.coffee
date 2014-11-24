@@ -14,31 +14,30 @@
     @SCHEDULE_SUFFIX: '/schedule'
     @SETUP_URL_SUFFIX: '/setup'
 
-    @CLS:       'mailfred'
+    @CLS:         'mailfred'
     #@CLS_NAV:     M.CLS + '-nav'
     @CLS_THREAD:   M.CLS + '-thread'
-    @CLS_POPUP:   M.CLS + '-popup'
+    @CLS_POPUP:    M.CLS + '-popup'
     @CLS_MENU:     M.CLS + '-menu'
     @CLS_PICKER:   M.CLS + '-picker'
     @CLS_LOADER:   M.CLS + '-loader'
 
-    @ID_PREFIX:   M.CLS + '-id-'
+    @ID_PREFIX:    M.CLS + '-id-'
 
-    @TYPE_THREAD:   'thread'
+    @TYPE_THREAD:  'thread'
     @TYPE_NAV:     'nav'
 
     @STORE:
-      # LASTUSED:    'lastUsed'
       BOX_SETTING:  'settings'
-      DEBUG:      'debug'
-      EMAIL:      'email'
-      LAST_VERSION:  'lastVersion'
+      DEBUG:        'debug'
+      EMAIL:        'email'
+      LAST_VERSION: 'lastVersion'
 
     @GM_SEL:
-      ARCHIVE_BUTTON:         '.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
-      THREAD_BUTTON_BAR:         '.iH > div'
-      INSERT_AFTER:           '.G-Ni.J-J5-Ji:visible:nth-child(3)'
-      PREVIEW_PANE_ENABLED:      '.apF .apJ'
+      ARCHIVE_BUTTON:                 '.T-I.J-J5-Ji.lR.T-I-ax7.T-I-Js-IF.ar7:visible'
+      THREAD_BUTTON_BAR:              '.iH > div'
+      INSERT_AFTER:                   '.G-Ni.J-J5-Ji:visible:nth-child(3)'
+      PREVIEW_PANE_ENABLED:           '.apF .apJ'
       PREVIEW_PANE_THREAD_BUTTON_BAR:  "[gh='mtb'] > div > div"
 
     # URL
@@ -49,7 +48,6 @@
     settingEmail: null
     settingProps: {}
     selectedConversationId: null
-    # lastUsed: []
 
     currentView: null
 
@@ -86,8 +84,6 @@
       chrome.storage.onChanged.addListener (changes, namespace) =>
         switch namespace
           when 'sync'
-            #if M.STORE.LASTUSED of changes
-            #  @lastUsed = changes[M.STORE.LASTUSED].newValue
             if M.STORE.BOX_SETTING of changes
               @settingProps = changes[M.STORE.BOX_SETTING].newValue
           when 'local'
@@ -406,7 +402,6 @@
         return
 
       button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
-
       errorSection = popup.append new GMailUI.ErrorSection __msg 'errorNoActionSpecified' # __msg 'errorNoTimeSpecified'
 
       isValid()
