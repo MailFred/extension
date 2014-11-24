@@ -66,6 +66,7 @@
     "js/build/mediator.min.js",
     "bower_components/*.map",
     "js/build/*.map",
+    "js/build/*.js",
     "js/src/*.coffee",
     "bower_components/*.coffee"
   ]
