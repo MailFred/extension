@@ -113,7 +113,7 @@
     @isAuthorisationErrorPage: (contents) -> /reauth/i.test contents
 
     @isAuthorisationErrorResponse: (resp) ->
-      resp?.toLowerCase().indexOf "authorization" isnt -1
+      (resp?.toLowerCase().indexOf "authorization") isnt -1
 
     checkAuthorised: (resp) ->
       url = @getServiceURL() + M.SETUP_URL_SUFFIX
