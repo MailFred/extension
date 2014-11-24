@@ -166,6 +166,15 @@ module.exports = function(grunt) {
           "bower_components/yepnope/yepnope.js"
         ]
       }
+    },
+
+    notify: {
+      watch: {
+        options: {
+          title: 'Watch run',
+          message: 'Recompiling completed',
+        }
+      }
     }
   });
 
@@ -176,6 +185,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-crx');
   grunt.loadNpmTasks('grunt-bump');
+  grunt.loadNpmTasks('grunt-notify');
 
   grunt.registerTask('build', [
     'coffee:compile',
