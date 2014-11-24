@@ -115,21 +115,31 @@
     @isAuthorisationErrorResponse: (resp) ->
       (resp?.toLowerCase().indexOf "authorization") isnt -1
 
-    checkAuthorised: (resp) ->
+    isAuthorised: ->
       url = @getServiceURL() + M.SETUP_URL_SUFFIX
       log 'checking if the user authorised', url
+      deferred = new $.Deferred
+      error = ->
+        log '...user is not authorised (yet/any more)'
+        deferred.reject()
+        return
+
       $.ajax
         url:      url
         dataType: 'json'
-        data:     action: 'status'
+        cache:    false
+        data:     format: 'json'
         success:  (data, textStatus, jqXHR) ->
-          log '...user is still authorised'
-          resp true
+          if data.success
+            log '...user is still authorised'
+            deferred.resolve()
+          else
+            error()
           return
         error:    (jqXHR, textStatus, errorThrown) ->
-          log '...user is not authorised'
-          resp false
+          error()
           return
+      deferred.promise()
 
     firstInstall: (version) ->
       log 'first install', version
@@ -138,8 +148,8 @@
 
     upgradeInstall: (oldVersion, newVersion) ->
       log 'upgrade from', oldVersion, newVersion
-      @checkAuthorised (authorised) =>
-        @gettingStarted action: 'setupNoSchedule' unless authorised
+      @isAuthorised.fail =>
+        @gettingStarted()
         return
       return
 
