@@ -601,16 +601,23 @@
     onScheduleError: (status, params, error, responseText) =>
       log 'There was an error', arguments
 
-      if error is'authMissing' or
+      errorCodeAvailable = (_.isObject error) and ('code' of error)
+      if (errorCodeAvailable and error.code is'authMissing') or
       (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or
       (M.isAuthorisationErrorResponse status)
         @gettingStarted params ? {}
       else
+        getMessage = ->
+          if errorCodeAvailable
+            (__msg "notificationScheduleError#{error.code}")
+          else
+            (__msg 'notificationScheduleError', '' + new String error)
+
         chrome.extension.sendMessage
           action:   'notification'
           icon:     "images/tie.svg"
           title:    __msg 'notificationScheduleErrorTitle'
-          message:  if (_.isObject error) and ('code' of error) then (__msg "notificationScheduleError#{error.code}") else (__msg 'notificationScheduleError', '' + new String error)
+          message:  getMessage()
       return
 
   mb = new M
