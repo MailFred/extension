@@ -27,7 +27,7 @@
     "message": "en"
   },
   "authorizeDialogText": {
-    "message": "$name$ has been built using Google Apps Script technology. This means that your data remains at Google, thus keeping your data extra secure. Google Apps Script needs permission to access your Google Mail account. You can revoke this access at any time.",
+    "message": "$name$ has been built using Google App Engine technology. This means that your data remains at Google, thus keeping your data extra secure. Google App Engine needs permission to access your Google Mail account. You can revoke this access at any time.",
     "placeholders": {
       "name": {
         "content": "$1",

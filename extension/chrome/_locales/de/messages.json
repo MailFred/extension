@@ -27,7 +27,7 @@
     "message": "de"
   },
   "authorizeDialogText": {
-    "message": "$name$ basiert auf der Google Apps Script Technologie. Deine Daten bleiben also vollständig bei Google und sind dadurch extra sicher. Google Apps Script benötigt die Erlaubnis auf Dein Google Mail Konto zugreifen zu dürfen. Diese Erlaubnis kannst Du jederzeit widerrufen.",
+    "message": "$name$ basiert auf der Google App Engine Technologie. Deine Daten bleiben also vollständig bei Google und sind dadurch extra sicher. Google App Engine benötigt die Erlaubnis auf Dein Google Mail Konto zugreifen zu dürfen. Diese Erlaubnis kannst Du jederzeit widerrufen.",
     "placeholders": {
       "name": {
         "content": "$1",
