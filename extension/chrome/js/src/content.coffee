@@ -149,7 +149,7 @@
 
     upgradeInstall: (oldVersion, newVersion) ->
       log 'upgrade from', oldVersion, newVersion
-      @isAuthorised.fail =>
+      @isAuthorised().fail =>
         @gettingStarted()
         return
       return
