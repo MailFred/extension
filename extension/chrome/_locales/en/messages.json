@@ -23,11 +23,8 @@
   "authorizeDialogImageHint": {
     "message": "That's what the new dialog &#10; with the request for permission &#10; will look like."
   },
-  "authorizeDialogImageLanguage": {
-    "message": "en"
-  },
   "authorizeDialogText": {
-    "message": "$name$ has been built using Google App Engine technology. This means that your data remains at Google, thus keeping your data extra secure. Google App Engine needs permission to access your Google Mail account. You can revoke this access at any time.",
+    "message": "$name$ has been built using Google App Engine technology.\n\nThis means that your data remains at Google, thus keeping your data extra secure.\n\nGoogle App Engine needs permission to access your Google Mail account. You can revoke this access at any time.",
     "placeholders": {
       "name": {
         "content": "$1",

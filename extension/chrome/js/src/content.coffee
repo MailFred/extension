@@ -21,6 +21,7 @@
     @CLS_MENU:     M.CLS + '-menu'
     @CLS_PICKER:   M.CLS + '-picker'
     @CLS_LOADER:   M.CLS + '-loader'
+    @CLS_AUTH_IMG: M.CLS + '-auth-image'
 
     @ID_PREFIX:    M.CLS + '-id-'
 
@@ -539,12 +540,14 @@
 
     gettingStartedDialogContent: ->
       extName = __msg 'extName'
-      img = chrome.extension.getURL "images/#{__msg 'authorizeDialogImageLanguage'}/clickToAuthorize.png"
+      img = chrome.extension.getURL 'images/authorize.svg'
+      dialogText = __msg 'authorizeDialogText', extName
+      dialogText = dialogText.replace /\n/g, '<br/>'
       """
       <div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
-        #{__msg 'authorizeDialogText', extName}
+        #{dialogText}
       </div>
-      <div>
+      <div class="#{M.CLS_AUTH_IMG}">
         <img src="#{img}" data-tooltip="#{__msg 'authorizeDialogImageHint'}" alt="#{__msg 'authorizeDialogImageAlt'}">
       </div>
       """
