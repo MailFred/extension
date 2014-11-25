@@ -278,7 +278,7 @@
     "message": "Dismiss"
   },
   "welcomeDialogButtonCancelTooltip": {
-    "message": "If you don't complete the setup,&#10;you can't use $name$",
+    "message": "If you don't complete the setup, you can't use $name$",
     "placeholders": {
       "name": {
         "content": "$1",
@@ -299,7 +299,7 @@
     "message": "The MailFred button &#10; on the top right in conversation view."
   },
   "welcomeDialogText": {
-    "message": "Thanks for installing $name$. You can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.&#10;&#10;In order for $name$ to work you have to grant access to your GMail account. Click 'Continue' to access the two authorization windows. Enjoy MailFred.",
+    "message": "Thanks for installing $name$.\n\nYou can access $name$ using the bow-tie icon on the top right. It will appear when you are in conversation mode.\n\nIn order for $name$ to work you have to grant access to your GMail account. Click 'Continue' to access the two authorization windows.\n\nEnjoy MailFred.",
     "placeholders": {
       "name": {
         "content": "$1",

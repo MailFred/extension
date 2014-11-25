@@ -514,10 +514,12 @@
       extName = __msg 'extName'
       [dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'welcomeDialogTitle', extName), [(__msg 'welcomeDialogButtonOk'), (__msg 'welcomeDialogButtonOkTooltip')], [(__msg 'welcomeDialogButtonCancel'), (__msg 'welcomeDialogButtonCancelTooltip', extName)]
 
+      welcomeDialogText = __msg 'welcomeDialogText', extName
+      welcomeDialogText = welcomeDialogText.replace /\n/g, '<br/>'
       container.append  """
                 <div style="text-align: justify;">
-                  <img src="#{chrome.extension.getURL 'images/button_example.png'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px;">
-                  #{__msg 'welcomeDialogText', extName}
+                  <img src="#{chrome.extension.getURL 'images/button_example.svg'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px; width: 115px; height: 73px;">
+                  #{welcomeDialogText}
                 </div>
                 """
 
