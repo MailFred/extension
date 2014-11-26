@@ -51,6 +51,7 @@
     selectedConversationId: null
 
     currentView: null
+    currentVersion: null
 
     constructor: ->
       window.addEventListener "message", @messageListener, false
@@ -156,6 +157,7 @@
 
     sameInstall: (version) ->
       log 'no version change', version
+      @currentVersion = version
       return
 
     inConversation: ->
@@ -460,6 +462,7 @@
       data =
         msgId: messageId
         when:  props.when
+        version: @currentVersion
 
       data.markUnread = true              if !!props.unread
       data.starIt = true                  if !!props.star
