@@ -4,3 +4,4 @@ node_modules
 extension/chrome/js/build
 extension/chrome/css/styles.css
 extension/build
+extension/tmp

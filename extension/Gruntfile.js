@@ -62,46 +62,6 @@ module.exports = function(grunt) {
       },
     },
 
-    compress: {
-      main: {
-        options: {
-          level: 9,
-          pretty: true,
-          archive: 'build/<%= pkg.name %>-<%= chrome_manifest.version %>.zip'
-        },
-        files: [
-          {
-            src:  [
-                    'chrome/_locales/**',
-                    'chrome/css/*.css',
-                    'chrome/html/*.html',
-                    'chrome/manifest.json',
-                    'chrome/js/build/*.min.js',
-                    'chrome/images/**'
-            ],
-            dest: '/',
-            filter: 'isFile'
-          },
-          {
-            src: [
-              'chrome/bower_components/eventr/build/eventr.min.js',
-              'chrome/bower_components/gmailr/build/gmailr.min.js',
-              'chrome/bower_components/gmailui/build/gmailui.min.js',
-              'chrome/bower_components/jquery/dist/jquery.min.js',
-              'chrome/bower_components/jquery-deparam/jquery.ba-deparam.min.js',
-              'chrome/bower_components/moment/min/moment.min.js',
-              'chrome/bower_components/pikaday/pikaday.js',
-              'chrome/bower_components/pikaday/css/pikaday.css',
-              'chrome/bower_components/lodash/dist/lodash.min.js',
-              'chrome/bower_components/yepnope/yepnope.1.5.4-min.js',
-            ],
-            dest: '/',
-            filter: 'isFile'
-          },
-        ]
-      }
-    },
-
     bump: {
       options: {
         files: [
@@ -128,10 +88,11 @@ module.exports = function(grunt) {
     },
 
     crx: {
-      dev: {
+      both: {
         "src": "./chrome",
-        "dest": "build/<%= pkg.name %>-<%= chrome_manifest.version %>-dev.crx",
-        "privateKey": "chrome.pem",
+        "dest": "./build",
+        "zipDest": "./build",
+        "privateKey": "key.pem",
         "exclude": [
           "**/*.md",
           "js/src/*",
@@ -197,7 +158,7 @@ module.exports = function(grunt) {
     grunt.task.run([
       'bump-only:' + (type || 'patch'),
       'build',
-      'compress:main',
+      'crx:both',
       'bump-commit'
     ]);
   });
