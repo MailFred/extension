@@ -1,8 +1,8 @@
 npm-debug.log
 bower_components
 node_modules
-extension/chrome/js/build
-extension/chrome/css/styles.css
-extension/build/*.crx
-extension/tmp
-extension/key.pem
+chrome/js/build
+chrome/css/styles.css
+build/*.crx
+tmp
+key.pem
