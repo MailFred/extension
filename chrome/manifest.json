@@ -52,9 +52,7 @@
     "storage",
     "notifications",
 
-    "https://www.google.com/accounts/*",
-    "https://accounts.google.com/*",
-    "https://appengine.google.com/*",
+    "https://*.google.com/*",
 
     "https://api.mailfred.de/*"
   ],
