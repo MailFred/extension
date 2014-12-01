@@ -75,10 +75,7 @@ module.exports = function(grunt) {
         commit: true,
         commitMessage: 'Release v%VERSION%',
         commitFiles: [
-          'package.json',
-          'chrome/bower.json',
-          'chrome/manifest.json',
-          releasePath
+          '-a'
         ],
         createTag: true,
         tagName: 'v%VERSION%',
