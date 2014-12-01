@@ -8,7 +8,7 @@ settings =
 NOTIFICATION_ID = 'mailfred.notification'
 
 chrome.runtime.onMessage.addListener (request, sender, sendResponse) ->
-  console.log 'got message', request
+  # console.log 'got message', request
 
   switch request.action
     when 'notification'
