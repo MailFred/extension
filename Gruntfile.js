@@ -144,7 +144,7 @@ module.exports = function(grunt) {
       "browser_path": '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
       "accounts": {
         "support@mailfred.de": {
-          publish: false, // be careful here, we still want to have some control
+          publish: true,
           client_id: process.env.CLIENT_ID,
           client_secret: process.env.CLIENT_SECRET
         }
