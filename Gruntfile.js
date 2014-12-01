@@ -178,7 +178,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'coffee:compile',
     'uglify:build',
-    'less:build'
+    'less:build',
+    'crx:both'
   ]);
 
   grunt.registerTask('release', 'Bump, build and release.', function(type) {
@@ -191,6 +192,6 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('travis', ['coffee:compile', 'less:build']);
+  grunt.registerTask('travis', ['build']);
 
 };
