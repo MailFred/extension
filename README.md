@@ -14,3 +14,6 @@ The source code for our extension is [open](https://github.com/MailFred/extensio
 All of the components of the extension are open source as well, for example we use [eventr](https://github.com/joscha/eventr), which is a Javascript event simulator to fire events on the buttons in GMail. We use [GMailr](https://github.com/joscha/gmailr), which is a Javascript API for GMail to find message IDs and whether you are in a conversation or threaded view and [gmailui](https://github.com/joscha/gmailui) to generate buttons and overlays which look exactly like native GMail.
 
 Our [website](http://www.mailfred.de) has more information about our free service and the extension in an installable form can be found here [for Google Chrome](https://chrome.google.com/webstore/detail/mailfred/lijahkfnlmaikbppnbjeelhihaklhoim).
+
+# How can I help?
+We would actually love to have new translations. So far we only have `en` and `de` - if you'd like to contribute, you can either do so here, by translating the according JSON file into your language or if you are not a developer, we are more than happy to give you access to our project on [PhraseApp](https://phraseapp.com/projects/mailfred-extension).
