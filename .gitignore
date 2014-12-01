@@ -3,6 +3,6 @@ bower_components
 node_modules
 chrome/js/build
 chrome/css/styles.css
-build/*.crx
+build/
 tmp
 key.pem
