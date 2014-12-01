@@ -22,6 +22,7 @@
     @CLS_PICKER:   M.CLS + '-picker'
     @CLS_LOADER:   M.CLS + '-loader'
     @CLS_AUTH_IMG: M.CLS + '-auth-image'
+    @CLS_AUTH_TXT: M.CLS + '-auth-text'
 
     @ID_PREFIX:    M.CLS + '-id-'
 
@@ -549,7 +550,7 @@
       dialogText = __msg 'authorizeDialogText', extName
       dialogText = dialogText.replace /\n/g, '<br/>'
       """
-      <div style="float: left; width: 250px; text-align: justify; padding-right: 10px;">
+      <div class="#{M.CLS_AUTH_TXT}">
         #{dialogText}
       </div>
       <div class="#{M.CLS_AUTH_IMG}">
