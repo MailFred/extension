@@ -5,3 +5,4 @@ extension/chrome/js/build
 extension/chrome/css/styles.css
 extension/build/*.crx
 extension/tmp
+extension/key.pem
