@@ -1,8 +1,10 @@
 module.exports = function(grunt) {
 
+  var releasePath = "./build/<%= pkg.name %>-<%= manifest.version %>.zip";
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    chrome_manifest: grunt.file.readJSON('chrome/manifest.json'),
+    manifest: grunt.file.readJSON('chrome/manifest.json'),
     uglify: {
       options: {
         sourceMap: true,
@@ -69,13 +71,14 @@ module.exports = function(grunt) {
           'chrome/bower.json',
           'chrome/manifest.json'
         ],
-        updateConfigs: ['pkg', 'chrome_manifest'],
+        updateConfigs: ['pkg', 'manifest'],
         commit: true,
         commitMessage: 'Release v%VERSION%',
         commitFiles: [
           'package.json',
           'chrome/bower.json',
-          'chrome/manifest.json'
+          'chrome/manifest.json',
+          releasePath
         ],
         createTag: true,
         tagName: 'v%VERSION%',
@@ -91,7 +94,7 @@ module.exports = function(grunt) {
       both: {
         "src": "./chrome",
         "dest": "./build",
-        "zipDest": "./build",
+        "zipDest": releasePath,
         "privateKey": "key.pem",
         "exclude": [
           "**/*.md",
@@ -136,6 +139,29 @@ module.exports = function(grunt) {
           message: 'Recompiling completed',
         }
       }
+    },
+
+    webstore_upload: {
+      "browser_path": '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      "accounts": {
+        "support@mailfred.de": {
+          publish: false, // be careful here, we still want to have some control
+          client_id: process.env.CLIENT_ID,
+          client_secret: process.env.CLIENT_SECRET
+        }
+      },
+      "extensions": {
+        "mailfred_beta": {
+            account: 'support@mailfred.de',
+            appID: "hcedpboddcjnggmdpbgdnlllkhmjjeil",
+            zip: releasePath
+        },
+        "mailfred_release": {
+            account: 'support@mailfred.de',
+            appID: "lijahkfnlmaikbppnbjeelhihaklhoim",
+            zip: releasePath
+        }
+      }
     }
   });
 
@@ -147,6 +173,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-crx');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-notify');
+  grunt.loadNpmTasks('grunt-webstore-upload');
 
   grunt.registerTask('build', [
     'coffee:compile',
@@ -159,6 +186,7 @@ module.exports = function(grunt) {
       'bump-only:' + (type || 'patch'),
       'build',
       'crx:both',
+      'webstore_upload:mailfred_release',
       'bump-commit'
     ]);
   });
