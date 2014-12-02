@@ -9,3 +9,10 @@ before_install:
   - './node_modules/crx/bin/crx.js keygen .'
   - 'cd $TRAVIS_BUILD_DIR/chrome/ && bower install'
   - 'cd $TRAVIS_BUILD_DIR'
+after_success: grunt beta
+env:
+  global:
+  # CLIENT_ID
+  - secure: M/Xj97CDMAjpUDj4pOA31hxf0lPWBwg+v3MNiIcQ3JVdzpwsAAEEJlqJ12kn8/V0ruZapHZr5r8aiIzBgcgVf+/iFIWNM0aFHOz4IcQ9r9vdNM4Vo98Ni12r9s8o/VpxuAcM/uliw/lhJFZ5c9pOty502vqwAtxpEi5AXZKaRQc=
+  # CLIENT_SECRET
+  - secure: hJlXvlgRns/bXDNqMjiRUjSnp/toXWdqMy4JbFjePF4uF18lsGsIpwpxIeo6YDfb6oMixBNSj/orQqiB1/8EPWjtZ3GO7XtyuXGAkk11Lqch9qyMa+Derz0WlWukgji1+oqTOLpaflvs9IJyv6xAixTnhakudMzTTFJJptxLzmA=

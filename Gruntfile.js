@@ -150,12 +150,12 @@ module.exports = function(grunt) {
         }
       },
       "extensions": {
-        "mailfred_beta": {
+        "beta": {
             account: 'support@mailfred.de',
             appID: "hcedpboddcjnggmdpbgdnlllkhmjjeil",
             zip: releasePath
         },
-        "mailfred_release": {
+        "release": {
             account: 'support@mailfred.de',
             appID: "lijahkfnlmaikbppnbjeelhihaklhoim",
             zip: releasePath
@@ -180,12 +180,16 @@ module.exports = function(grunt) {
     'crx:both'
   ]);
 
+  grunt.registerTask('beta', [
+    'webstore_upload:beta'
+  ]);
+
   grunt.registerTask('release', 'Bump, build and release.', function(type) {
     grunt.task.run([
       'bump-only:' + (type || 'patch'),
       'build',
       'crx:both',
-      'webstore_upload:mailfred_release',
+      'webstore_upload:release',
       'bump-commit'
     ]);
   });
