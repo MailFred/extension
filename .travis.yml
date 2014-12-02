@@ -9,4 +9,3 @@ before_install:
   - './node_modules/crx/bin/crx.js keygen .'
   - 'cd $TRAVIS_BUILD_DIR/chrome/ && bower install'
   - 'cd $TRAVIS_BUILD_DIR'
-script: 'npm test'
