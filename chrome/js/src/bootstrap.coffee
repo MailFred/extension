@@ -7,6 +7,8 @@ if top.document is document
         chrome.extension.getURL "bower_components/gmailr/build/gmailr.min.js"
         chrome.extension.getURL "js/build/mediator.min.js"
       ]
-      complete: -> jQuery.noConflict true
+      complete: ->
+        jQuery.noConflict true
+        return
     }
   ]
