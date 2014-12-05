@@ -383,12 +383,12 @@
 
       # Time section
 
-      timeSection = popup.append new GMailUI.Section
-      timeSection.append new GMailUI.Separator
+      timeSection = popup.append new GMailUI.Section()
+      timeSection.append new GMailUI.Separator()
       timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
 
       timeSection.append   (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),  '',  '',  true)
-      timeSection.append new GMailUI.Separator
+      timeSection.append new GMailUI.Separator()
 
       # Presets
 
@@ -406,7 +406,7 @@
               schedule wen
               return
             return
-          sep = new GMailUI.Separator
+          sep = new GMailUI.Separator()
         return
 
       button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
@@ -506,9 +506,9 @@
       [okButtonLabel, okButtonTooltip] = okButton
       [cancelButtonLabel, cancelButtonTooltip] = cancelButton
 
-      container = dialog.append new GMailUI.ModalDialog.Container
+      container = dialog.append new GMailUI.ModalDialog.Container()
 
-      footer = dialog.append new GMailUI.ModalDialog.Footer
+      footer = dialog.append new GMailUI.ModalDialog.Footer()
       okButton = footer.append new GMailUI.ModalDialog.Button okButtonLabel, okButtonTooltip
       cancelButton = footer.append new GMailUI.ModalDialog.Button cancelButtonLabel, cancelButtonTooltip, 'cancel'
 
@@ -616,7 +616,7 @@
           message:  getMessage()
       return
 
-  mb = new M
+  mb = new M()
   return
 
 ) jQuery, window if top.document is document
