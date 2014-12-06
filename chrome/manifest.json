@@ -58,6 +58,7 @@
   ],
   "web_accessible_resources": [
     "images/*",
+    "bower_components/jquery/dist/jquery.js",
     "bower_components/jquery/dist/jquery.min.js",
     "bower_components/jquery-deparam/jquery.ba-deparam.min.js",
     "bower_components/gmailr/build/gmailr.min.js",
