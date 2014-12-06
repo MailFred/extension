@@ -9,7 +9,8 @@ before_install:
   - './node_modules/crx/bin/crx.js keygen .'
   - 'cd $TRAVIS_BUILD_DIR/chrome/ && bower install'
   - 'cd $TRAVIS_BUILD_DIR'
-after_success: grunt beta
+#after_success:
+#  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 env:
   global:
   # CLIENT_ID
