@@ -1,15 +1,19 @@
 (($, window) ->
 
   log = (args...) ->
-    if console?.log and mb?.debug is true
-      args.unshift "[#{M.CLS}]"
-      console.log.apply console, args
+    return unless console?.log
+    mb?.getDebug().then (debug) ->
+      if debug
+        args.unshift "[#{M.CLS}]"
+        console.log.apply console, args
+      return
     return
 
   __msg = chrome.i18n.getMessage
 
+  currentGmailDeferred = new $.Deferred()
+
   class M
-    debug:   false
 
     @SCHEDULE_SUFFIX: '/schedule'
     @SETUP_URL_SUFFIX: '/setup'
@@ -42,37 +46,39 @@
       PREVIEW_PANE_ENABLED:           '.apF .apJ'
       PREVIEW_PANE_THREAD_BUTTON_BAR:  "[gh='mtb'] > div > div"
 
-    # URL
-    url: null
-
-    # Current GMail address of the logged in user
-    currentGmail: null
     settingEmail: null
     settingProps: {}
     selectedConversationId: null
 
     currentView: null
-    currentVersion: null
 
     constructor: ->
       window.addEventListener "message", @messageListener, false
 
       @initSettings()
+      @checkVersion()
+      return
 
-      # Get the service URL
-      chrome.runtime.sendMessage {action: 'url'}, (url) =>
-        @url = url
-        @checkVersion()
+    ###* This returns the service URL
+         @return {Promise} resolves to the service URL {String}
+    ###
+    getServiceUrl: ->
+      deferred = new $.Deferred()
+      chrome.runtime.sendMessage {action: 'url'}, deferred.resolve
+      deferred.promise()
+
+    getDebug: ->
+      deferred = new $.Deferred()
+      chrome.storage.local.get M.STORE.DEBUG, (items) ->
+        deferred.resolve items[M.STORE.DEBUG]
         return
+      deferred.promise()
 
     initSettings: ->
       # Get the settings
       chrome.storage.local.get null, (items) =>
         _.each items, (value, key) =>
           switch key
-            when M.STORE.DEBUG
-              @debug = value
-              log 'MailFred debugging is enabled' if @debug
             when M.STORE.EMAIL
               @settingEmail = value
           return
@@ -90,9 +96,6 @@
             if M.STORE.BOX_SETTING of changes
               @settingProps = changes[M.STORE.BOX_SETTING].newValue
           when 'local'
-            if M.STORE.DEBUG of changes
-              @debug = changes[M.STORE.DEBUG].newValue
-              log 'MailFred debugging is enabled' if @debug
             if M.STORE.EMAIL of changes
               @settingEmail = changes[M.STORE.EMAIL].newValue
         return
@@ -119,29 +122,31 @@
       (resp?.toLowerCase().indexOf "authorization") isnt -1
 
     isAuthorised: ->
-      url = @getServiceURL() + M.SETUP_URL_SUFFIX
-      log 'checking if the user authorised', url
+      log 'checking if the user authorised'
       deferred = new $.Deferred
-      error = ->
-        log '...user is not authorised (yet/any more)'
-        deferred.reject()
-        return
+      @getServiceUrl().then (url) ->
+        url += M.SETUP_URL_SUFFIX
 
-      $.ajax
-        url:      url
-        dataType: 'json'
-        cache:    false
-        data:     format: 'json'
-        success:  (data, textStatus, jqXHR) ->
-          if data.success
-            log '...user is still authorised'
-            deferred.resolve()
-          else
+        error = ->
+          log '...user is not authorised (yet/any more)'
+          deferred.reject()
+          return
+
+        $.ajax
+          url:      url
+          dataType: 'json'
+          cache:    false
+          data:     format: 'json'
+          success:  (data, textStatus, jqXHR) ->
+            if data.success
+              log '...user is still authorised'
+              deferred.resolve()
+            else
+              error()
+            return
+          error:    (jqXHR, textStatus, errorThrown) ->
             error()
-          return
-        error:    (jqXHR, textStatus, errorThrown) ->
-          error()
-          return
+            return
       deferred.promise()
 
     firstInstall: (version) ->
@@ -158,7 +163,6 @@
 
     sameInstall: (version) ->
       log 'no version change', version
-      @currentVersion = version
       return
 
     inConversation: ->
@@ -172,10 +176,16 @@
         Eventr.simulate button, 'mouseup'
       return
 
+    ###* returns the email address of the currently
+         logged in user
+         @returns {Promise} a promise that resolves to the email address {String}
+    ###
+    getCurrentGmail: -> currentGmailDeferred.promise()
+
     messageListener: (e) =>
       if e.source is window
         # We only accept messages from ourselves
-        #log "event", e
+        # log "event from Gmailr", e
 
         if e.data?.from is "GMAILR"
           # log 'Got Gmailr event: ', e.data.event.type
@@ -183,15 +193,17 @@
           switch evt.type
             when 'init'
             # GMailr is ready
-              @currentGmail = evt.email
+              currentGmailDeferred.resolve (evt.email ? '').trim() ? null
               # GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
 
               # kick GMailr into debug mode?
-              if @debug
-                message =
-                  from: 'MAILFRED'
-                  type: 'debug.enable'
-                window.postMessage message, "*"
+              @getDebug().then (debug) ->
+                if debug
+                  message =
+                    from: 'MAILFRED'
+                    type: 'debug.enable'
+                  window.postMessage message, "*"
+                return
 
             when 'viewThread'
             # User moves to previous or next convo
@@ -205,9 +217,20 @@
 
       return
 
+    ### returns the version of the extension
+        @returns {Promise} resolves to the semver version {String}
+    ###
+    getVersion: ->
+      log 'getting version'
+      deferred = new $.Deferred()
+      chrome.runtime.sendMessage action: "version", (version) ->
+        deferred.resolve version
+        return
+      deferred.promise()
+
     checkVersion: ->
       # Get the extension version
-      chrome.runtime.sendMessage {action: "version"}, (version) =>
+      @getVersion().then (version) =>
         M.getLastVersion (lastVersion) =>
           unless lastVersion
             M.storeLastVersion version
@@ -224,12 +247,10 @@
     inject: ->
       return unless @inConversation()
       log 'Email address in settings', @settingEmail
-      log 'Current Gmail window', @currentGmail
-
-      @injectThread() if (not @settingEmail or not @currentGmail) or @currentGmail.trim() in @settingEmail.split /[, ]+/ig
+      @getCurrentGmail().then (currentGmail) =>
+        log 'Current Gmail window', currentGmail
+        @injectThread() if (not @settingEmail or not currentGmail) or currentGmail in @settingEmail.split /[, ]+/ig
       return
-
-    getServiceURL: -> @url
 
     isPreviewPaneEnabled: ->
       ($ M.GM_SEL.PREVIEW_PANE_ENABLED).length > 0
@@ -270,6 +291,17 @@
         (__msg "#{x}Selected")
         (__msg x)
       ]
+
+    getPresets: =>
+      @getDebug().then (debug) ->
+        presets = {}
+        presets.minutes    = [5] if debug
+        presets.hours      = [4]
+        presets.hours.unshift 2 if debug
+        presets.tomorrow   = [8,14]
+        presets.days       = [2,7,14]
+        presets.months     = [1] if debug
+        return presets
 
     composeButton: =>
 
@@ -317,14 +349,6 @@
             return
           isValid()
         return
-
-      presets = {}
-      presets.minutes    = [5] if @debug
-      presets.hours      = [4]
-      presets.hours.unshift 2 if @debug
-      presets.tomorrow   = [8,14]
-      presets.days       = [2,7,14]
-      presets.months     = [1] if @debug
 
       # UI
 
@@ -391,22 +415,23 @@
       timeSection.append new GMailUI.Separator()
 
       # Presets
-
-      sep = null
-      _.each presets, (times, key) =>
-        unless _.isEmpty times
-          timeSection.append sep if sep
-          _.each times, (time) =>
-            timeFn = @generateTimeFn key
-            [label, title] = @getTexts key, time
-            item = timeSection.append new GMailUI.Button label, title
-            item.on 'click', ->
-              wen = timeFn time
-              log "schedule: #{time}, #{key}: #{wen}"
-              schedule wen
+      @getPresets().then (presets) =>
+        sep = null
+        _.each presets, (times, key) =>
+          unless _.isEmpty times
+            timeSection.append sep if sep
+            _.each times, (time) =>
+              timeFn = @generateTimeFn key
+              [label, title] = @getTexts key, time
+              item = timeSection.append new GMailUI.Button label, title
+              item.on 'click', ->
+                wen = timeFn time
+                log "schedule: #{time}, #{key}: #{wen}"
+                schedule wen
+                return
               return
-            return
-          sep = new GMailUI.Separator()
+            sep = new GMailUI.Separator()
+          return
         return
 
       button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
@@ -454,51 +479,58 @@
       id
 
     onSchedule: (props) =>
+      deferred = new $.Deferred()
       try
         messageId = @getMessageId()
       catch e
         @onScheduleError null, null, e.toString(), ''
+        deferred.reject()
         return
 
-      data =
-        msgId: messageId
-        when:  props.when
-        version: @currentVersion
+      @getVersion().then (version) =>
+        data =
+          msgId: messageId
+          when:  props.when
+          version: version
 
-      data.markUnread = true              if !!props.unread
-      data.starIt = true                  if !!props.star
-      data.onlyIfNoAnswer = true          if !!props.noanswer
-      data.moveToInbox = true             if !!props.inbox
-      data.archiveAfterScheduling = true  if !!props.archive
+        data.markUnread = true              if !!props.unread
+        data.starIt = true                  if !!props.star
+        data.onlyIfNoAnswer = true          if !!props.noanswer
+        data.moveToInbox = true             if !!props.inbox
+        data.archiveAfterScheduling = true  if !!props.archive
 
-      log 'scheduling mail...', data
+        log 'scheduling mail...', data
 
-      url = @getServiceURL() + M.SCHEDULE_SUFFIX
+        @getServiceUrl().then (url) =>
+          url += M.SCHEDULE_SUFFIX
+          success = =>
+            deferred.resolve()
+            chrome.runtime.sendMessage
+              action:   'notification'
+              icon:     'images/tie.svg'
+              title:     __msg 'notificationScheduleSuccessTitle'
+              message:   __msg 'notificationScheduleSuccess'
+            @activateArchiveButton() if data.archiveAfterScheduling
+            return
 
-      success = =>
-        chrome.runtime.sendMessage
-          action:   'notification'
-          icon:     'images/tie.svg'
-          title:     __msg 'notificationScheduleSuccessTitle'
-          message:   __msg 'notificationScheduleSuccess'
-        @activateArchiveButton() if data.archiveAfterScheduling
+          error = (status, error, responseText) =>
+            deferred.reject()
+            @onScheduleError status, data, error, responseText
+            return
+
+          ($.post url, data, null, 'json')
+          .done (resp, textStatus, jqXHR) ->
+            if resp.success
+              success()
+            else
+              error textStatus, resp.error, jqXHR.responseText
+            return
+          .fail (jqXHR, textStatus, reason) ->
+            error textStatus, reason, jqXHR.responseText
+            return
+          return
         return
-
-      error = (status, error, responseText) =>
-        @onScheduleError status, data, error, responseText
-        return
-
-      ($.post url, data, null, 'json')
-      .done (resp, textStatus, jqXHR) ->
-        if resp.success
-          success()
-        else
-          error textStatus, resp.error, jqXHR.responseText
-        return
-      .fail (jqXHR, textStatus, reason) ->
-        error textStatus, reason, jqXHR.responseText
-        return
-      .promise()
+      deferred.promise()
 
     createDialog: (title, okButton, cancelButton) ->
       dialog = new GMailUI.ModalDialog title
@@ -577,21 +609,23 @@
       dialog.open()
 
     openAuthWindow: (params) ->
-      url = @getServiceURL() + M.SETUP_URL_SUFFIX
-      if params
-        query = $.param params
-        url += "?#{query}"
-      windowOptions =
-        width: 500
-        height: 500
-        location: 0
-        menubar: 0
-        scrollbars: 0
-        status: 0
-        toolbar: 0
-        resizable: 1
-      w = window.open url, M.CLS, (($.param windowOptions).replace '&', ',')
-      w.focus()
+      @getServiceUrl().then (url) ->
+        url += M.SETUP_URL_SUFFIX
+        if params
+          query = $.param params
+          url += "?#{query}"
+        windowOptions =
+          width: 500
+          height: 500
+          location: 0
+          menubar: 0
+          scrollbars: 0
+          status: 0
+          toolbar: 0
+          resizable: 1
+        w = window.open url, M.CLS, (($.param windowOptions).replace '&', ',')
+        w.focus()
+        return
       return
 
     onScheduleError: (status, params, error, responseText) =>
