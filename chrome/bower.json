@@ -18,11 +18,12 @@
   "dependencies": {
     "eventr": "0.2.8",
     "gmailui": "0.2.5",
-    "gmailr": "0.0.4",
+    "gmailr": "0.0.5",
     "lodash": "~2.4.1",
     "jquery": "~1.11.1",
     "yepnope": "1.5.4",
     "pikaday": "~1.2.0",
-    "moment": "~2.8.4"
+    "moment": "~2.8.4",
+    "trackjs": "~2.1.6"
   }
 }

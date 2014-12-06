@@ -1,12 +1,20 @@
 (($, window) ->
 
   log = (args...) ->
+    window.trackJs.console.log.apply window.trackJs.console, args
     return unless console?.log
     mb?.getDebug().then (debug) ->
       if debug
         args.unshift "[#{M.CLS}]"
         console.log.apply console, args
       return
+    return
+
+  track = (args) ->
+    try
+      trackJs.track JSON.stringify args
+    catch err
+      # ignore
     return
 
   __msg = chrome.i18n.getMessage
@@ -56,6 +64,7 @@
       window.addEventListener "message", @messageListener, false
 
       @initSettings()
+      @initTrackJs()
       @checkVersion()
       return
 
@@ -66,6 +75,18 @@
       deferred = new $.Deferred()
       chrome.runtime.sendMessage {action: 'url'}, deferred.resolve
       deferred.promise()
+
+    initTrackJs: ->
+      @getVersion().then (version) =>
+        @getCurrentGmail().then (email) ->
+          opts =
+            userId: email
+            version: version
+          log 'initializing TrackJS with', opts
+          window.trackJs.configure opts
+          return
+        return
+      return
 
     getDebug: ->
       deferred = new $.Deferred()
@@ -130,6 +151,7 @@
         error = ->
           log '...user is not authorised (yet/any more)'
           deferred.reject()
+          track arguments
           return
 
         $.ajax
@@ -142,10 +164,10 @@
               log '...user is still authorised'
               deferred.resolve()
             else
-              error()
+              error textStatus, jqXHR.responseText
             return
           error:    (jqXHR, textStatus, errorThrown) ->
-            error()
+            error textStatus, jqXHR.responseText
             return
       deferred.promise()
 
@@ -516,6 +538,7 @@
           error = (status, error, responseText) =>
             deferred.reject()
             @onScheduleError status, data, error, responseText
+            track arguments
             return
 
           ($.post url, data, null, 'json')

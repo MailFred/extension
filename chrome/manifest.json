@@ -14,6 +14,8 @@
         "bower_components/pikaday/css/pikaday.css"
       ],
       "js": [
+        "js/build/trackjs.min.js",
+        "bower_components/trackjs/tracker.js",
         "bower_components/lodash/dist/lodash.min.js",
         "bower_components/jquery/dist/jquery.min.js",
 
