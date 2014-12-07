@@ -141,7 +141,6 @@ module.exports = function(grunt) {
     },
 
     webstore_upload: {
-      "browser_path": '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
       "accounts": {
         "support@mailfred.de": {
           publish: true,

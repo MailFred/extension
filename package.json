@@ -22,6 +22,6 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-crx": "git://github.com/oncletom/grunt-crx.git#update-crx",
     "grunt-notify": "^0.4.1",
-    "grunt-webstore-upload": "^0.7.3"
+    "grunt-webstore-upload": "^0.8.1"
   }
 }
