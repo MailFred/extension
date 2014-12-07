@@ -151,7 +151,6 @@
         error = ->
           log '...user is not authorised (yet/any more)'
           deferred.reject()
-          track arguments
           return
 
         $.ajax
@@ -538,7 +537,6 @@
           error = (status, error, responseText) =>
             deferred.reject()
             @onScheduleError status, data, error, responseText
-            track arguments
             return
 
           ($.post url, data, null, 'json')
@@ -549,6 +547,7 @@
               error textStatus, resp.error, jqXHR.responseText
             return
           .fail (jqXHR, textStatus, reason) ->
+            track [textStatus, reason, jqXHR.responseText]
             error textStatus, reason, jqXHR.responseText
             return
           return
@@ -620,6 +619,7 @@
       [dialog, okButton, cancelButton, container, footer]
 
     gettingStarted: (params) ->
+      log 'showing getting started dialog'
       [dialog, okButton, cancelButton, container, footer] = @gettingStartedDialog()
 
       okButton.on 'click', =>
@@ -660,10 +660,12 @@
       (M.isAuthorisationErrorResponse status)
         @gettingStarted params
       else
+        log 'could not recover, showing error'
         getMessage = ->
           if errorCodeAvailable
             (__msg "notificationScheduleError#{error.code}")
           else
+            track [status, params, error, responseText]
             (__msg 'notificationScheduleError', '' + new String error)
 
         chrome.runtime.sendMessage
