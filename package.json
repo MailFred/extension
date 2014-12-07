@@ -17,11 +17,14 @@
     "grunt": "^0.4.5",
     "grunt-bump": "0.0.16",
     "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-copy": "^0.7.0",
     "grunt-contrib-less": "^0.12.0",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-crx": "git://github.com/oncletom/grunt-crx.git#74bad8b51cbfd9b87bdb0cb0e8015215b59deef0",
     "grunt-notify": "^0.4.1",
-    "grunt-webstore-upload": "^0.8.1"
+    "grunt-webstore-upload": "^0.8.1",
+    "grunt-mozilla-addon-sdk": "^0.3.2",
+    "load-grunt-tasks": "^1.0.0"
   }
 }

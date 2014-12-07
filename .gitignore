@@ -2,7 +2,10 @@ npm-debug.log
 bower_components
 node_modules
 chrome/js/build
-chrome/css/styles.css
+shared/js/build
+shared/css/build
 build/
 tmp
 key.pem
+chrome/data/shared
+firefox/data/shared

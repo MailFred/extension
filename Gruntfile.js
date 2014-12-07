@@ -1,83 +1,137 @@
 module.exports = function(grunt) {
 
   var releasePath = "./build/<%= pkg.name %>-<%= manifest.version %>.zip";
+  var sharedStaticSrc = [
+    'shared/**',
+    '!shared/{css,js}/**'
+  ];
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     manifest: grunt.file.readJSON('chrome/manifest.json'),
+    firefoxPackage: grunt.file.readJSON('firefox/package.json'),
     uglify: {
       options: {
         sourceMap: true,
         sourceMapIncludeSources: true,
       },
-      build: {
+      chrome: {
         files: [{
           expand: true,
-          cwd: 'chrome/js/build',
+          cwd: 'chrome/lib/js/build',
           src: '*.coffee.js',
-          dest: 'chrome/js/build',
+          dest: 'chrome/lib/js/build',
+          ext: '.min.js'
+        }]
+      },
+      firefox: {
+        files: [{
+          expand: true,
+          cwd: 'firefox/lib/js/build',
+          src: '*.coffee.js',
+          dest: 'firefox/lib/js/build',
+          ext: '.min.js'
+        }]
+      },
+      shared: {
+        files: [{
+          expand: true,
+          cwd: 'shared/js/build',
+          src: '*.coffee.js',
+          dest: 'shared/js/build',
           ext: '.min.js'
         }]
       }
     },
 
     coffee: {
-      compile: {
-        options: {
-          sourceMap: true
-        },
+      options: {
+        sourceMap: true
+      },
+      chrome: {
         expand: true,
         flatten: true,
-        cwd: 'chrome/js/src',
+        cwd: 'chrome/lib/js/src',
         src: ['*.coffee'],
-        dest: 'chrome/js/build',
+        dest: 'chrome/lib/js/build',
+        ext: '.coffee.js'
+      },
+      firefox: {
+        expand: true,
+        flatten: true,
+        cwd: 'firefox/lib/js/src',
+        src: ['*.coffee'],
+        dest: 'chrome/lib/js/build',
+        ext: '.coffee.js'
+      },
+      shared: {
+        expand: true,
+        flatten: true,
+        cwd: 'shared/js/src',
+        src: ['*.coffee'],
+        dest: 'shared/js/build',
         ext: '.coffee.js'
       }
     },
 
     less: {
-      build: {
+      shared: {
         files: {
-          "chrome/css/styles.css": "chrome/css/styles.less"
+          "shared/css/build/styles.css": "shared/css/src/styles.less"
         }
       }
     },
 
     watch: {
-      scripts: {
+      options: {
+        interrupt: true,
+      },
+      'chrome.scripts': {
         files: [
           'chrome/js/src/*.coffee'
         ],
-        tasks: ['coffee:compile', 'uglify:build'],
-        options: {
-          interrupt: true,
-        },
+        tasks: ['coffee:chrome', 'uglify:chrome']
       },
-      styles: {
+      'firefox.scripts': {
         files: [
-        'chrome/css/*.less'
+          'firefox/js/src/*.coffee'
         ],
-        tasks: ['less:build'],
-        options: {
-          interrupt: true,
-        },
+        tasks: ['coffee:firefox', 'uglify:firefox']
       },
+      'shared.scripts': {
+        files: [
+          'shared/js/src/*.coffee'
+        ],
+        tasks: ['coffee:shared', 'uglify:shared', 'copy:shared.scripts']
+      },
+      'shared.styles': {
+        files: [
+        'shared/css/*.less'
+        ],
+        tasks: ['less:shared', 'copy:shared.styles']
+      },
+      'shared.static': {
+        files: sharedStaticSrc,
+        tasks: ['copy:shared.static']
+      }
     },
 
     bump: {
       options: {
         files: [
           'package.json',
-          'chrome/bower.json',
-          'chrome/manifest.json'
+          'bower.json',
+          'chrome/manifest.json',
+          'firefox/package.json'
         ],
-        updateConfigs: ['pkg', 'manifest'],
+        updateConfigs: ['pkg', 'manifest', 'firefoxPackage'],
         commit: true,
         commitMessage: 'Release v%VERSION%',
         commitFiles: [
           'package.json',
-          'chrome/bower.json',
-          'chrome/manifest.json'
+          'bower.json',
+          'chrome/manifest.json',
+          'firefox/package.json'
         ],
         createTag: true,
         tagName: 'v%VERSION%',
@@ -131,15 +185,6 @@ module.exports = function(grunt) {
       }
     },
 
-    notify: {
-      watch: {
-        options: {
-          title: 'Watch run',
-          message: 'Recompiling completed',
-        }
-      }
-    },
-
     webstore_upload: {
       "accounts": {
         "support@mailfred.de": {
@@ -160,23 +205,77 @@ module.exports = function(grunt) {
             zip: releasePath
         }
       }
+    },
+
+    "mozilla-addon-sdk": {
+      'latest': {
+        options: {
+          revision: "1.17"
+        }
+      }
+    },
+    "mozilla-cfx-xpi": {
+      'release': {
+        options: {
+          "mozilla-addon-sdk": "latest",
+          extension_dir: "./firefox",
+          dist_dir: "./build",
+          arguments: "--strip-sdk"
+        }
+      }
+    },
+    "mozilla-cfx": {
+      'release': {
+        options: {
+          "mozilla-addon-sdk": "latest",
+          extension_dir: "./firefox",
+          command: "run"
+        }
+      }
+    },
+
+    copy: {
+      options: {
+        timestamp: true
+      },
+      'shared.styles': {
+        files: [
+          {expand: true, src: ['shared/css/build/*.css'], dest: 'chrome/data/shared/css'},
+          {expand: true, src: ['shared/css/build/*.css'], dest: 'firefox/data/shared/css'},
+        ]
+      },
+      'shared.scripts': {
+        files: [
+          {expand: true, src: ['shared/js/build/**'], dest: 'chrome/data/shared/js'},
+          {expand: true, src: ['shared/js/build/**'], dest: 'firefox/data/shared/js'},
+        ]
+      },
+      'shared.static': {
+        files: [
+          {
+            expand: true,
+            src: sharedStaticSrc,
+            dest: 'chrome/data'
+          },
+          {
+            expand: true,
+            src: sharedStaticSrc,
+            dest: 'firefox/data'
+          }
+        ]
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-crx');
-  grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-notify');
-  grunt.loadNpmTasks('grunt-webstore-upload');
+  require('load-grunt-tasks')(grunt);
 
   grunt.registerTask('build', [
-    'coffee:compile',
-    'uglify:build',
-    'less:build',
-    'crx:both'
+    'coffee',
+    'uglify',
+    'less',
+    'copy',
+    'mozilla-cfx-xpi',
+    'crx'
   ]);
 
   grunt.registerTask('beta', [
