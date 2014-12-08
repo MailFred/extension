@@ -3,31 +3,31 @@
   "background": {
     "persistent": false,
     "scripts": [
-      "js/build/background.min.js"
+      "lib/js/build/background.min.js"
     ]
   },
   "minimum_chrome_version": "28",
   "content_scripts": [
     {
       "css": [
-        "css/styles.css",
-        "bower_components/pikaday/css/pikaday.css"
+        "data/shared/css/styles.css",
+        "data/shared/bower_components/pikaday/css/pikaday.css"
       ],
       "js": [
-        "js/build/trackjs.min.js",
-        "bower_components/trackjs/tracker.js",
-        "bower_components/lodash/dist/lodash.min.js",
-        "bower_components/jquery/dist/jquery.min.js",
+        "data/shared/js/trackjs.min.js",
+        "data/shared/bower_components/trackjs/tracker.js",
+        "data/shared/bower_components/lodash/dist/lodash.min.js",
+        "data/shared/bower_components/jquery/dist/jquery.min.js",
 
-        "bower_components/moment/min/moment.min.js",
-        "bower_components/pikaday/pikaday.js",
+        "data/shared/bower_components/moment/min/moment.min.js",
+        "data/shared/bower_components/pikaday/pikaday.js",
 
-        "bower_components/yepnope/yepnope.1.5.4-min.js",
-        "js/build/bootstrap.min.js",
+        "data/shared/bower_components/yepnope/yepnope.1.5.4-min.js",
+        "lib/js/build/bootstrap.min.js",
 
-        "bower_components/eventr/build/eventr.min.js",
-        "bower_components/gmailui/build/gmailui.min.js",
-        "js/build/content.min.js"
+        "data/shared/bower_components/eventr/build/eventr.min.js",
+        "data/shared/bower_components/gmailui/build/gmailui.min.js",
+        "data/shared/js/content.min.js"
       ],
       "matches": [
         "*://mail.google.com/*"
@@ -40,11 +40,11 @@
   "default_locale": "en",
   "description": "__MSG_extTeaser__",
   "icons": {
-    "16" : "images/tie16x16.png",
-    "32" : "images/tie32x32.png",
-    "48" : "images/tie48x48.png",
-    "128": "images/tie128x128.png",
-    "256": "images/tie256x256.png"
+    "16" : "data/shared/images/tie16x16.png",
+    "32" : "data/shared/images/tie32x32.png",
+    "48" : "data/shared/images/tie48x48.png",
+    "128": "data/shared/images/tie128x128.png",
+    "256": "data/shared/images/tie256x256.png"
   },
   "manifest_version": 2,
   "name": "__MSG_extName__",
@@ -59,16 +59,17 @@
     "https://api.mailfred.de/*"
   ],
   "web_accessible_resources": [
-    "images/*",
-    "bower_components/jquery/dist/jquery.js",
-    "bower_components/jquery/dist/jquery.min.js",
-    "bower_components/jquery-deparam/jquery.ba-deparam.min.js",
-    "bower_components/gmailr/build/gmailr.min.js",
-    "js/build/mediator.min.js",
-    "bower_components/*.map",
-    "js/build/*.map",
-    "js/build/*.js",
-    "js/src/*.coffee",
-    "bower_components/*.coffee"
+    "data/shared/images/*",
+    "data/shared/bower_components/jquery/dist/jquery.js",
+    "data/shared/bower_components/jquery/dist/jquery.min.js",
+    "data/shared/bower_components/jquery-deparam/jquery.ba-deparam.min.js",
+    "data/shared/bower_components/gmailr/build/gmailr.min.js",
+    "data/shared/js/mediator.min.js",
+    "data/shared/js/*.map",
+    "data/shared/bower_components/*.map",
+    "lib/js/build/*.map",
+    "lib/js/build/*.js",
+    "lib/js/src/*.coffee",
+    "data/shared/bower_components/*.coffee"
   ]
 }

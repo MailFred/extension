@@ -528,7 +528,7 @@
             deferred.resolve()
             chrome.runtime.sendMessage
               action:   'notification'
-              icon:     'images/tie.svg'
+              icon:     'data/shared/images/tie.svg'
               title:     __msg 'notificationScheduleSuccessTitle'
               message:   __msg 'notificationScheduleSuccess'
             @activateArchiveButton() if data.archiveAfterScheduling
@@ -576,7 +576,7 @@
       welcomeDialogText = welcomeDialogText.replace /\n/g, '<br/>'
       container.append  """
                 <div style="text-align: justify;">
-                  <img src="#{chrome.extension.getURL 'images/button_example.svg'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px; width: 115px; height: 73px;">
+                  <img src="#{chrome.extension.getURL 'data/shared/images/button_example.svg'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px; width: 115px; height: 73px;">
                   #{welcomeDialogText}
                 </div>
                 """
@@ -600,7 +600,7 @@
 
     gettingStartedDialogContent: ->
       extName = __msg 'extName'
-      img = chrome.extension.getURL 'images/authorize.svg'
+      img = chrome.extension.getURL 'data/shared/images/authorize.svg'
       dialogText = __msg 'authorizeDialogText', extName
       dialogText = dialogText.replace /\n/g, '<br/>'
       """
@@ -670,7 +670,7 @@
 
         chrome.runtime.sendMessage
           action:   'notification'
-          icon:     'images/tie.svg'
+          icon:     'data/shared/images/tie.svg'
           title:    __msg 'notificationScheduleErrorTitle'
           message:  getMessage()
       return

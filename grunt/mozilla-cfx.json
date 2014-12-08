@@ -1,0 +1,9 @@
+{
+  "release": {
+    "options": {
+      "mozilla-addon-sdk": "latest",
+      "extension_dir": "./firefox",
+      "command": "run"
+    }
+  }
+}

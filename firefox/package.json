@@ -1,12 +1,12 @@
 {
   "id": "firefox@mailfred.de",
-  "name": "MailFred",
-  "fullName": "MailFred Add-on",
+  "name": "mailfred",
+  "fullName": "MailFred",
   "title": "Master Your Inbox",
   "description": "An add-on for GMail that lets you schedule emails to return to your inbox",
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
-  "version": "2.0.17",
+  "version": "2.0.18",
   "homepage": "http://www.mailfred.de",
   "preferences": [{
         "name": "debug",
