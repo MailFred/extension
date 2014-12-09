@@ -10,6 +10,14 @@
   "homepage": "http://www.mailfred.de",
   "icon": "data/shared/images/tie48x48.png",
   "icon64": "data/shared/images/tie64x64.png",
+  "permissions": {
+    "cross-domain-content": [
+      "https://api.mailfred.de/",
+      "https://www.google.com/accounts/",
+      "https://accounts.google.com/",
+      "https://appengine.google.com/"
+    ]
+  },
   "preferences": [{
         "name": "debug",
         "title": "Debug mode",
