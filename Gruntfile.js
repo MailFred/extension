@@ -42,7 +42,10 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('travis', ['build']);
+  grunt.registerTask('travis', [
+    'setup',
+    'build'
+  ]);
 
   grunt.registerTask('setup', [
     'mozilla-addon-sdk'
