@@ -7,8 +7,6 @@ before_install:
   - 'npm install crx'
   - 'npm install'
   - './node_modules/crx/bin/crx.js keygen .'
-  - 'cd $TRAVIS_BUILD_DIR/chrome/ && bower install'
-  - 'cd $TRAVIS_BUILD_DIR'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 env:

@@ -9,7 +9,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "test": "grunt travis"
+    "test": "bower install && grunt travis"
   },
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
