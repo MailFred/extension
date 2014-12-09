@@ -13,6 +13,11 @@ module.exports = function(grunt) {
 
   require('load-grunt-config')(grunt);
 
+  grunt.registerTask('dev', [
+      'copy',
+      'watch'
+  ]);
+
   grunt.registerTask('build', [
     'coffee',
     'uglify',
