@@ -8,6 +8,8 @@
   "license": "MIT",
   "version": "2.0.18",
   "homepage": "http://www.mailfred.de",
+  "icon": "data/shared/images/tie48x48.png",
+  "icon64": "data/shared/images/tie64x64.png",
   "preferences": [{
         "name": "debug",
         "title": "Debug mode",
