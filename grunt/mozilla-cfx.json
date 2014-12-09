@@ -3,7 +3,8 @@
     "options": {
       "mozilla-addon-sdk": "latest",
       "extension_dir": "./firefox",
-      "command": "run"
+      "command": "run",
+      "arguments": "-p /tmp/mailfred"
     }
   }
 }
