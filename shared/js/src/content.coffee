@@ -73,7 +73,7 @@
     ###
     getServiceUrl: ->
       deferred = new $.Deferred()
-      chrome.runtime.sendMessage {action: 'url'}, deferred.resolve
+      ExtensionFacade.sendMessage {action: 'url'}, deferred.resolve
       deferred.promise()
 
     initTrackJs: ->
@@ -244,7 +244,7 @@
     getVersion: ->
       log 'getting version'
       deferred = new $.Deferred()
-      chrome.runtime.sendMessage action: "version", (version) ->
+      ExtensionFacade.sendMessage action: "version", (version) ->
         deferred.resolve version
         return
       deferred.promise()
@@ -526,7 +526,7 @@
           url += M.SCHEDULE_SUFFIX
           success = =>
             deferred.resolve()
-            chrome.runtime.sendMessage
+            ExtensionFacade.sendMessage
               action:   'notification'
               icon:     'data/shared/images/tie.svg'
               title:     __msg 'notificationScheduleSuccessTitle'
@@ -668,7 +668,7 @@
             track [status, params, error, responseText]
             (__msg 'notificationScheduleError', '' + new String error)
 
-        chrome.runtime.sendMessage
+        ExtensionFacade.sendMessage
           action:   'notification'
           icon:     'data/shared/images/tie.svg'
           title:    __msg 'notificationScheduleErrorTitle'
