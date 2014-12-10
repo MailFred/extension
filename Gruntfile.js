@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('travis', [
     'setup',
-    'build'
+    'build:all'
   ]);
 
   grunt.registerTask('setup', [
