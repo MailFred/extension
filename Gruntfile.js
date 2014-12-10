@@ -14,14 +14,19 @@ module.exports = function(grunt) {
   require('load-grunt-config')(grunt);
 
   grunt.registerTask('dev', [
+      'build:sources',
       'copy',
       'watch'
   ]);
 
-  grunt.registerTask('build', [
+  grunt.registerTask('build:sources', [
     'coffee',
     'uglify',
-    'less',
+    'less'
+  ]);
+
+  grunt.registerTask('build:all', [
+    'build:sources',
     'copy',
     'env:ff',
     'mozilla-cfx-xpi',
@@ -35,7 +40,7 @@ module.exports = function(grunt) {
   grunt.registerTask('release', 'Bump, build and release.', function(type) {
     grunt.task.run([
       'bump-only:' + (type || 'patch'),
-      'build',
+      'build:all',
       'crx:both',
       'webstore_upload:release',
       'bump-commit'

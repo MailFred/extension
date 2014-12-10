@@ -17,7 +17,7 @@ module.exports = function (grunt, options) {
       "expand": true,
       "cwd": "shared/js/build",
       "src": [
-        "**/*.min.{js,map}"
+        "**/*.{js,map}"
       ],
       "dest": target + "/data/shared/js"
     };
