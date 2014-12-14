@@ -22,6 +22,15 @@ module.exports = function (grunt, options) {
         "less:shared",
         "copy:shared.styles"
       ]
+    },
+    "firefox.main": {
+      "files": [
+          "firefox/lib/main.js"
+      ],
+      "tasks": [
+        'mozilla-cfx-xpi',
+        'shell:update-xpi'
+      ]
     }
   };
 
@@ -37,7 +46,11 @@ module.exports = function (grunt, options) {
     };
   });
 
-  config["shared.scripts"].tasks.push("copy:shared.scripts");
+  var sharedTasks = config["shared.scripts"].tasks;
+  sharedTasks.push("copy:shared.scripts");
+  sharedTasks.push('mozilla-cfx-xpi');
+  sharedTasks.push('shell:update-xpi');
+
 
   return config;
 };

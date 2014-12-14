@@ -4,7 +4,7 @@
       "mozilla-addon-sdk": "latest",
       "extension_dir": "./firefox",
       "command": "run",
-      "arguments": "-p /tmp/mailfred"
+      "arguments": "-p /tmp/mailfred --binary-args https://mail.google.com/mail/#inbox/14a3786a65ef2141"
     }
   }
 }
