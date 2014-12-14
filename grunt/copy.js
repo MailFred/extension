@@ -12,6 +12,17 @@ module.exports = function (grunt, options) {
     };
   }
 
+  function src(target) {
+    return {
+      "expand": true,
+      "cwd": "shared/js/src",
+      "src": [
+        "**/*.coffee"
+      ],
+      "dest": target + "/data/shared/js"
+    };
+  }
+
   function scripts(target) {
     return {
       "expand": true,
@@ -48,7 +59,9 @@ module.exports = function (grunt, options) {
     "shared.scripts": {
       "files": [
         scripts('chrome'),
-        scripts('firefox')
+        src('chrome'),
+        scripts('firefox'),
+        src('firefox')
       ]
     },
     "shared.static": {
