@@ -14,6 +14,7 @@
         "data/shared/bower_components/pikaday/css/pikaday.css"
       ],
       "js": [
+        "data/shared/bower_components/q/q.js",
         "data/shared/js/facade.min.js",
         "data/shared/js/trackjs.min.js",
         "data/shared/bower_components/trackjs/tracker.js",
@@ -67,6 +68,7 @@
     "data/shared/bower_components/gmailr/build/gmailr.min.js",
     "data/shared/js/mediator.min.js",
     "data/shared/js/*.map",
+    "data/shared/js/*.coffee",
     "data/shared/bower_components/*.map",
     "lib/js/build/*.map",
     "lib/js/build/*.js",

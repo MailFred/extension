@@ -1,4 +1,4 @@
-(($, window) ->
+(($, window, ExtensionFacade, Q, Eventr) ->
 
   log = (args...) ->
     window.trackJs.console.log.apply window.trackJs.console, args
@@ -17,9 +17,14 @@
       # ignore
     return
 
-  __msg = chrome.i18n.getMessage
+  __msg = (key, substitutions) ->
+    deferred = Q.defer()
+    ExtensionFacade.i18n key, substitutions, deferred.resolve
+    deferred.promise
 
-  currentGmailDeferred = new $.Deferred()
+  currentGmailDeferred = Q.defer()
+
+  SERVICE_URL = 'https://api.mailfred.de'
 
   class M
 
@@ -35,6 +40,7 @@
     @CLS_LOADER:   M.CLS + '-loader'
     @CLS_AUTH_IMG: M.CLS + '-auth-image'
     @CLS_AUTH_TXT: M.CLS + '-auth-text'
+    @CLS_WLCM_DLG: M.CLS + '-welcome-dialog'
 
     @ID_PREFIX:    M.CLS + '-id-'
 
@@ -54,27 +60,31 @@
       PREVIEW_PANE_ENABLED:           '.apF .apJ'
       PREVIEW_PANE_THREAD_BUTTON_BAR:  "[gh='mtb'] > div > div"
 
-    settingEmail: null
     settingProps: {}
     selectedConversationId: null
 
     currentView: null
 
     constructor: ->
-      window.addEventListener "message", @messageListener, false
+      # console.log 'content script:construct'
+      window.addEventListener "message", @listenToGmailr, false
 
-      @initSettings()
       @initTrackJs()
       @checkVersion()
       return
 
     ###* This returns the service URL
          @return {Promise} resolves to the service URL {String}
+
+       use the following with
+       --allow-running-insecure-content
+       to allow non-HTTPS calls
+      'http://localhost:8080'
     ###
     getServiceUrl: ->
-      deferred = new $.Deferred()
-      ExtensionFacade.sendMessage {action: 'url'}, deferred.resolve
-      deferred.promise()
+      deferred = Q.defer()
+      deferred.resolve SERVICE_URL
+      deferred.promise
 
     initTrackJs: ->
       @getVersion().then (version) =>
@@ -89,50 +99,38 @@
       return
 
     getDebug: ->
-      deferred = new $.Deferred()
-      chrome.storage.local.get M.STORE.DEBUG, (items) ->
+      deferred = Q.defer()
+      ExtensionFacade.storage.local.get M.STORE.DEBUG, (items) ->
         deferred.resolve items[M.STORE.DEBUG]
         return
-      deferred.promise()
+      deferred.promise
 
-    initSettings: ->
-      # Get the settings
-      chrome.storage.local.get null, (items) =>
-        _.each items, (value, key) =>
-          switch key
-            when M.STORE.EMAIL
-              @settingEmail = value
-          return
+    getSettingEmail: ->
+      deferred = Q.defer()
+      ExtensionFacade.storage.local.get M.STORE.EMAIL, (items) ->
+        deferred.resolve items[M.STORE.EMAIL]
+        return
+      deferred.promise
+
+
+    getSettingProps: ->
+      deferred = Q.defer()
+      ExtensionFacade.storage.sync.get M.STORE.BOX_SETTING, (items) =>
+        deferred.resolve items[M.STORE.BOX_SETTING]
         return
 
-      # Get the selected options
-      chrome.storage.sync.get M.STORE.BOX_SETTING, (items) =>
-        @settingProps = items[M.STORE.BOX_SETTING]
-        return
-
-      # Listen to changes
-      chrome.storage.onChanged.addListener (changes, namespace) =>
-        switch namespace
-          when 'sync'
-            if M.STORE.BOX_SETTING of changes
-              @settingProps = changes[M.STORE.BOX_SETTING].newValue
-          when 'local'
-            if M.STORE.EMAIL of changes
-              @settingEmail = changes[M.STORE.EMAIL].newValue
-        return
-
-      return
+      deferred.promise
 
     @storeLastVersion: (version) ->
       store = {}
       store[M.STORE.LAST_VERSION] = version
-      chrome.storage.sync.set store, ->
+      ExtensionFacade.storage.sync.set store, ->
         log 'Set the last used version to', version
         return
       return
 
     @getLastVersion: (resp) ->
-      chrome.storage.sync.get M.STORE.LAST_VERSION, (items) ->
+      ExtensionFacade.storage.sync.get M.STORE.LAST_VERSION, (items) ->
         resp items[M.STORE.LAST_VERSION]
         return
       return
@@ -168,7 +166,7 @@
           error:    (jqXHR, textStatus, errorThrown) ->
             error textStatus, jqXHR.responseText
             return
-      deferred.promise()
+      deferred.promise
 
     firstInstall: (version) ->
       log 'first install', version
@@ -201,9 +199,9 @@
          logged in user
          @returns {Promise} a promise that resolves to the email address {String}
     ###
-    getCurrentGmail: -> currentGmailDeferred.promise()
+    getCurrentGmail: -> currentGmailDeferred.promise
 
-    messageListener: (e) =>
+    listenToGmailr: (e) =>
       if e.source is window
         # We only accept messages from ourselves
         # log "event from Gmailr", e
@@ -215,7 +213,7 @@
             when 'init'
             # GMailr is ready
               currentGmailDeferred.resolve (evt.email ? '').trim() ? null
-              # GMailUI.Breadcrumbs.add (__msg 'extName'), => @gettingStarted()
+              # (__msg 'extName').then (name) -> GMailUI.Breadcrumbs.add name, => @gettingStarted()
 
               # kick GMailr into debug mode?
               @getDebug().then (debug) ->
@@ -243,11 +241,9 @@
     ###
     getVersion: ->
       log 'getting version'
-      deferred = new $.Deferred()
-      ExtensionFacade.sendMessage action: "version", (version) ->
-        deferred.resolve version
-        return
-      deferred.promise()
+      deferred = Q.defer()
+      deferred.resolve ExtensionFacade.getVersion()
+      deferred.promise
 
     checkVersion: ->
       # Get the extension version
@@ -267,10 +263,11 @@
 
     inject: ->
       return unless @inConversation()
-      log 'Email address in settings', @settingEmail
-      @getCurrentGmail().then (currentGmail) =>
-        log 'Current Gmail window', currentGmail
-        @injectThread() if (not @settingEmail or not currentGmail) or currentGmail in @settingEmail.split /[, ]+/ig
+      @getSettingEmail().then (settingEmail) =>
+        log 'Email address in settings', settingEmail
+        @getCurrentGmail().then (currentGmail) =>
+          log 'Current Gmail window', currentGmail
+          @injectThread() if (not settingEmail or not currentGmail) or currentGmail in settingEmail.split /[, ]+/ig
       return
 
     isPreviewPaneEnabled: ->
@@ -291,9 +288,14 @@
 
       if threads.length > 0
         after = threads.find M.GM_SEL.INSERT_AFTER
-        bar = @composeButton()
-        bar.addClass 'T-I'
-        if after.length > 0 then after.after bar else threads.append bar
+        @composeButton()
+          .then (bar) ->
+            bar.addClass 'T-I'
+            if after.length > 0 then after.after bar else threads.append bar
+            return
+          .catch (err) ->
+            track error: err
+            return
       return
 
     actionOps: [
@@ -302,13 +304,11 @@
           'inbox'
           ]
 
-    ucFirst: (str) ->
-      str[0].toUpperCase() + str.substring(1).toLowerCase()
-
     getTexts: (key, time) ->
-      i18nKey = @ucFirst key
+      ucFirst = (str) -> str[0].toUpperCase() + str.substring(1).toLowerCase()
+      i18nKey = ucFirst key
       x = "menuTimePresetCloseFutureItem#{i18nKey}#{time}"
-      [
+      Q.all [
         (__msg "#{x}Selected")
         (__msg x)
       ]
@@ -322,7 +322,7 @@
         presets.tomorrow   = [8,14]
         presets.days       = [2,7,14]
         presets.months     = [1] if debug
-        return presets
+        presets
 
     composeButton: =>
 
@@ -338,13 +338,20 @@
         props[op] = !! @settingProps?[op] if hasSetting
         return
 
+      presetMenu = null
+      constraintSection = null
+      timeSection = null
+      errorSection = null
+      pickerMenu = null
+      button = null
+
       schedule = (wen) =>
         pickerMenu.close()
         presetMenu.close()
         button.close()
         button.addClass M.CLS_LOADER
         props.when = wen
-        (@onSchedule props).always ->
+        (@onSchedule props).finally ->
           button.removeClass M.CLS_LOADER
           return
         return
@@ -365,7 +372,7 @@
           toStore = {}
           toStore[M.STORE.BOX_SETTING] = props
           @settingProps = props
-          chrome.storage.sync.set toStore, ->
+          ExtensionFacade.storage.sync.set toStore, ->
             log 'Storing properties finished'
             return
           isValid()
@@ -373,94 +380,127 @@
 
       # UI
 
-      bar = new GMailUI.ButtonBar
+      bar = new GMailUI.ButtonBar()
       bar.addClass M.CLS
       bar.addClass M.CLS_THREAD
 
-      popup = new GMailUI.Popup
+      popup = new GMailUI.Popup()
       popup.addClass M.CLS_POPUP
 
-      popup.append new GMailUI.PopupLabel __msg 'menuMailActions'
+      __msg('menuMailActions')
+        .then (label) ->
+          log 'compose: actions'
+          popup.append new GMailUI.PopupLabel label
+          return
+        .then ->
+          # Actions section
+          Q.all([
+            (__msg 'mailActionMarkUnread')
+            (__msg 'mailActionMarkUnreadTitle')
+            (__msg 'mailActionStar')
+            (__msg 'mailActionStarTitle')
+            (__msg 'mailActionMoveToInbox')
+            (__msg 'mailActionMoveToInboxTitle')
+          ]).then ([markUnread, markUnreadTitle, star, starTitle, moveToInbox, moveToInboxTitle]) ->
+            log 'compose: action section'
+            actionSection = popup.append new GMailUI.Section
+            actionSectionCheckboxes =
+              unread: actionSection.append (new GMailUI.PopupCheckbox markUnread, props.unread, '', markUnreadTitle)
+              star: actionSection.append (new GMailUI.PopupCheckbox star, props.star, '', starTitle)
+              inbox: actionSection.append (new GMailUI.PopupCheckbox moveToInbox, props.inbox, '', moveToInboxTitle)
 
-      # Actions section
+            _.each actionSectionCheckboxes, propStoreFn
+            return
+        .then ->
+          # Constraints section
+          Q.all([
+            (__msg 'menuConstraintsNoAnswer')
+            (__msg 'menuConstraintsNoAnswerTitle')
+            (__msg 'menuAdditionalActionsArchive')
+            (__msg 'menuAdditionalActionsArchiveTitle')
+          ]).then ([noAnswer, noAnswerTitle, archive, archiveTitle]) ->
+            log 'compose: constraint section'
+            constraintSection = popup.append new GMailUI.Section
+            constraintSection.append new GMailUI.Separator
+            constraintSectionCheckboxes =
+              noanswer: constraintSection.append (new GMailUI.PopupCheckbox noAnswer, props.noanswer, '', noAnswerTitle)
+              archive: constraintSection.append (new GMailUI.PopupCheckbox archive, props.archive, '', archiveTitle)
 
-      actionSection = popup.append new GMailUI.Section
-      actionSectionCheckboxes =
-        unread: actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMarkUnread'),   props.unread,   '', (__msg 'mailActionMarkUnreadTitle'))
-        star:  actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionStar'),       props.star,   '', (__msg 'mailActionStarTitle'))
-        inbox:  actionSection.append (new GMailUI.PopupCheckbox (__msg 'mailActionMoveToInbox'),   props.inbox,   '', (__msg 'mailActionMoveToInboxTitle'))
+            _.each constraintSectionCheckboxes, propStoreFn
+            return
+        .then ->
+          log 'compose: presets'
+          presetMenu = new GMailUI.PopupMenu popup
+          presetMenu.addClass M.CLS_MENU
+        .then ->
+          # Date picker
+          __msg('dateFormat').then (dateFormat) ->
+            log 'compose: date picker'
+            pickerMenu = new GMailUI.PopupMenu popup
+            pickerMenu.addClass M.CLS_PICKER
 
-      _.each actionSectionCheckboxes, propStoreFn
-
-      # Constraints section
-
-      constraintSection = popup.append new GMailUI.Section
-      constraintSection.append new GMailUI.Separator
-      constraintSectionCheckboxes =
-        noanswer:  constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuConstraintsNoAnswer'),    props.noanswer,  '', (__msg 'menuConstraintsNoAnswerTitle'))
-        archive:  constraintSection.append (new GMailUI.PopupCheckbox (__msg 'menuAdditionalActionsArchive'), props.archive,  '', (__msg 'menuAdditionalActionsArchiveTitle'))
-
-      _.each constraintSectionCheckboxes, propStoreFn
-
-
-      presetMenu = new GMailUI.PopupMenu popup
-      presetMenu.addClass M.CLS_MENU
-
-      # Date picker
-      pickerMenu = new GMailUI.PopupMenu popup
-      pickerMenu.addClass M.CLS_PICKER
-
-      picker = null
-      pickerMenu.onShow = ->
-        unless picker
-          picker = new Pikaday
-            bound: false
-            format: __msg 'dateFormat'
-            minDate: moment().add(1, 'day').toDate()
-            maxDate: moment().add(1, 'year').toDate()
-            onSelect: ->
-              date = @getMoment()
-              log 'schedule', date.format()
-              schedule date.utc().valueOf()
+            picker = null
+            pickerMenu.onShow = ->
+              unless picker
+                picker = new Pikaday
+                  bound: false
+                  format: dateFormat
+                  minDate: moment().add(1, 'day').toDate()
+                  maxDate: moment().add(1, 'year').toDate()
+                  onSelect: ->
+                    date = @getMoment()
+                    log 'schedule', date.format()
+                    schedule date.utc().valueOf()
+                    return
+                pickerMenu.getElement().append picker.el
               return
-          pickerMenu.getElement().append picker.el
-        return
+            return
+        .then =>
+          # Time section
+          Q.all([
+              (__msg 'menuTime')
+              (__msg 'menuTimePresetSpecifiedDate')
+          ]).then ([menuTime, menuTimePresetSpecifiedDate]) =>
+            log 'compose: time section'
+            timeSection = popup.append new GMailUI.Section()
+            timeSection.append new GMailUI.Separator()
+            timeSection.append new GMailUI.PopupLabel menuTime
 
-      # Time section
+            timeSection.append new GMailUI.PopupMenuItem pickerMenu, menuTimePresetSpecifiedDate,  '',  '',  true
+            timeSection.append new GMailUI.Separator()
 
-      timeSection = popup.append new GMailUI.Section()
-      timeSection.append new GMailUI.Separator()
-      timeSection.append new GMailUI.PopupLabel __msg 'menuTime'
-
-      timeSection.append   (new GMailUI.PopupMenuItem pickerMenu, (__msg 'menuTimePresetSpecifiedDate'),  '',  '',  true)
-      timeSection.append new GMailUI.Separator()
-
-      # Presets
-      @getPresets().then (presets) =>
-        sep = null
-        _.each presets, (times, key) =>
-          unless _.isEmpty times
-            timeSection.append sep if sep
-            _.each times, (time) =>
-              timeFn = @generateTimeFn key
-              [label, title] = @getTexts key, time
-              item = timeSection.append new GMailUI.Button label, title
-              item.on 'click', ->
-                wen = timeFn time
-                log "schedule: #{time}, #{key}: #{wen}"
-                schedule wen
+            # Presets
+            @getPresets().then (presets) =>
+              sep = null
+              _.each presets, (times, key) =>
+                unless _.isEmpty times
+                  _.each times, (time) =>
+                    timeFn = @generateTimeFn key
+                    @getTexts(key, time).then ([label, title]) ->
+                      timeSection.append sep if sep
+                      item = timeSection.append new GMailUI.Button label, title
+                      item.on 'click', ->
+                        wen = timeFn time
+                        log "schedule: #{time}, #{key}: #{wen}"
+                        schedule wen
+                        return
+                      return
+                    return
+                  sep = new GMailUI.Separator()
                 return
               return
-            sep = new GMailUI.Separator()
-          return
-        return
-
-      button = bar.append new GMailUI.ButtonBarPopupButton popup, '', (__msg 'extName')
-      errorSection = popup.append new GMailUI.ErrorSection __msg 'errorNoActionSpecified' # __msg 'errorNoTimeSpecified'
-
-      isValid()
-
-      bar.getElement()
+        .then ->
+          Q.all([
+            (__msg 'extName')
+            (__msg 'errorNoActionSpecified')
+          ]).then ([extName, noActionSpecified]) ->
+            log 'compose: button'
+            button = bar.append new GMailUI.ButtonBarPopupButton popup, '', extName
+            errorSection = popup.append new GMailUI.ErrorSection noActionSpecified
+            isValid()
+        .then ->
+          log 'compose: return'
+          bar.getElement()
 
     _delta: (offset) ->
       "delta:#{offset}"
@@ -488,71 +528,74 @@
           (month) ->
             moment().add(month, 'months').utc().valueOf()
 
-    getMessageId: ->
-      if @isPreviewPaneEnabled()
-        id = @selectedConversationId
-      else
-        id = /\/([0-9a-f]{16})/i.exec window.location.hash
-        id = id?[1]
-
-      if id is null
-        throw __msg 'errorNotWithinAConversation'
-      id
+    getMessageId: =>
+      deferred = Q.defer()
+      try
+        if @isPreviewPaneEnabled()
+          id = @selectedConversationId
+        else
+          id = /\/([0-9a-f]{16})/i.exec window.location.hash
+          id = id?[1]
+        deferred.resolve id
+      catch e
+        deferred.reject e
+      deferred.promise
 
     onSchedule: (props) =>
-      deferred = new $.Deferred()
-      try
-        messageId = @getMessageId()
-      catch e
-        @onScheduleError null, null, e.toString(), ''
-        deferred.reject()
-        return
-
-      @getVersion().then (version) =>
-        data =
-          msgId: messageId
-          when:  props.when
-          version: version
-
-        data.markUnread = true              if !!props.unread
-        data.starIt = true                  if !!props.star
-        data.onlyIfNoAnswer = true          if !!props.noanswer
-        data.moveToInbox = true             if !!props.inbox
-        data.archiveAfterScheduling = true  if !!props.archive
-
-        log 'scheduling mail...', data
-
-        @getServiceUrl().then (url) =>
-          url += M.SCHEDULE_SUFFIX
-          success = =>
-            deferred.resolve()
-            ExtensionFacade.sendMessage
-              action:   'notification'
-              icon:     'data/shared/images/tie.svg'
-              title:     __msg 'notificationScheduleSuccessTitle'
-              message:   __msg 'notificationScheduleSuccess'
-            @activateArchiveButton() if data.archiveAfterScheduling
-            return
-
-          error = (status, error, responseText) =>
+      deferred = Q.defer()
+      @getMessageId()
+        .catch (err) =>
+          track error: err
+          @onScheduleError null, null, err, ''
+        .then (messageId) =>
+          unless messageId
+            __msg('errorNotWithinAConversation')
+              .then (notWithinAConversation) =>
+                @onScheduleError null, null, notWithinAConversation, ''
             deferred.reject()
-            @onScheduleError status, data, error, responseText
-            return
+          Q.all([
+            Q.when(messageId)
+            @getVersion()
+            @getServiceUrl()
+          ]).then ([messageId, version, url]) =>
+            data =
+              msgId: messageId
+              when:  props.when
+              version: version
 
-          ($.post url, data, null, 'json')
-          .done (resp, textStatus, jqXHR) ->
-            if resp.success
-              success()
-            else
-              error textStatus, resp.error, jqXHR.responseText
+            data.markUnread = true              if !!props.unread
+            data.starIt = true                  if !!props.star
+            data.onlyIfNoAnswer = true          if !!props.noanswer
+            data.moveToInbox = true             if !!props.inbox
+            data.archiveAfterScheduling = true  if !!props.archive
+
+            log 'scheduling mail...', data
+
+            url += M.SCHEDULE_SUFFIX
+            success = =>
+              deferred.resolve()
+              ExtensionFacade.showNotification 'shared/images/tie.svg', (__msg 'notificationScheduleSuccessTitle'), (__msg 'notificationScheduleSuccess')
+              @activateArchiveButton() if data.archiveAfterScheduling
+              return
+
+            error = (status, error, responseText) =>
+              deferred.reject()
+              @onScheduleError status, data, error, responseText
+              return
+
+            ($.post url, data, null, 'json')
+            .done (resp, textStatus, jqXHR) ->
+              if resp.success
+                success()
+              else
+                error textStatus, resp.error, jqXHR.responseText
+              return
+            .fail (jqXHR, textStatus, reason) ->
+              track [textStatus, reason, jqXHR.responseText]
+              error textStatus, reason, jqXHR.responseText
+              return
             return
-          .fail (jqXHR, textStatus, reason) ->
-            track [textStatus, reason, jqXHR.responseText]
-            error textStatus, reason, jqXHR.responseText
-            return
-          return
-        return
-      deferred.promise()
+      deferred.promise
 
     createDialog: (title, okButton, cancelButton) ->
       dialog = new GMailUI.ModalDialog title
@@ -569,38 +612,48 @@
       [dialog, okButton, cancelButton, container, footer]
 
     welcome: ->
-      extName = __msg 'extName'
-      [dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'welcomeDialogTitle', extName), [(__msg 'welcomeDialogButtonOk'), (__msg 'welcomeDialogButtonOkTooltip')], [(__msg 'welcomeDialogButtonCancel'), (__msg 'welcomeDialogButtonCancelTooltip', extName)]
+      (__msg 'extName').then (extName) =>
+        Q.all([
+          (__msg 'welcomeDialogTitle', extName)
+          (__msg 'welcomeDialogButtonOk')
+          (__msg 'welcomeDialogButtonOkTooltip')
+          (__msg 'welcomeDialogButtonCancel')
+          (__msg 'welcomeDialogButtonCancelTooltip', extName)
+          (__msg 'welcomeDialogText', extName)
+          (__msg 'welcomeDialogImageAlt')
+          (__msg 'welcomeDialogImageHint')
+        ]).then ([_title, _ok, _okTT, _cancel, _cancelTT, _ext, _imgAlt, _imgHint]) ->
+          [dialog, okButton, cancelButton, container, footer] = @createDialog _title, [_ok, _okTT], [_cancel, _cancelTT]
 
-      welcomeDialogText = __msg 'welcomeDialogText', extName
-      welcomeDialogText = welcomeDialogText.replace /\n/g, '<br/>'
-      container.append  """
-                <div style="text-align: justify;">
-                  <img src="#{chrome.extension.getURL 'data/shared/images/button_example.svg'}" data-tooltip="#{__msg 'welcomeDialogImageHint'}" alt="#{__msg 'welcomeDialogImageAlt'}" align="right" style="padding-left: 10px; padding-bottom: 10px; width: 115px; height: 73px;">
-                  #{welcomeDialogText}
-                </div>
-                """
+          Text = _ext.replace /\n/g, '<br/>'
+          imgSrc = ExtensionFacade.getURL 'shared/images/button_example.svg'
+          container.append  """
+                    <div class="#{M.CLS_WLCM_DLG}">
+                      <img src="#{imgSrc}" data-tooltip="#{_imgHint}" alt="#{_imgAlt}" align="right">
+                      #{Text}
+                    </div>
+                    """
 
-      okButton.on 'click', =>
-        [authDialog, authOkButton, authCancelButton, authContainer, authFooter] = @gettingStartedDialog()
-        container.replaceWith authContainer
-        okButton.replaceWith authOkButton
-        cancelButton.replaceWith authCancelButton
-        dialog.title authDialog.title()
+          okButton.on 'click', =>
+            [authDialog, authOkButton, authCancelButton, authContainer, authFooter] = @gettingStartedDialog()
+            container.replaceWith authContainer
+            okButton.replaceWith authOkButton
+            cancelButton.replaceWith authCancelButton
+            dialog.title authDialog.title()
 
-        authOkButton.on 'click', =>
-          @openAuthWindow {}
-          dialog.close()
-          return
+            authOkButton.on 'click', =>
+              @openAuthWindow {}
+              dialog.close()
+              return
 
-        authCancelButton.on 'click', dialog.close
+            authCancelButton.on 'click', dialog.close
 
-      cancelButton.on 'click', dialog.close
-      dialog.open()
+          cancelButton.on 'click', dialog.close
+          dialog.open()
 
     gettingStartedDialogContent: ->
       extName = __msg 'extName'
-      img = chrome.extension.getURL 'data/shared/images/authorize.svg'
+      img = ExtensionFacade.getURL 'shared/images/authorize.svg'
       dialogText = __msg 'authorizeDialogText', extName
       dialogText = dialogText.replace /\n/g, '<br/>'
       """
@@ -668,14 +721,10 @@
             track [status, params, error, responseText]
             (__msg 'notificationScheduleError', '' + new String error)
 
-        ExtensionFacade.sendMessage
-          action:   'notification'
-          icon:     'data/shared/images/tie.svg'
-          title:    __msg 'notificationScheduleErrorTitle'
-          message:  getMessage()
+        ExtensionFacade.showNotification 'shared/images/tie.svg', (__msg 'notificationScheduleErrorTitle'), getMessage()
       return
 
   mb = new M()
   return
 
-) jQuery, window if top.document is document
+) jQuery, window, window.ExtensionFacade, window.Q, window.Eventr if top.document is document

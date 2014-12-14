@@ -14,6 +14,7 @@
             self.data.url('shared/bower_components/pikaday/css/pikaday.css')
         ],
         contentScriptFile: [
+            self.data.url('shared/bower_components/q/q.js'),
             self.data.url('shared/js/facade.min.js'),
             self.data.url('shared/js/trackjs.min.js'),
             self.data.url('shared/bower_components/trackjs/tracker.js'),
@@ -31,6 +32,47 @@
             self.data.url('shared/bower_components/gmailui/build/gmailui.min.js'),
             self.data.url('shared/js/content.min.js')
         ],
-        contentScriptWhen: 'ready'
+        contentScriptWhen: 'ready',
+        contentScriptOptions: {
+            version: self.version,
+            baseUrl: self.data.url('')
+        },
+        onAttach: setupListener
     });
+
+    var simplePrefs = require('sdk/simple-prefs');
+    var simpleStorage = require('sdk/simple-storage');
+
+    function initDebug() {
+        simpleStorage.storage.debug = simplePrefs.prefs.debug;
+    }
+    function initEmail() {
+        simpleStorage.storage.email = simplePrefs.prefs.email;
+    }
+
+    simplePrefs.on('debug', initDebug);
+    simplePrefs.on('email', initEmail);
+
+
+
+    function setupListener(worker) {
+        worker.port.on('facade.message', function(args) {
+            var ret = null;
+            switch(args.action) {
+                case 'notification':
+                    require('sdk/notifications').notify({
+                        title: args.title,
+                        text: args.message,
+                        iconURL: args.icon
+                    });
+                    break;
+                case 'i18n':
+                    ret = require('sdk/l10n').get(args.key);
+                    break;
+            }
+            if (args.callback) {
+                worker.port.emit(args.callback, ret);
+            }
+        });
+    }
 })();
