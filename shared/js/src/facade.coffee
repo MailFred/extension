@@ -58,9 +58,18 @@
           callback ret
           return
         set: (items, callback) ->
+          # TODO implement
+          callback()
+          return
       sync:
         get: (keys, callback) ->
+          # TODO implement
+          callback()
+          return
         set: (items, callback) ->
+          # TODO implement
+          callback()
+          return
 
   class Chrome
     constructor: ->
@@ -80,11 +89,13 @@
     @param {String message} the message body of the notification
     ###
     showNotification: (icon, title, message) ->
-      @sendMessage
+      msgObj =
         action: 'notification'
         icon: @getURL icon
         title: title
         message: message
+      @sendMessage msgObj
+
 
     ###
       uses the translation system of the according browser
