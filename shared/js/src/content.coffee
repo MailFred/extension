@@ -22,7 +22,7 @@
     ExtensionFacade.i18n key, substitutions, deferred.resolve
     deferred.promise
 
-  currentGmailDeferred = Q.defer()
+  currentEmailAddressDeferred = Q.defer()
 
   SERVICE_URL = 'https://api.mailfred.de'
 
@@ -40,7 +40,7 @@
     @CLS_LOADER:   M.CLS + '-loader'
     @CLS_AUTH_IMG: M.CLS + '-auth-image'
     @CLS_AUTH_TXT: M.CLS + '-auth-text'
-    @CLS_WLCM_DLG: M.CLS + '-welcome-dialog'
+    @CLS_WELCME_DIALOG: M.CLS + '-welcome-dialog'
 
     @ID_PREFIX:    M.CLS + '-id-'
 
@@ -67,14 +67,14 @@
 
     constructor: ->
       # console.log 'content script:construct'
-      window.addEventListener "message", @listenToGmailr, false
-
+      @listenToGmailr()
       @initTrackJs()
       @checkVersion()
       return
 
-    ###* This returns the service URL
-         @return {Promise} resolves to the service URL {String}
+    ###
+    This returns the service URL
+    @return {Promise} resolves to the service URL {String}
 
        use the following with
        --allow-running-insecure-content
@@ -135,35 +135,40 @@
         return
       return
 
-    @isAuthorisationErrorPage: (contents) -> /reauth/i.test contents
+    @isAuthorisationErrorPage: (contents) ->
+      /reauth/i.test contents
 
     @isAuthorisationErrorResponse: (resp) ->
       (resp?.toLowerCase().indexOf "authorization") isnt -1
 
+    ###
+    Checks whether the user is authorised
+    @return {Promise} that resolves if the user is authorised, is rejected if the user is not authorised
+    ###
     isAuthorised: ->
       log 'checking if the user authorised'
-      deferred = new $.Deferred
+      deferred = Q.defer()
       @getServiceUrl().then (url) ->
-        url += M.SETUP_URL_SUFFIX
 
         error = ->
           log '...user is not authorised (yet/any more)'
           deferred.reject()
           return
 
-        $.ajax
-          url:      url
+        params =
+          url:      url + M.SETUP_URL_SUFFIX
           dataType: 'json'
           cache:    false
           data:     format: 'json'
-          success:  (data, textStatus, jqXHR) ->
+        Q $.ajax params
+          .then (data, textStatus, jqXHR) ->
             if data.success
               log '...user is still authorised'
               deferred.resolve()
             else
               error textStatus, jqXHR.responseText
             return
-          error:    (jqXHR, textStatus, errorThrown) ->
+          .catch (jqXHR, textStatus) ->
             error textStatus, jqXHR.responseText
             return
       deferred.promise
@@ -199,41 +204,46 @@
          logged in user
          @returns {Promise} a promise that resolves to the email address {String}
     ###
-    getCurrentGmail: -> currentGmailDeferred.promise
+    getCurrentGmail: -> currentEmailAddressDeferred.promise
 
+    ###
+    Sets up a listener for GMailr
+    ###
     listenToGmailr: (e) =>
-      if e.source is window
-        # We only accept messages from ourselves
-        # log "event from Gmailr", e
+      listener = =>
+        if e.source is window
+          # We only accept messages from ourselves
+          # log "event from Gmailr", e
 
-        if e.data?.from is "GMAILR"
-          # log 'Got Gmailr event: ', e.data.event.type
-          evt = e.data.event
-          switch evt.type
-            when 'init'
-            # GMailr is ready
-              currentGmailDeferred.resolve (evt.email ? '').trim() ? null
-              # (__msg 'extName').then (name) -> GMailUI.Breadcrumbs.add name, => @gettingStarted()
+          if e.data?.from is "GMAILR"
+            # log 'Got Gmailr event: ', e.data.event.type
+            evt = e.data.event
+            switch evt.type
+              when 'init'
+              # GMailr is ready
+                currentEmailAddressDeferred.resolve (evt.email ? '').trim() ? null
+                # (__msg 'extName').then (name) -> GMailUI.Breadcrumbs.add name, => @gettingStarted()
 
-              # kick GMailr into debug mode?
-              @getDebug().then (debug) ->
-                if debug
-                  message =
-                    from: 'MAILFRED'
-                    type: 'debug.enable'
-                  window.postMessage message, "*"
-                return
+                # kick GMailr into debug mode?
+                @getDebug().then (debug) ->
+                  if debug
+                    message =
+                      from: 'MAILFRED'
+                      type: 'debug.enable'
+                    window.postMessage message, "*"
+                  return
 
-            when 'viewThread'
-            # User moves to previous or next convo
-              @selectedConversationId = evt.args[0]
-              @inject()
-            when 'viewChanged'
-            # User switches view (conversation <-> threads)
-              @currentView = evt.args[0]
-              log "User switched to #{@currentView} view"
-              @inject()
-
+              when 'viewThread'
+              # User moves to previous or next convo
+                @selectedConversationId = evt.args[0]
+                @inject()
+              when 'viewChanged'
+              # User switches view (conversation <-> threads)
+                @currentView = evt.args[0]
+                log "User switched to #{@currentView} view"
+                @inject()
+          return
+      window.addEventListener 'message', listener, false
       return
 
     ### returns the version of the extension
@@ -261,7 +271,7 @@
         return
       return
 
-    inject: ->
+    inject: =>
       return unless @inConversation()
       @getSettingEmail().then (settingEmail) =>
         log 'Email address in settings', settingEmail
@@ -283,7 +293,7 @@
         # Preview pane is not enabled
         sel = M.GM_SEL.THREAD_BUTTON_BAR
 
-      threads = ($ sel).filter (index) ->
+      threads = ($ sel).filter ->
         ($ ".#{M.CLS_THREAD}", @).length is 0
 
       if threads.length > 0
@@ -506,7 +516,9 @@
       "delta:#{offset}"
 
     generateTimeFn: (unit) ->
-      _1d = 24 * (_1h = 60 * (_1m = 60 * 1000))
+      _1m = 60 * 1000
+      _1h = 60 * _1m
+      _1d = 24 * _1h
 
       switch unit
         when 'minutes'
@@ -528,6 +540,11 @@
           (month) ->
             moment().add(month, 'months').utc().valueOf()
 
+    ###
+      Extracts a GMail message ID from the current GMail view
+      @return {Promise} resolving to the hexadecimal message ID or null if the message ID could not be extracted.
+                        Rejected if an error occurred
+    ###
     getMessageId: =>
       deferred = Q.defer()
       try
@@ -574,13 +591,18 @@
             url += M.SCHEDULE_SUFFIX
             success = =>
               deferred.resolve()
-              ExtensionFacade.showNotification 'shared/images/tie.svg', (__msg 'notificationScheduleSuccessTitle'), (__msg 'notificationScheduleSuccess')
+              Q.all([
+                (__msg 'notificationScheduleSuccessTitle')
+                (__msg 'notificationScheduleSuccess')
+              ]).then ([_title, _body]) ->
+                ExtensionFacade.showNotification 'shared/images/tie.svg', _title, _body
+                return
               @activateArchiveButton() if data.archiveAfterScheduling
               return
 
-            error = (status, error, responseText) =>
+            error = (status, err, responseText) =>
               deferred.reject()
-              @onScheduleError status, data, error, responseText
+              @onScheduleError status, data, err, responseText
               return
 
             ($.post url, data, null, 'json')
@@ -597,6 +619,14 @@
             return
       deferred.promise
 
+    ###
+    Creates a new GMail dialog
+
+    @param {String} title The title for the dialog
+    @param {Array} okButton The text elements of the OK button (label, tooltip)
+    @param {Array} cancelButton The text elements of the cancel button (label, tooltip)
+    @return {Array} an array consisting of jQuery elements ([dialog, okButton, cancelButton, container, footer])
+    ###
     createDialog: (title, okButton, cancelButton) ->
       dialog = new GMailUI.ModalDialog title
 
@@ -611,6 +641,11 @@
 
       [dialog, okButton, cancelButton, container, footer]
 
+    ###
+    Opens the localized welcome dialog
+
+    @return {Promise}
+    ###
     welcome: ->
       (__msg 'extName').then (extName) =>
         Q.all([
@@ -622,68 +657,102 @@
           (__msg 'welcomeDialogText', extName)
           (__msg 'welcomeDialogImageAlt')
           (__msg 'welcomeDialogImageHint')
-        ]).then ([_title, _ok, _okTT, _cancel, _cancelTT, _ext, _imgAlt, _imgHint]) ->
-          [dialog, okButton, cancelButton, container, footer] = @createDialog _title, [_ok, _okTT], [_cancel, _cancelTT]
+        ]).then ([_title, _ok, _okTT, _cancel, _cancelTT, _text, _imgAlt, _imgHint]) =>
+          [dialog, okButton, cancelButton, container] = @createDialog _title, [_ok, _okTT], [_cancel, _cancelTT]
 
-          Text = _ext.replace /\n/g, '<br/>'
+          _text = _text.replace /\n/g, '<br/>'
           imgSrc = ExtensionFacade.getURL 'shared/images/button_example.svg'
           container.append  """
-                    <div class="#{M.CLS_WLCM_DLG}">
+                    <div class="#{M.CLS_WELCME_DIALOG}">
                       <img src="#{imgSrc}" data-tooltip="#{_imgHint}" alt="#{_imgAlt}" align="right">
-                      #{Text}
+                      #{_text}
                     </div>
                     """
 
           okButton.on 'click', =>
-            [authDialog, authOkButton, authCancelButton, authContainer, authFooter] = @gettingStartedDialog()
-            container.replaceWith authContainer
-            okButton.replaceWith authOkButton
-            cancelButton.replaceWith authCancelButton
-            dialog.title authDialog.title()
+            @gettingStartedDialog().then ([authDialog, authOkButton, authCancelButton, authContainer]) =>
+              container.replaceWith authContainer
+              okButton.replaceWith authOkButton
+              cancelButton.replaceWith authCancelButton
+              dialog.title authDialog.title()
 
-            authOkButton.on 'click', =>
-              @openAuthWindow {}
-              dialog.close()
+              authOkButton.on 'click', =>
+                @openAuthWindow {}
+                dialog.close()
+                return
+
+              authCancelButton.on 'click', dialog.close
               return
-
-            authCancelButton.on 'click', dialog.close
 
           cancelButton.on 'click', dialog.close
           dialog.open()
+          return
 
+
+    ###
+    Returns the getting started dialog container content markup
+
+    @return {Promise} resolving to the localized HTML markup
+    ###
     gettingStartedDialogContent: ->
-      extName = __msg 'extName'
-      img = ExtensionFacade.getURL 'shared/images/authorize.svg'
-      dialogText = __msg 'authorizeDialogText', extName
-      dialogText = dialogText.replace /\n/g, '<br/>'
-      """
-      <div class="#{M.CLS_AUTH_TXT}">
-        #{dialogText}
-      </div>
-      <div class="#{M.CLS_AUTH_IMG}">
-        <img src="#{img}" data-tooltip="#{__msg 'authorizeDialogImageHint'}" alt="#{__msg 'authorizeDialogImageAlt'}">
-      </div>
-      """
+      (__msg 'extName').then (extName) ->
+        Q.all([
+          (__msg 'authorizeDialogText', extName)
+          (__msg 'authorizeDialogImageHint')
+          (__msg 'authorizeDialogImageAlt')
+        ]).then ([_text, _imgHint, _imgAlt]) ->
+          img = ExtensionFacade.getURL 'shared/images/authorize.svg'
+          _text = _text.replace /\n/g, '<br/>'
+          """
+          <div class="#{M.CLS_AUTH_TXT}">
+            #{_text}
+          </div>
+          <div class="#{M.CLS_AUTH_IMG}">
+            <img src="#{img}" data-tooltip="#{_imgHint}" alt="#{_imgAlt}">
+          </div>
+          """
 
+    ###
+    Returns the getting started dialog markup elements
+
+    @return {Promise} resolving to an array of jQuery elements ([dialog, okButton, cancelButton, container, footer])
+    ###
     gettingStartedDialog: ->
-      extName = __msg 'extName'
-      [dialog, okButton, cancelButton, container, footer] = @createDialog (__msg 'authorizeDialogTitle', extName), [(__msg 'authorizeDialogButtonOk'), (__msg 'authorizeDialogButtonOkTooltip')], [(__msg 'authorizeDialogButtonCancel'), (__msg 'authorizeDialogButtonCancelTooltip', extName)]
-      container.append @gettingStartedDialogContent()
-      [dialog, okButton, cancelButton, container, footer]
+      (__msg 'extName').then (extName) =>
+        Q.all([
+          (__msg 'authorizeDialogTitle', extName)
+          (__msg 'authorizeDialogButtonOk')
+          (__msg 'authorizeDialogButtonOkTooltip')
+          (__msg 'authorizeDialogButtonCancel')
+          (__msg 'authorizeDialogButtonCancelTooltip', extName)
+          @gettingStartedDialogContent()
+        ]).then ([_title, _ok, _okTT, _cancel, _cancelTT, gettingStartedDialogContent]) =>
+          [dialog, okButton, cancelButton, container, footer] = @createDialog _title, [_ok, _okTT], [_cancel, _cancelTT]
+          container.append gettingStartedDialogContent
+          [dialog, okButton, cancelButton, container, footer]
 
+    ###
+    Opens the getting started dialog
+    @param {Object} params parameters to pass to the setup/auth endpoint
+    @return {Promise}
+    ###
     gettingStarted: (params) ->
       log 'showing getting started dialog'
-      [dialog, okButton, cancelButton, container, footer] = @gettingStartedDialog()
+      @gettingStartedDialog().then ([dialog, okButton, cancelButton]) =>
+        okButton.on 'click', =>
+          @openAuthWindow params
+          dialog.close()
+          return
 
-      okButton.on 'click', =>
-        @openAuthWindow params
-        dialog.close()
+        cancelButton.on 'click', dialog.close
+
+        dialog.open()
         return
 
-      cancelButton.on 'click', dialog.close
-
-      dialog.open()
-
+    ###
+    Opens an authentication window
+    @return {Promise}
+    ###
     openAuthWindow: (params) ->
       @getServiceUrl().then (url) ->
         url += M.SETUP_URL_SUFFIX
@@ -702,13 +771,16 @@
         w = window.open url, M.CLS, (($.param windowOptions).replace '&', ',')
         w.focus()
         return
-      return
 
+    ### shows an error notification and does tracking if the error is not recognized
+    @return {Promise}
+    ###
     onScheduleError: (status, params, error, responseText) =>
       log 'There was an error', arguments
 
       errorCodeAvailable = (_.isObject error) and ('code' of error)
-      if (errorCodeAvailable and error.code is'authMissing') or
+
+      if (errorCodeAvailable and error.code is 'authMissing') or
       (status is 'parsererror' and M.isAuthorisationErrorPage responseText) or
       (M.isAuthorisationErrorResponse status)
         @gettingStarted params
@@ -721,8 +793,12 @@
             track [status, params, error, responseText]
             (__msg 'notificationScheduleError', '' + new String error)
 
-        ExtensionFacade.showNotification 'shared/images/tie.svg', (__msg 'notificationScheduleErrorTitle'), getMessage()
-      return
+        Q.all([
+          getMessage()
+          (__msg 'notificationScheduleErrorTitle')
+        ]).then ([_message, _title]) ->
+          ExtensionFacade.showNotification 'shared/images/tie.svg', _title, _message
+          return
 
   mb = new M()
   return
