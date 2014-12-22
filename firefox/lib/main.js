@@ -60,7 +60,8 @@
     function setupListener(worker) {
         worker.port.on('facade.message', function(args) {
             var ret = null;
-            switch(args.action) {
+            var key;
+            switch (args.action) {
                 case 'notification':
                     require('sdk/notifications').notify({
                         title: args.title,
@@ -70,6 +71,36 @@
                     break;
                 case 'i18n':
                     ret = require('sdk/l10n').get(args.key);
+                    break;
+                case 'storage.get':
+                    ret = {};
+                    var keys = args.keys;
+
+                    if (typeof keys === 'string') {
+                        ret[keys] = simpleStorage.storage[keys];
+                    } else if (Array.isArray(keys)) {
+                        for (var i = 0, l = keys.length; i < l; i++) {
+                            key = keys[i];
+                            ret[key] = simpleStorage.storage[key];
+                        }
+                    } else {
+                        for (key in keys) {
+                            if (keys.hasOwnProperty(key)) {
+                                ret[key] = keys[key]; // given default value
+                                if (typeof simpleStorage.storage[key] !== 'undefined') {
+                                    ret[key] = simpleStorage.storage[key];
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'storage.set':
+                    var items = args.items || {};
+                    for (key in  items) {
+                        if (items.hasOwnProperty(key)) {
+                            simpleStorage.storage[key] = items[key];
+                        }
+                    }
                     break;
             }
             if (args.callback) {

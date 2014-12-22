@@ -8,6 +8,26 @@
       @self = self
       @options = @self.options
       console.log 'Firefox', @options
+
+      get = (keys, callback) =>
+        args =
+          action: 'storage.get'
+          keys:   keys
+        @sendMessage args, callback
+        return
+      set = (items, callback) =>
+        args =
+          action: 'storage.set'
+          items:   items
+        @sendMessage args, callback
+        return
+      @storage =
+        local:
+          set: set
+          get: get
+        sync:
+          set: set
+          get: get
       return
 
     getURL: (path) => @options.baseUrl + path
@@ -44,35 +64,6 @@
       return
 
     getVersion: => @options.version
-
-    storage:
-      local:
-        get: (keys, callback) =>
-          ret = {}
-          if typeof keys is 'string'
-            ret[keys] = @ss.storage[keys]
-          else if Array.isArray keys
-            for key in keys
-              ret[key] = @ss.storage[key]
-          else
-            for key, defaultValue of keys
-              ret[key] = defaultValue
-              ret[key] = @ss.storage[key] unless @ss.storage[key] is 'undefined'
-          callback ret
-          return
-        set: (items, callback) ->
-          # TODO implement
-          callback()
-          return
-      sync:
-        get: (keys, callback) ->
-          # TODO implement
-          callback()
-          return
-        set: (items, callback) ->
-          # TODO implement
-          callback()
-          return
 
   class Chrome
     constructor: ->

@@ -110,7 +110,7 @@
     getDebug: ->
       deferred = Q.defer()
       ExtensionFacade.storage.local.get M.STORE.DEBUG, (items) ->
-        deferred.resolve items[M.STORE.DEBUG]
+        deferred.resolve !!items[M.STORE.DEBUG]
         return
       deferred.promise
 
