@@ -1,12 +1,20 @@
 // CSS here
 
+@chrome-base: "chrome-extension://__MSG_@@extension_id__/";
+@firefox-base: "resource://firefox-at-mailfred-dot-de/mailfred/";
+@img-base: "data/shared/images/";
+
+.background(@image) {
+	background: url("@{chrome-base}@{img-base}@{image}"), url("@{firefox-base}@{img-base}@{image}");
+}
+
 .mailfred {
 	> div > * {
 		pointer-events: none;
 	}
 	.asa {
 		.ase {
-			background: url(chrome-extension://__MSG_@@extension_id__/data/shared/images/icon.svg);
+			.background("icon.svg");
 			background-size: 21px 21px;
 		}
 	}
@@ -14,7 +22,7 @@
 .mailfred-loader {
 	.asa {
 		.ase {
-			background: url(chrome-extension://__MSG_@@extension_id__/data/shared/images/loader.svg);
+			.background("loader.svg");
 			background-repeat: no-repeat;
 			background-position: center;
 			background-size: 25px 25px;
