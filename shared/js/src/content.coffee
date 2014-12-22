@@ -2,6 +2,9 @@
 
   verbose = false
 
+  EVENT_SOURCE_MAILFRED = 'MAILFRED'
+  EVENT_SOURCE_GMAILR = 'GMAILR'
+
   log = (args...) ->
     if window.trackJs
       window.trackJs.console.log.apply window.trackJs.console, args
