@@ -1,13 +1,21 @@
 (($, window, ExtensionFacade, Q, Eventr) ->
 
+  verbose = false
+
   log = (args...) ->
-    window.trackJs.console.log.apply window.trackJs.console, args
+    if window.trackJs
+      window.trackJs.console.log.apply window.trackJs.console, args
+    else
+      console.warn "[#{M.CLS}]", 'TrackJS not loaded'
     return unless console?.log
-    mb?.getDebug().then (debug) ->
-      if debug
-        args.unshift "[#{M.CLS}]"
-        console.log.apply console, args
-      return
+    args.unshift "[#{M.CLS}]"
+    if verbose
+      console.log.apply console, args
+    else
+      mb?.getDebug().then (debug) ->
+        if debug
+          console.log.apply console, args
+        return
     return
 
   track = (args) ->
@@ -66,10 +74,11 @@
     currentView: null
 
     constructor: ->
-      # console.log 'content script:construct'
-      @listenToGmailr()
+      log 'content script:construct'
+      @listenToGMailr()
       @initTrackJs()
       @checkVersion()
+      log 'content script:construct done'
       return
 
     ###
@@ -268,6 +277,10 @@
         return
       return
 
+    ###
+      Injects the MailFred button into the view
+      @return {Promise|void}
+    ###
     inject: =>
       return unless @inConversation()
       @getSettingEmail().then (settingEmail) =>
@@ -559,6 +572,7 @@
       deferred = Q.defer()
       @getMessageId()
         .catch (err) =>
+          log 'message ID error', err
           track error: err
           @onScheduleError null, null, err, ''
         .then (messageId) =>
@@ -602,6 +616,7 @@
               @onScheduleError status, data, err, responseText
               return
 
+            log 'post', url, data
             ($.post url, data, null, 'json')
             .done (resp, textStatus, jqXHR) ->
               if resp.success

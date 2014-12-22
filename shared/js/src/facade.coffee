@@ -1,9 +1,12 @@
-### global require, chrome ###
+###* global require, chrome, self ###
 ((global) ->
   class Firefox
     options: null
+    self: null
+
     constructor: ->
-      @options = self.options
+      @self = self
+      @options = @self.options
       console.log 'Firefox', @options
       return
 
@@ -11,14 +14,14 @@
 
     # sends a message from the content script
     sendMessage: (args, callback) =>
-      console.log 'sendMessage'
+      # console.log 'sendMessage'
       if typeof callback is 'function'
         rand = 'callback_' + Math.random().toString(36).substr(2, 5)
-        self.port.once rand, callback
+        @self.port.once rand, callback
         args.callback = rand
 
-      console.log 'emitting', args
-      self.port.emit 'facade.message', args
+      # console.log 'emitting', args
+      @self.port.emit 'facade.message', args
       return
 
     showNotification: (icon, title, message) =>
