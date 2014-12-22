@@ -320,7 +320,7 @@
 
       if threads.length > 0
         after = threads.find M.GM_SEL.INSERT_AFTER
-        @composeButton()
+        return @composeButton()
           .then (bar) ->
             bar.addClass 'T-I'
             if after.length > 0 then after.after bar else threads.append bar
