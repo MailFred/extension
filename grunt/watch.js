@@ -37,7 +37,7 @@ module.exports = function (grunt, options) {
   ['chrome', 'firefox', 'shared'].forEach(function(target) {
     config[target + '.scripts'] = {
       "files": [
-        target + "/js/src/*.coffee"
+        target === 'shared' ? target + "/js/src/*.coffee" : target + "/lib/js/src/*.coffee"
       ],
       "tasks": [
         "coffee:" + target,

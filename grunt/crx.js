@@ -1,7 +1,7 @@
-module.exports = function (grunt, options) {
+module.exports = function (grunt) {
   'use strict';
   var shared = grunt.config('shared');
-  
+
   return {
     "both": {
       "src": "./chrome",

@@ -13,7 +13,7 @@ module.exports = function (grunt, options) {
         "*.coffee"
       ],
       "dest": "shared/js/build",
-      "ext": ".coffee.js"
+      "ext": ".js"
     }
   };
 
@@ -26,7 +26,7 @@ module.exports = function (grunt, options) {
         "*.coffee"
       ],
       "dest": target + "/lib/js/build",
-      "ext": ".coffee.js"
+      "ext": ".js"
     };
   });
 

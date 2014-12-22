@@ -10,7 +10,7 @@ module.exports = function (grunt, options) {
         {
           "expand": true,
           "cwd": "shared/js/build",
-          "src": "*.coffee.js",
+          "src": ["*.js", "!*.min.js"],
           "dest": "shared/js/build",
           "ext": ".min.js"
         }
@@ -25,7 +25,7 @@ module.exports = function (grunt, options) {
         {
           "expand": true,
           "cwd": path,
-          "src": "*.coffee.js",
+          "src": ["*.js", "!*.min.js"],
           "dest": path,
           "ext": ".min.js"
         }
