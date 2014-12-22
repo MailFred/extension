@@ -283,6 +283,8 @@
     ###
     inject: =>
       return unless @inConversation()
+      return if @inject.lock
+      @inject.lock = true
 
       log 'inject: in a conversation'
       Q.all([
@@ -294,6 +296,10 @@
         log 'Current Gmail window', currentEmailAddress
         if (not settingEmail or not currentEmailAddress) or currentEmailAddress in settingEmail.split /[, ]+/ig
           return @injectThread()
+        return
+      .then =>
+        log 'releasing inject lock'
+        @inject.lock = false
         return
 
     isPreviewPaneEnabled: ->
