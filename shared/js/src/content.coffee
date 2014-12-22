@@ -25,9 +25,9 @@
       # ignore
     return
 
-  __msg = (key, substitutions) ->
+  __msg = (key, substitutions...) ->
     deferred = Q.defer()
-    ExtensionFacade.i18n key, substitutions, deferred.resolve
+    ExtensionFacade.i18n.apply ExtensionFacade, [].concat(key).concat(deferred.resolve).concat(substitutions)
     deferred.promise
 
   currentEmailAddressDeferred = Q.defer()

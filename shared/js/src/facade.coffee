@@ -52,14 +52,17 @@
         message: message
       return
 
-    i18n: (messageId, placeholders, callback) =>
+    i18n: (messageId, callback, placeholders...) =>
       args =
         action: 'i18n'
         key: messageId
       @sendMessage args, (message) ->
-        if placeholders
-          for placeholderName, value of placeholders
-            message.replace (new RegExp("\\$#{placeholderName}\\$", 'g')), value
+        if message
+          message = message.replace /\\n/g, '\n'
+          message = message.replace /\\([:#!])/g, '$1'
+          if placeholders
+            for placeholder in placeholders
+              message = message.replace (new RegExp("\\$.*?\\$")), placeholder
         callback message
       return
 
@@ -90,13 +93,12 @@
         message: message
       @sendMessage msgObj
 
-
     ###
       uses the translation system of the according browser
       Supports named placeholders e.g. $placeholder$
     ###
-    i18n: (key, substitutions, callback) ->
-      callback (chrome.i18n.getMessage key, substitutions)
+    i18n: (key, callback, substitutions...) ->
+      callback (chrome.i18n.getMessage.apply chrome.i18n, [].concat(key).concat(substitutions))
       return
 
     # gets the extension version
