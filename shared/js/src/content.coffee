@@ -97,7 +97,7 @@
 
     initTrackJs: ->
       @getVersion().then (version) =>
-        @getCurrentGmail().then (email) ->
+        @getCurrentEmailAddress().then (email) ->
           opts =
             userId: email
             version: version
@@ -213,7 +213,7 @@
          logged in user
          @returns {Promise} a promise that resolves to the email address {String}
     ###
-    getCurrentGmail: -> currentEmailAddressDeferred.promise
+    getCurrentEmailAddress: -> currentEmailAddressDeferred.promise
 
     ###
     Sets up a listener for GMailr
@@ -283,12 +283,18 @@
     ###
     inject: =>
       return unless @inConversation()
-      @getSettingEmail().then (settingEmail) =>
+
+      log 'inject: in a conversation'
+      Q.all([
+        @getSettingEmail()
+        @getCurrentEmailAddress()
+      ])
+      .then ([settingEmail, currentEmailAddress]) =>
         log 'Email address in settings', settingEmail
-        @getCurrentGmail().then (currentGmail) =>
-          log 'Current Gmail window', currentGmail
-          @injectThread() if (not settingEmail or not currentGmail) or currentGmail in settingEmail.split /[, ]+/ig
-      return
+        log 'Current Gmail window', currentEmailAddress
+        if (not settingEmail or not currentEmailAddress) or currentEmailAddress in settingEmail.split /[, ]+/ig
+          return @injectThread()
+        return
 
     isPreviewPaneEnabled: ->
       ($ M.GM_SEL.PREVIEW_PANE_ENABLED).length > 0
