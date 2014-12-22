@@ -16,11 +16,13 @@ module.exports = function (grunt, options) {
     },
     "shared.styles": {
       "files": [
-        "shared/css/*.less"
+        "shared/css/src/*.less"
       ],
       "tasks": [
         "less:shared",
-        "copy:shared.styles"
+        "copy:shared.styles",
+        "mozilla-cfx-xpi",
+        "shell:update-xpi"
       ]
     },
     "firefox.main": {

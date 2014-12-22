@@ -590,60 +590,62 @@
           log 'message ID error', err
           track error: err
           @onScheduleError null, null, err, ''
+          deferred.reject()
         .then (messageId) =>
           unless messageId
             __msg('errorNotWithinAConversation')
               .then (notWithinAConversation) =>
                 @onScheduleError null, null, notWithinAConversation, ''
             deferred.reject()
-          Q.all([
-            Q.when(messageId)
-            @getVersion()
-            @getServiceUrl()
-          ]).then ([messageId, version, url]) =>
-            data =
-              msgId: messageId
-              when:  props.when
-              version: version
+          else
+            Q.all([
+              Q.when(messageId)
+              @getVersion()
+              @getServiceUrl()
+            ]).then ([messageId, version, url]) =>
+              data =
+                msgId: messageId
+                when:  props.when
+                version: version
 
-            data.markUnread = true              if !!props.unread
-            data.starIt = true                  if !!props.star
-            data.onlyIfNoAnswer = true          if !!props.noanswer
-            data.moveToInbox = true             if !!props.inbox
-            data.archiveAfterScheduling = true  if !!props.archive
+              data.markUnread = true              if !!props.unread
+              data.starIt = true                  if !!props.star
+              data.onlyIfNoAnswer = true          if !!props.noanswer
+              data.moveToInbox = true             if !!props.inbox
+              data.archiveAfterScheduling = true  if !!props.archive
 
-            log 'scheduling mail...', data
+              log 'scheduling mail...', data
 
-            url += M.SCHEDULE_SUFFIX
-            success = =>
-              deferred.resolve()
-              Q.all([
-                (__msg 'notificationScheduleSuccessTitle')
-                (__msg 'notificationScheduleSuccess')
-              ]).then ([_title, _body]) ->
-                ExtensionFacade.showNotification 'shared/images/tie.svg', _title, _body
+              url += M.SCHEDULE_SUFFIX
+              success = =>
+                deferred.resolve()
+                Q.all([
+                  (__msg 'notificationScheduleSuccessTitle')
+                  (__msg 'notificationScheduleSuccess')
+                ]).then ([_title, _body]) ->
+                  ExtensionFacade.showNotification 'shared/images/tie.svg', _title, _body
+                  return
+                @activateArchiveButton() if data.archiveAfterScheduling
                 return
-              @activateArchiveButton() if data.archiveAfterScheduling
-              return
 
-            error = (status, err, responseText) =>
-              deferred.reject()
-              @onScheduleError status, data, err, responseText
-              return
+              error = (status, err, responseText) =>
+                deferred.reject()
+                @onScheduleError status, data, err, responseText
+                return
 
-            log 'post', url, data
-            ($.post url, data, null, 'json')
-            .done (resp, textStatus, jqXHR) ->
-              if resp.success
-                success()
-              else
-                error textStatus, resp.error, jqXHR.responseText
+              log 'post', url, data
+              ($.post url, data, null, 'json')
+              .done (resp, textStatus, jqXHR) ->
+                if resp.success
+                  success()
+                else
+                  error textStatus, resp.error, jqXHR.responseText
+                return
+              .fail (jqXHR, textStatus, reason) ->
+                track [textStatus, reason, jqXHR.responseText]
+                error textStatus, reason, jqXHR.responseText
+                return
               return
-            .fail (jqXHR, textStatus, reason) ->
-              track [textStatus, reason, jqXHR.responseText]
-              error textStatus, reason, jqXHR.responseText
-              return
-            return
       deferred.promise
 
     ###

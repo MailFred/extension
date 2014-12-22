@@ -5,7 +5,7 @@
 @img-base: "data/shared/images/";
 
 .background(@image) {
-	background: url("@{chrome-base}@{img-base}@{image}"), url("@{firefox-base}@{img-base}@{image}");
+	background: data-uri("../../images/@{image}"), url("@{chrome-base}@{img-base}@{image}"), url("@{firefox-base}@{img-base}@{image}");
 }
 
 .mailfred {
