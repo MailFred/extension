@@ -209,41 +209,38 @@
     ###
     Sets up a listener for GMailr
     ###
-    listenToGmailr: (e) =>
-      listener = =>
-        if e.source is window
-          # We only accept messages from ourselves
-          # log "event from Gmailr", e
+    listenToGMailr: =>
+      listener = (e) =>
+        # log 'listener: got Gmailr event', e.detail
+        evt = e.detail
 
-          if e.data?.from is "GMAILR"
-            # log 'Got Gmailr event: ', e.data.event.type
-            evt = e.data.event
-            switch evt.type
-              when 'init'
-              # GMailr is ready
-                currentEmailAddressDeferred.resolve (evt.email ? '').trim() ? null
-                # (__msg 'extName').then (name) -> GMailUI.Breadcrumbs.add name, => @gettingStarted()
+        switch evt.type
+          when 'init'
+          # GMailr is ready
+            currentEmailAddressDeferred.resolve (evt.email ? '').trim() ? null
+            # (__msg 'extName').then (name) -> GMailUI.Breadcrumbs.add name, => @gettingStarted()
 
-                # kick GMailr into debug mode?
-                @getDebug().then (debug) ->
-                  if debug
-                    message =
-                      from: 'MAILFRED'
-                      type: 'debug.enable'
-                    window.postMessage message, "*"
-                  return
+            # kick GMailr into debug mode?
+            @getDebug().then (debug) ->
+              if debug
+                event = new CustomEvent EVENT_SOURCE_MAILFRED, detail:
+                  type: 'debug.enable'
+                window.dispatchEvent event
+              return
 
-              when 'viewThread'
-              # User moves to previous or next convo
-                @selectedConversationId = evt.args[0]
-                @inject()
-              when 'viewChanged'
-              # User switches view (conversation <-> threads)
-                @currentView = evt.args[0]
-                log "User switched to #{@currentView} view"
-                @inject()
-          return
-      window.addEventListener 'message', listener, false
+          when 'viewThread'
+            # User moves to previous or next convo
+            @selectedConversationId = evt.args[0]
+            @inject()
+          when 'viewChanged'
+            # User switches view (conversation <-> threads)
+            @currentView = evt.args[0]
+            log "User switched to #{@currentView} view"
+            @inject()
+        return
+      log 'setting up listener'
+      # Last parameter is for Mozilla (untrusted sources)
+      window.addEventListener EVENT_SOURCE_GMAILR, listener, true, true
       return
 
     ### returns the version of the extension
