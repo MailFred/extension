@@ -24,7 +24,7 @@
         "data/shared/bower_components/moment/min/moment.min.js",
         "data/shared/bower_components/pikaday/pikaday.js",
 
-        "data/shared/bower_components/yepnope/yepnope.1.5.4-min.js",
+        "data/shared/bower_components/headjs/dist/1.0.0/head.load.min.js",
         "data/shared/js/bootstrap.min.js",
 
         "data/shared/bower_components/eventr/build/eventr.min.js",

@@ -34,12 +34,7 @@ module.exports = function (grunt) {
         "bower_components/moment/*.*",
         "bower_components/moment/min/*locales*",
         "bower_components/pikaday/css/site.css",
-        "bower_components/pikaday/plugins",
-        "bower_components/yepnope/tests",
-        "bower_components/yepnope/prefixes",
-        "bower_components/yepnope/plugins",
-        "bower_components/yepnope/compress",
-        "bower_components/yepnope/yepnope.js"
+        "bower_components/pikaday/plugins"
       ]
     }
   };
