@@ -4,8 +4,5 @@
     "chrome/lib/js/build",
     "firefox/data/shared",
     "shared/js/build"
-  ],
-  "release": [
-    "chrome/data/shared/bower_components"
   ]
 }

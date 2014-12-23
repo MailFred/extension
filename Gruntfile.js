@@ -26,6 +26,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build:all', [
+    'clean:all',
     'build:sources',
     'copy',
     'env:ff',
