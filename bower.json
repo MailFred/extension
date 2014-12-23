@@ -24,7 +24,7 @@
     "pikaday": "1.2.0",
     "moment": "2.8.4",
     "trackjs": "2.1.7",
-    "q": "git://git@github.com:joscha/q.git#production",
+    "q": "git://github.com/joscha/q.git#production",
     "headjs": "1.0.3"
   }
 }
