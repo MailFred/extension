@@ -9,6 +9,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "postinstall": "bower install",
     "test": "bower install && grunt travis"
   },
   "author": "Joscha Feth <joscha@feth.com>",
