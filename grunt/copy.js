@@ -51,6 +51,7 @@ module.exports = function() {
                 'bower_components/lodash/dist/lodash' + infix + '.js',
                 'bower_components/moment/min/moment' + infix + '.js',
                 'bower_components/pikaday/pikaday.js',
+                'bower_components/pikaday/css/pikaday.css',
                 'bower_components/q/q.js',
                 'bower_components/trackjs/tracker.js'
             ],
