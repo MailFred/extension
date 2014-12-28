@@ -18,7 +18,7 @@
   "dependencies": {
     "eventr": "0.2.8",
     "gmailui": "0.2.5",
-    "gmailr": "0.0.8",
+    "gmailr": "0.0.9",
     "lodash": "2.4.1",
     "jquery": "1.11.2",
     "pikaday": "1.2.0",
