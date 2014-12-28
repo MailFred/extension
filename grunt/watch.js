@@ -27,7 +27,7 @@ module.exports = function (grunt, options) {
     },
     "firefox.main": {
       "files": [
-          "firefox/lib/main.js"
+          "firefox/lib/main_spec.js"
       ],
       "tasks": [
         'mozilla-cfx-xpi',

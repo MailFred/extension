@@ -30,7 +30,9 @@
 
   __msg = (key, substitutions...) ->
     deferred = Q.defer()
-    ExtensionFacade.i18n.apply ExtensionFacade, [].concat(key).concat(deferred.resolve).concat(substitutions)
+    args = [key, deferred.resolve, substitutions]
+
+    ExtensionFacade.i18n.apply ExtensionFacade, args
     deferred.promise
 
   currentEmailAddressDeferred = Q.defer()
@@ -52,6 +54,9 @@
     @CLS_AUTH_IMG: M.CLS + '-auth-image'
     @CLS_AUTH_TXT: M.CLS + '-auth-text'
     @CLS_WELCME_DIALOG: M.CLS + '-welcome-dialog'
+    @CLS_AUTH_OK: M.CLS + '-auth-ok'
+    @CLS_WELCOME_OK: M.CLS + '-welcome-ok'
+    @CLS_GETTING_STARTED: M.CLS + '-getting-started-ok'
 
     @ID_PREFIX:    M.CLS + '-id-'
 
@@ -142,6 +147,8 @@
       return
 
     @getLastVersion: (resp) ->
+      # Firefox:
+      # loader.modules['resource://gre/modules/commonjs/sdk/simple-storage.js'].exports.storage.lastVersion
       ExtensionFacade.storage.sync.get M.STORE.LAST_VERSION, (items) ->
         resp items[M.STORE.LAST_VERSION]
         return
@@ -267,11 +274,14 @@
     checkVersion: ->
       # Get the extension version
       @getVersion().then (version) =>
+        log 'version', version
         M.getLastVersion (lastVersion) =>
+          log 'lastVersion', version
           unless lastVersion
             M.storeLastVersion version
             @firstInstall version
           else if lastVersion < version
+            # TODO we use semver - this does not work properly
             M.storeLastVersion version
             @upgradeInstall lastVersion, version
           else
@@ -698,8 +708,10 @@
                     </div>
                     """
 
+          okButton.getElement().addClass M.CLS_WELCOME_OK
           okButton.on 'click', =>
             @gettingStartedDialog().then ([authDialog, authOkButton, authCancelButton, authContainer]) =>
+              authOkButton.addClass M.CLS_AUTH_OK
               container.replaceWith authContainer
               okButton.replaceWith authOkButton
               cancelButton.replaceWith authCancelButton
@@ -768,6 +780,7 @@
     gettingStarted: (params) ->
       log 'showing getting started dialog'
       @gettingStartedDialog().then ([dialog, okButton, cancelButton]) =>
+        okButton.addClass M.CLS_GETTING_STARTED
         okButton.on 'click', =>
           @openAuthWindow params
           dialog.close()

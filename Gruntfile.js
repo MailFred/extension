@@ -50,7 +50,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('travis', [
     'setup',
-    'build:all'
+    'e2e:remote'
   ]);
 
   grunt.registerTask('setup', [
@@ -58,4 +58,18 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('default', 'setup');
+
+
+  grunt.registerTask("e2e:local", [
+      'build:all',
+      "protractor_webdriver:general",
+      "protractor:firefox",
+      "protractor:chrome"
+  ]);
+
+  grunt.registerTask("e2e:remote", [
+    'build:all',
+    "protractor:firefox.remote",
+    "protractor:chrome.remote"
+  ])
 };

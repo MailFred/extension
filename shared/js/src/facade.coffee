@@ -60,9 +60,12 @@
         if message
           message = message.replace /\\n/g, '\n'
           message = message.replace /\\([:#!])/g, '$1'
-          if placeholders
-            for placeholder in placeholders
-              message = message.replace (new RegExp("\\$.*?\\$")), placeholder
+          if placeholders and placeholders.length > 0
+            rgx = /\$(\w+?)\$/gi
+            match = null
+            while (match = rgx.exec(message)) isnt null
+              name = match[1]
+              message = message.replace (new RegExp("\\$#{name}\\$",'g')), placeholders.shift()
         callback message
       return
 

@@ -12,6 +12,14 @@ before_install:
 env:
   global:
   # CLIENT_ID
-  - secure: M/Xj97CDMAjpUDj4pOA31hxf0lPWBwg+v3MNiIcQ3JVdzpwsAAEEJlqJ12kn8/V0ruZapHZr5r8aiIzBgcgVf+/iFIWNM0aFHOz4IcQ9r9vdNM4Vo98Ni12r9s8o/VpxuAcM/uliw/lhJFZ5c9pOty502vqwAtxpEi5AXZKaRQc=
+  - secure: "M/Xj97CDMAjpUDj4pOA31hxf0lPWBwg+v3MNiIcQ3JVdzpwsAAEEJlqJ12kn8/V0ruZapHZr5r8aiIzBgcgVf+/iFIWNM0aFHOz4IcQ9r9vdNM4Vo98Ni12r9s8o/VpxuAcM/uliw/lhJFZ5c9pOty502vqwAtxpEi5AXZKaRQc="
   # CLIENT_SECRET
-  - secure: hJlXvlgRns/bXDNqMjiRUjSnp/toXWdqMy4JbFjePF4uF18lsGsIpwpxIeo6YDfb6oMixBNSj/orQqiB1/8EPWjtZ3GO7XtyuXGAkk11Lqch9qyMa+Derz0WlWukgji1+oqTOLpaflvs9IJyv6xAixTnhakudMzTTFJJptxLzmA=
+  - secure: "hJlXvlgRns/bXDNqMjiRUjSnp/toXWdqMy4JbFjePF4uF18lsGsIpwpxIeo6YDfb6oMixBNSj/orQqiB1/8EPWjtZ3GO7XtyuXGAkk11Lqch9qyMa+Derz0WlWukgji1+oqTOLpaflvs9IJyv6xAixTnhakudMzTTFJJptxLzmA="
+  # SAUCE_USERNAME
+  - secure: secure: "D7jjhs/q5N/jCHqtdkOwJdV3l3qbUrzFw+hS5puW9ch81Awuumq1tEOy52IOrY7ywR7pWUpIqgGRlOx8UVUMBmY55Rfm15J4vxmP91JtAHn1BOPzwQEGqjQbZuQ/UncqONDegoB2aZjwXnQBRmClTflxCkbGORcXLldY3SF4iuA="
+  # SAUCE_ACCESS_KEY
+  - secure: "j0T79t4ZQ1rUgSa0paUKzESWtWdeXzi/EP7ddVGRjt+VslTwVoGUyZCmYH1DNkHyhKcS3lfzs9zlVEAO+RGGRkHruivw3wSgwwGJ30DTuz8hLX9Xqttk0B9JhzYL3sbeDqSziKWkXR0PwY7Lz4DA74D+oSoUxu7BtUFwlJoyxoc="
+  # GOOGLE_USER_EMAIL
+  - secure: "hL4BGTYShAjkMir361uv2W6CEVsjHMURChoOEfuJK4PqlG25ddh5Aw5Z5+WxQF0jViLjfQiX4X1Y+eI1cQ0sdYU0PDlkLb92fOjjHd3CA8mULBebgzDbd1OqiqP/NA0pAR9YJ8XxnTTp9O0haeQ1de15Vhbi8IT+UA8grWDUc/s="
+  # GOOGLE_USER_PASSWORD
+  - secure: "YAGtojG66ltTHzprXoGfovjdN+PUjgBinJxj/v5vZo5DRCEDcpoc/8Tkx+m2PrcABKlhbXRRj31B6wpl3hK2vtQAFhq5W3uRUdytvWTzeU/spNKS2ETni+pGOneu15a07E6Bfutx2JyDdBPYPKPF36pM+e/f+kdDvFTZeO0f5DE="

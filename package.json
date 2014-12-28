@@ -14,6 +14,10 @@
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
+    "cucumber": "^0.4.7",
+    "firefox-profile": "^0.3.6",
     "grunt": "^0.4.5",
     "grunt-bump": "0.0.16",
     "grunt-contrib-clean": "^0.6.0",
@@ -26,9 +30,13 @@
     "grunt-env": "^0.4.2",
     "grunt-mozilla-addon-sdk": "^0.3.2",
     "grunt-notify": "^0.4.1",
+    "grunt-protractor-runner": "^1.1.4",
+    "grunt-protractor-webdriver": "^0.2.0",
     "grunt-shell": "^1.1.1",
     "grunt-webstore-upload": "^0.8.1",
     "load-grunt-config": "^0.16.0",
-    "load-grunt-tasks": "^1.0.0"
+    "load-grunt-tasks": "^1.0.0",
+    "protractor": "^1.5.0",
+    "q": "^1.1.2"
   }
 }
