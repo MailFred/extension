@@ -16,7 +16,7 @@ env:
   # CLIENT_SECRET
   - secure: "hJlXvlgRns/bXDNqMjiRUjSnp/toXWdqMy4JbFjePF4uF18lsGsIpwpxIeo6YDfb6oMixBNSj/orQqiB1/8EPWjtZ3GO7XtyuXGAkk11Lqch9qyMa+Derz0WlWukgji1+oqTOLpaflvs9IJyv6xAixTnhakudMzTTFJJptxLzmA="
   # SAUCE_USERNAME
-  - secure: secure: "D7jjhs/q5N/jCHqtdkOwJdV3l3qbUrzFw+hS5puW9ch81Awuumq1tEOy52IOrY7ywR7pWUpIqgGRlOx8UVUMBmY55Rfm15J4vxmP91JtAHn1BOPzwQEGqjQbZuQ/UncqONDegoB2aZjwXnQBRmClTflxCkbGORcXLldY3SF4iuA="
+  - secure: "D7jjhs/q5N/jCHqtdkOwJdV3l3qbUrzFw+hS5puW9ch81Awuumq1tEOy52IOrY7ywR7pWUpIqgGRlOx8UVUMBmY55Rfm15J4vxmP91JtAHn1BOPzwQEGqjQbZuQ/UncqONDegoB2aZjwXnQBRmClTflxCkbGORcXLldY3SF4iuA="
   # SAUCE_ACCESS_KEY
   - secure: "j0T79t4ZQ1rUgSa0paUKzESWtWdeXzi/EP7ddVGRjt+VslTwVoGUyZCmYH1DNkHyhKcS3lfzs9zlVEAO+RGGRkHruivw3wSgwwGJ30DTuz8hLX9Xqttk0B9JhzYL3sbeDqSziKWkXR0PwY7Lz4DA74D+oSoUxu7BtUFwlJoyxoc="
   # GOOGLE_USER_EMAIL
