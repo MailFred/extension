@@ -5,7 +5,7 @@
 
 ## What is MailFred?
 MailFred let's you temporarily archive and set reminders for GMail. Mails will come back to your inbox when you need them.
-It works in Google Chrome with GMail and Google Apps For Your Domain and looks like this:
+It works in Google Chrome and Firefox with GMail and Google Apps For Your Domain and looks like this:
 
 ![MailFred extension within GMail](http://mailfred.de/wp-content/uploads/2013/02/en_mailfred_640x400_dropdown.png)
 
