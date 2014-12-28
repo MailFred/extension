@@ -1,5 +1,6 @@
+/* global require */
 module.exports = function(grunt) {
-
+    'use strict';
   var releasePath = "./build/<%= pkg.name %>-<%= manifest.version %>.zip";
 
   grunt.initConfig({
@@ -38,15 +39,10 @@ module.exports = function(grunt) {
     'webstore_upload:beta'
   ]);
 
-  grunt.registerTask('release', 'Bump, build and release.', function(type) {
-    grunt.task.run([
-      'bump-only:' + (type || 'patch'),
-      'build:all',
-      'crx:both',
-      'webstore_upload:release',
-      'bump-commit'
+    grunt.registerTask('release', [
+        'build:all',
+        'webstore_upload:release'
     ]);
-  });
 
   grunt.registerTask('travis', [
     'setup',
