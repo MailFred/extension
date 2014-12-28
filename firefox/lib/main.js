@@ -34,7 +34,6 @@
             self.data.url('shared/bower_components/gmailui/build/gmailui' + debugInfix + '.js'),
             self.data.url('shared/js/content' + debugInfix + '.js')
         ],
-        contentScriptWhen: 'ready',
         contentScriptOptions: {
             version: self.version,
             baseUrl: self.data.url('')
