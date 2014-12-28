@@ -31,6 +31,7 @@ module.exports = function(grunt) {
     'build:sources',
     'copy',
     'env:ff',
+    'curl:amo',
     'mozilla-cfx-xpi',
     'crx'
   ]);

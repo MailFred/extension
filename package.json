@@ -27,6 +27,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-crx": "git://github.com/oncletom/grunt-crx.git#v1.0.1",
+    "grunt-curl": "^2.0.3",
     "grunt-env": "^0.4.2",
     "grunt-mozilla-addon-sdk": "^0.4.0",
     "grunt-notify": "^0.4.1",
@@ -37,6 +38,7 @@
     "load-grunt-config": "^0.16.0",
     "load-grunt-tasks": "^2.0.0",
     "protractor": "^1.5.0",
-    "q": "^1.1.2"
+    "q": "^1.1.2",
+    "semver": "^4.2.0"
   }
 }

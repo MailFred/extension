@@ -20,11 +20,14 @@
     "gmailui": "0.2.5",
     "gmailr": "0.0.9",
     "lodash": "2.4.1",
-    "jquery": "1.11.2",
+    "jquery": "1.11.1",
     "pikaday": "1.2.0",
     "moment": "2.8.4",
     "trackjs": "2.1.7",
     "q": "git://github.com/joscha/q.git#production",
     "headjs": "1.0.3"
+  },
+  "resolutions": {
+    "jquery": "1.11.1"
   }
 }
