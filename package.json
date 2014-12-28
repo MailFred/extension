@@ -17,6 +17,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "crx": "^2.0.0",
     "cucumber": "^0.4.7",
     "firefox-profile": "^0.3.6",
     "grunt": "^0.4.5",
