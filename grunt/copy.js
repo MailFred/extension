@@ -39,8 +39,19 @@ module.exports = function (grunt, options) {
       "expand": true,
       "cwd": "shared",
       "src": [
-        '**/*',
-        '!{css,js}/**'
+          'images/**',
+          'bower_components/eventr/build/eventr.min.js',
+          'bower_components/gmailr/build/gmailr.min.js',
+          'bower_components/gmailui/build/gmailui.min.js',
+          'bower_components/headjs/dist/1.0.0/head.load.min.js',
+          'bower_components/jquery/dist/jquery.min.js',
+          'bower_components/jquery-deparam/jquery.ba-deparam.min.js',
+          'bower_components/lodash/dist/lodash.min.js',
+          'bower_components/lodash/dist/lodash.min.js',
+          'bower_components/moment/min/moment.min.js',
+          'bower_components/pikaday/pikaday.js',
+          'bower_components/q/q.js',
+          'bower_components/trackjs/tracker.js'
       ],
       "dest": target + "/data/shared"
     };
