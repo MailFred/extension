@@ -1,10 +1,10 @@
 {
-  "name": "mailfred-chrome-extension",
+  "name": "mailfred-extension",
   "version": "2.2.0",
   "authors": [
     "Joscha Feth <joscha@feth.com>"
   ],
-  "description": "MailFred Chrome extension",
+  "description": "MailFred browser extension",
   "license": "MIT",
   "homepage": "http://www.mailfred.de",
   "private": true,
