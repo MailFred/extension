@@ -2,7 +2,7 @@
   "id": "firefox@mailfred.de",
   "name": "mailfred",
   "fullName": "MailFred",
-  "title": "Master Your Inbox",
+  "title": "MailFred - Master Your Inbox",
   "description": "An add-on for GMail that lets you schedule emails to return to your inbox",
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
