@@ -5,7 +5,7 @@ before_install:
   - 'npm install -g grunt-cli'
   - 'npm install -g bower'
   - 'npm install'
-  - './node_modules/crx/bin/crx.js keygen .'
+  - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 env:

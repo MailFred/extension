@@ -33,6 +33,7 @@ module.exports = function(grunt) {
     'env:ff',
     'curl:amo',
     'mozilla-cfx-xpi',
+    'shell:sign-xpi',
     'crx'
   ]);
 

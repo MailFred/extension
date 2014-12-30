@@ -6,9 +6,9 @@ shared/js/build
 shared/css/build
 build/
 tmp
-key.pem
 chrome/data/shared
 firefox/data/shared
 .idea
 mailbutler.iml
 out
+*.pem

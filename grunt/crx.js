@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             ],
             "dest": "./build",
             "zipDest": shared.releasePath,
-            "privateKey": "key.pem"
+            "privateKey": "certs/chrome/key.pem"
         }
     };
 };
