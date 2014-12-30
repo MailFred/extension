@@ -1,6 +1,8 @@
+/* global require */
 module.exports = function(grunt) {
     'use strict';
     var shared = grunt.config('shared');
+    var path = require('path');
 
     return {
         "both": {
@@ -12,7 +14,9 @@ module.exports = function(grunt) {
             ],
             "dest": "./build",
             "zipDest": shared.releasePath,
-            "privateKey": "certs/chrome/key.pem"
+            options: {
+                privateKey: path.join(__dirname, "../certs/chrome/key.pem")
+            }
         }
     };
 };
