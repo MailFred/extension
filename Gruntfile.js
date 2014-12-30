@@ -31,9 +31,7 @@ module.exports = function(grunt) {
     'build:sources',
     'copy',
     'env:ff',
-    'curl:amo',
     'mozilla-cfx-xpi',
-    'shell:sign-xpi',
     'crx'
   ]);
 
@@ -43,6 +41,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('release', [
         'build:all',
+        'shell:sign-xpi',
         'webstore_upload:release'
     ]);
 
@@ -52,7 +51,8 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('setup', [
-    'mozilla-addon-sdk'
+    'mozilla-addon-sdk',
+    'curl:amo'
   ]);
 
   grunt.registerTask('default', 'setup');

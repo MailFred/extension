@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 # Install JS packages
 bower install
 # Install tools for signing XPI files
