@@ -51,7 +51,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('setup', [
-    'mozilla-addon-sdk',
+    'mozilla-addon-sdk:latest',
     'curl:amo'
   ]);
 
