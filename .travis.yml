@@ -8,6 +8,8 @@ before_install:
   - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
+addons:
+  sauce_connect: true
 env:
   global:
   # CLIENT_ID
