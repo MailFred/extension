@@ -2,11 +2,6 @@
 set -e
 # Install JS packages
 bower install
-# Generate key if we don't have one yet
-if [ -f ./certs/chrome/key.pem ];
-then
-	./node_modules/crx/bin/crx.js keygen ./certs/chrome
-fi
 # Install tools for signing XPI files
 # If we have OpenSSL, we don't need M2Crypto, although it is recommended
 # easy_install -Z M2Crypto

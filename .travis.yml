@@ -4,8 +4,10 @@ node_js:
 before_install:
   - 'npm install -g grunt-cli'
   - 'npm install -g bower'
-  - 'curl -L https://cpanmin.us | perl - App::cpanminus'
-  #- 'curl -L http://cpanmin.us | perl - --sudo App::cpanminus'
+  #- 'curl -L https://cpanmin.us | perl - App::cpanminus'
+  - 'curl -L http://cpanmin.us | perl - --sudo App::cpanminus'
+before_script:
+  - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 addons:
