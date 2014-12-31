@@ -11,4 +11,4 @@ mkdir -p tmp/mxtools
 # http://www.softlights.net/projects/mxtools/
 wget http://www.softlights.net/files/mxtools.tar.gz -O tmp/mxtools.tar.gz
 tar -xzf tmp/mxtools.tar.gz -C tmp/mxtools
-cpanm RDF::Core
+sudo cpanm RDF::Core
