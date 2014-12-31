@@ -4,7 +4,6 @@ node_js:
 before_install:
   - 'npm install -g grunt-cli'
   - 'npm install -g bower'
-  - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
   - 'curl -L https://cpanmin.us | perl - App::cpanminus'
   #- 'curl -L http://cpanmin.us | perl - --sudo App::cpanminus'
 #after_success:
