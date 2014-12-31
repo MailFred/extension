@@ -6,6 +6,7 @@ before_install:
   - 'npm install -g bower'
   - 'npm install'
   - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
+  - 'curl -L http://cpanmin.us | perl - --sudo App::cpanminus'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 addons:
