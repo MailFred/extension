@@ -1,7 +1,14 @@
 {
-  "latest": {
+  "latest_old": {
     "options": {
       "revision": "latest"
     }
+  },
+  "latest": {
+	"options": {
+	  "revision": "add-update-key-option",
+	  "github": true,
+	  "github_user": "joscha"
+	}
   }
 }

@@ -15,6 +15,9 @@ module.exports = function() {
             },
             // for this to work, https://addons.mozilla.org/en-US/firefox/addon/autoinstaller/ must be installed in the Firefox you are using
             "command": "wget --post-file=build/mailfred.xpi http://localhost:8888/"
+        },
+        "update-rdf": {
+            command: 'tmp/uhura -o build/update.rdf -k certs/firefox/updateRdfKeyFile.pem build/mailfred.signed.xpi http://bla/mailfred.xpi'
         }
     };
 };
