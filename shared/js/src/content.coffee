@@ -155,7 +155,9 @@
       return
 
     @isAuthorisationErrorPage: (contents) ->
-      /reauth/i.test contents
+      (/reauth/i.test contents) or
+      (contents and contents.indexOf('continue%3Dhttps://api.mailfred.de/schedule') isnt -1) or
+      (contents and contents.indexOf('google.com/accounts/AddSession') isnt -1)
 
     @isAuthorisationErrorResponse: (resp) ->
       (resp?.toLowerCase().indexOf "authorization") isnt -1
