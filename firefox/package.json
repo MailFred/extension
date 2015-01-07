@@ -18,18 +18,20 @@
       "https://appengine.google.com/"
     ]
   },
-  "preferences": [{
-        "name": "debug",
-        "title": "Debug mode",
-        "description": "Whether to enable debug mode or not",
-        "type": "bool",
-        "value": false
+  "preferences": [
+    {
+      "name": "debug",
+      "title": "Debug mode",
+      "description": "Whether to enable debug mode or not",
+      "type": "bool",
+      "value": false
     },
     {
-        "description": "The GMail address you want to use MailFred with",
-        "name": "email",
-        "type": "string",
-        "value": "",
-        "title": "GMail address"
-    }]
+      "description": "The GMail address you want to use MailFred with",
+      "name": "email",
+      "type": "string",
+      "value": "",
+      "title": "GMail address"
+    }
+  ]
 }

@@ -19,7 +19,8 @@ module.exports = function() {
                 "extension_dir": "firefox",
                 "dist_dir": "build",
                 "arguments": [
-                    '--update-link=http://www.mailfred.de/extension/firefox/mailfred.signed.xpi',
+                    // This is done by uhura
+                    //'--update-link=http://www.mailfred.de/extension/firefox/mailfred.signed.xpi',
                     '--update-url=http://www.mailfred.de/extension/firefox/update.rdf',
                     '--update-key=' + updateKey
                 ].join(' ')

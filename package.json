@@ -41,6 +41,7 @@
     "load-grunt-tasks": "^2.0.0",
     "protractor": "^1.5.0",
     "q": "^1.1.2",
-    "semver": "^4.2.0"
+    "semver": "^4.2.0",
+    "xml2js": "^0.4.4"
   }
 }

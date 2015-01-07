@@ -31,6 +31,7 @@ module.exports = function(grunt) {
     'build:sources',
     'copy',
     'env:ff',
+    'shell:update-max-version-cfx',
     'mozilla-cfx-xpi',
     'crx'
   ]);
@@ -39,10 +40,23 @@ module.exports = function(grunt) {
     'webstore_upload:beta'
   ]);
 
-    grunt.registerTask('release', [
+    grunt.registerTask('release:prepare', [
         'build:all',
         'shell:sign-xpi',
+        'shell:update-rdf'
+    ]);
+
+    grunt.registerTask('release:upload:firefox', [
+
+    ]);
+    grunt.registerTask('release:upload:chrome', [
         'webstore_upload:release'
+    ]);
+
+    grunt.registerTask('release', [
+        'release:prepare',
+        'release:upload:firefox',
+        'release:upload:chrome'
     ]);
 
   grunt.registerTask('travis', [
