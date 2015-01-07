@@ -490,6 +490,7 @@
             pickerMenu.onShow = ->
               unless picker
                 picker = new Pikaday
+                  firstDay: 1
                   bound: false
                   format: dateFormat
                   minDate: moment().add(1, 'day').toDate()
