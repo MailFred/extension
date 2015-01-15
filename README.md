@@ -16,4 +16,4 @@ All of the components of the extension are open source as well, for example we u
 Our [website](http://www.mailfred.de) has more information about our free service and the extension in an installable form can be found here [for Google Chrome](https://chrome.google.com/webstore/detail/mailfred/lijahkfnlmaikbppnbjeelhihaklhoim).
 
 # How can I help?
-We would actually love to have new translations. So far we only have `en` and `de` - if you'd like to contribute, you can either do so here, by translating the according JSON file into your language or if you are not a developer, we are more than happy to give you access to our project on [PhraseApp](https://phraseapp.com/projects/mailfred-extension).
+We would actually love to have new translations. So far we only have `en` and `de` - if you'd like to contribute, you can either do so here, by translating the according JSON file into your language or if you are not a developer, we are more than happy to give you access to our project on [CrowdIn](https://crowdin.com/project/mailfred).
