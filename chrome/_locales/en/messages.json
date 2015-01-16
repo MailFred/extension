@@ -43,7 +43,7 @@
     }
   },
   "calendarLanguage": {
-    "message": ""
+    "message": "en"
   },
   "dateFormat": {
     "description": "The date format for the calendar",
