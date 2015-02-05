@@ -6,7 +6,7 @@
   "description": "An add-on for GMail that lets you schedule emails to return to your inbox",
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "homepage": "http://www.mailfred.de",
   "icon": "data/shared/images/tie48x48.png",
   "icon64": "data/shared/images/tie64x64.png",
