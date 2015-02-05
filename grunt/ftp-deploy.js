@@ -1,4 +1,4 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
     'use strict';
 
     var ff = grunt.config('shared.firefox');
@@ -11,10 +11,10 @@ module.exports = function (grunt) {
                 authKey: 'firefox'
             },
             src: ff.path,
-            dest: '/',
+            dest: '/firefox',
             forceVerbose: true,
             exclusions: [
-                '**/*!' + ff.file
+                '**/*.xpi!' + ff.file
             ]
         }
     };

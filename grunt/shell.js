@@ -2,13 +2,14 @@ module.exports = function(grunt) {
     'use strict';
 
     var ff = grunt.config('shared.firefox');
+    var pathToXpiReleaseFile = ff.path + ff.file;
 
     return {
         'sign-xpi': {
             command: [
-                'rm -f ' + ff.path + ff.file,
+                'rm -f ' + pathToXpiReleaseFile,
                 'mkdir ' + ff.path,
-                'xpisign -k ./certs/code_signing/key.pem ./build/mailfred.xpi ' + ff.path + ff.file
+                'xpisign -k ./certs/code_signing/key.pem ./build/mailfred.xpi ' + pathToXpiReleaseFile
             ].join(' && ')
         },
         "update-xpi": {
@@ -22,10 +23,19 @@ module.exports = function(grunt) {
             "command": "wget --post-file=build/mailfred.xpi http://localhost:8888/"
         },
         'update-max-version-cfx': {
-          command: './updateInstallRdf.js'
+            command: './updateInstallRdf.js'
         },
         "update-rdf": {
-            command: 'tmp/mxtools/uhura -o build/update.rdf -m -k certs/firefox/updateRdfKeyFile.pem build/mailfred.xpi http://bla/mailfred.xpi firefox/appvers.txt'
+            command: 'tmp/mxtools/uhura' +
+            ' -o build/firefox/update.rdf' +
+            ' -m' +
+            ' -k certs/firefox/updateRdfKeyFile.pem' +
+            ' ' + pathToXpiReleaseFile +
+            ' http://extension.mailfred.de/firefox/' + ff.file +
+            ' firefox/appvers.txt'
+        },
+        "generate-htaccess": {
+            command: 'echo "Redirect /firefox/latest /firefox/' + ff.file + '" > ' + ff.path + '.htaccess'
         }
     };
 };

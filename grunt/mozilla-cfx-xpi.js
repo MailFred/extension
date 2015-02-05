@@ -21,7 +21,7 @@ module.exports = function() {
                 "arguments": [
                     // This is done by uhura
                     //'--update-link=http://www.mailfred.de/extension/firefox/mailfred.signed.xpi',
-                    '--update-url=http://www.mailfred.de/extension/firefox/update.rdf',
+                    '--update-url=http://extension.mailfred.de/firefox/update.rdf',
                     '--update-key=' + updateKey
                 ].join(' ')
             }

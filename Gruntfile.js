@@ -54,7 +54,8 @@ module.exports = function(grunt) {
     grunt.registerTask('release:prepare', [
         'build:all',
         'shell:sign-xpi',
-        'shell:update-rdf'
+        'shell:update-rdf',
+        'shell:generate-htaccess'
     ]);
 
     grunt.registerTask('release:upload:firefox', [
