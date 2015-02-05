@@ -13,7 +13,9 @@ module.exports = function() {
                 "stderr": false,
                 "failOnError": false
             },
-            // for this to work, https://addons.mozilla.org/en-US/firefox/addon/autoinstaller/ must be installed in the Firefox you are using
+            // for this to work
+            // https://addons.mozilla.org/en-US/firefox/addon/autoinstaller/
+            // must be installed in the Firefox you are using
             "command": "wget --post-file=build/mailfred.xpi http://localhost:8888/"
         },
         'update-max-version-cfx': {
