@@ -28,7 +28,7 @@
     "grunt-contrib-less": "^1.0.0",
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-crx": "git://github.com/oncletom/grunt-crx.git#fix-options-not-passed",
+    "grunt-crx": "1.0.2",
     "grunt-curl": "^2.0.3",
     "grunt-env": "^0.4.2",
     "grunt-ftp-deploy": "^0.1.10",
