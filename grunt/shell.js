@@ -1,11 +1,14 @@
-module.exports = function() {
+module.exports = function(grunt) {
     'use strict';
+
+    var ff = grunt.config('shared.firefox');
 
     return {
         'sign-xpi': {
             command: [
-                'rm -f ./build/mailfred.signed.xpi',
-                'xpisign -k ./certs/code_signing/key.pem ./build/mailfred.xpi ./build/mailfred.signed.xpi'
+                'rm -f ' + ff.path + ff.file,
+                'mkdir ' + ff.path,
+                'xpisign -k ./certs/code_signing/key.pem ./build/mailfred.xpi ' + ff.path + ff.file
             ].join(' && ')
         },
         "update-xpi": {

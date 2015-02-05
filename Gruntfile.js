@@ -3,13 +3,24 @@ module.exports = function(grunt) {
     'use strict';
   var releasePath = "./build/<%= pkg.name %>-<%= manifest.version %>.zip";
 
+    var pkg = grunt.file.readJSON('package.json');
+    var firefoxPackage = grunt.file.readJSON('firefox/package.json');
+
+    var firefoxReleaseName = grunt.template.process("<%= name %>-<%= version %>.xpi", {
+        data: firefoxPackage
+    });
+
   grunt.initConfig({
     shared: {
-      releasePath: releasePath
+      releasePath: releasePath,
+        firefox: {
+            path: './build/firefox/',
+            file: firefoxReleaseName
+        }
     },
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: pkg,
     manifest: grunt.file.readJSON('chrome/manifest.json'),
-    firefoxPackage: grunt.file.readJSON('firefox/package.json')
+    firefoxPackage: firefoxPackage
   });
 
   require('load-grunt-config')(grunt);
@@ -47,7 +58,7 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('release:upload:firefox', [
-
+        'ftp-deploy:firefox-release'
     ]);
     grunt.registerTask('release:upload:chrome', [
         'webstore_upload:release'
