@@ -1,4 +1,5 @@
-module.exports = function (grunt, options) {
+/* global module */
+module.exports = function () {
     'use strict';
 
     var files = [
