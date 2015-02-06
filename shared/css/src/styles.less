@@ -1,0 +1,81 @@
+// CSS here
+
+@chrome-base: "chrome-extension://__MSG_@@extension_id__/";
+@firefox-base: "resource://firefox-at-mailfred-dot-de/mailfred/";
+@img-base: "data/shared/images/";
+
+.background(@image) {
+	background: data-uri("../../images/@{image}"), url("@{chrome-base}@{img-base}@{image}"), url("@{firefox-base}@{img-base}@{image}");
+}
+
+.mailfred {
+	> div > * {
+		pointer-events: none;
+	}
+	.asa {
+		.ase {
+			.background("icon.svg");
+			background-size: 21px 21px;
+		}
+	}
+}
+.mailfred-loader {
+	.asa {
+		.ase {
+			.background("loader.svg");
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: 25px 25px;
+		}
+	}
+}
+
+.mailfred-picker {
+	&.J-M {
+		overflow: hidden;
+	}
+	.pika-single {
+		border: none;
+	}
+}
+
+.mailfred-auth-image {
+	img {
+		width: 198px;
+		border: 1px solid #ccc;
+	}
+}
+
+.mailfred-auth-text {
+	float: left;
+	width: 245px;
+	text-align: justify;
+	padding-right: 10px;
+}
+
+.mailfred-welcome-dialog {
+  text-align: justify;
+  img {
+	padding-left: 10px;
+	padding-bottom: 10px;
+	width: 115px;
+	height: 73px;
+  }
+}
+
+
+.mailfred-popup {
+	[act='manual'],[act='presets'] {
+		span.selected {
+			display: none;
+		}
+		&.J-Ks-KO {
+			span.default {
+				display: none;
+			}
+			span.selected {
+				display: inline;
+			}
+		}
+	}
+}

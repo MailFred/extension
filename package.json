@@ -1,6 +1,6 @@
 {
   "name": "mailfred-extension",
-  "version": "2.0.21",
+  "version": "2.2.2",
   "description": "MailFred extension",
   "repository": {
     "type": "git",
@@ -9,19 +9,41 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "postinstall": "./postinstall.sh",
     "test": "grunt travis"
   },
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^1.10.0",
+    "chai-as-promised": "^4.1.1",
+    "crx": "^3.0.2",
+    "cucumber": "^0.4.7",
+    "firefox-profile": "^0.3.6",
     "grunt": "^0.4.5",
-    "grunt-bump": "0.0.16",
+    "grunt-bump": "0.1.0",
+    "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-coffee": "^0.12.0",
-    "grunt-contrib-less": "^0.12.0",
-    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-less": "^1.0.0",
+    "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-crx": "git://github.com/oncletom/grunt-crx.git#74bad8b51cbfd9b87bdb0cb0e8015215b59deef0",
+    "grunt-crowdin-request": "1.0.2",
+    "grunt-crx": "1.0.2",
+    "grunt-curl": "^2.1.0",
+    "grunt-env": "^0.4.2",
+    "grunt-ftp-deploy": "^0.1.10",
+    "grunt-mozilla-addon-sdk": "^0.4.0",
     "grunt-notify": "^0.4.1",
-    "grunt-webstore-upload": "^0.8.1"
+    "grunt-protractor-runner": "1.2.1",
+    "grunt-protractor-webdriver": "0.2.0",
+    "grunt-shell": "^1.1.1",
+    "grunt-webstore-upload": "^0.8.2",
+    "load-grunt-config": "^0.16.0",
+    "load-grunt-tasks": "^3.1.0",
+    "protractor": "1.5.0",
+    "q": "^1.1.2",
+    "semver": "^4.2.0",
+    "xml2js": "^0.4.4"
   }
 }

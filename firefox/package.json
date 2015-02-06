@@ -1,0 +1,37 @@
+{
+  "id": "firefox@mailfred.de",
+  "name": "mailfred",
+  "fullName": "MailFred",
+  "title": "MailFred - Master Your Inbox",
+  "description": "An add-on for GMail that lets you schedule emails to return to your inbox",
+  "author": "Joscha Feth <joscha@feth.com>",
+  "license": "MIT",
+  "version": "2.2.2",
+  "homepage": "http://www.mailfred.de",
+  "icon": "data/shared/images/tie48x48.png",
+  "icon64": "data/shared/images/tie64x64.png",
+  "permissions": {
+    "cross-domain-content": [
+      "https://api.mailfred.de/",
+      "https://www.google.com/accounts/",
+      "https://accounts.google.com/",
+      "https://appengine.google.com/"
+    ]
+  },
+  "preferences": [
+    {
+      "name": "debug",
+      "title": "Debug mode",
+      "description": "Whether to enable debug mode or not",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "description": "The GMail address you want to use MailFred with",
+      "name": "email",
+      "type": "string",
+      "value": "",
+      "title": "GMail address"
+    }
+  ]
+}

@@ -1,8 +1,11 @@
-# [![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mailfred/localized.png)](https://crowdin.com/project/mailfred) MailFred
+# [![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mailfred/localized.png)](https://crowdin.com/project/mailfred) [![devDependency Status](https://david-dm.org/mailfred/extension/dev-status.svg)](https://david-dm.org/mailfred/extension#info=devDependencies) MailFred
+
+## Compatibility
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/mailfred.svg)](https://saucelabs.com/u/mailfred)
 
 ## What is MailFred?
 MailFred let's you temporarily archive and set reminders for GMail. Mails will come back to your inbox when you need them.
-It works in Google Chrome with GMail and Google Apps For Your Domain and looks like this:
+It works in Google Chrome and Firefox with GMail and Google Apps For Your Domain and looks like this:
 
 ![MailFred extension within GMail](http://mailfred.de/wp-content/uploads/2013/02/en_mailfred_640x400_dropdown.png)
 

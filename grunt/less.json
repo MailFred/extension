@@ -1,0 +1,7 @@
+{
+  "shared": {
+    "files": {
+      "shared/css/build/styles.css": "shared/css/src/styles.less"
+    }
+  }
+}

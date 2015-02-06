@@ -1,0 +1,11 @@
+{
+  "all": [
+	"build",
+    "chrome/data/shared",
+    "chrome/lib/js/build",
+	"chrome/_locales/**/*.json",
+    "firefox/data/shared",
+	"firefox/locale/*.properties",
+    "shared/js/build"
+  ]
+}

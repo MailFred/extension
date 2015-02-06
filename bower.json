@@ -1,0 +1,33 @@
+{
+  "name": "mailfred-extension",
+  "version": "2.2.2",
+  "authors": [
+    "Joscha Feth <joscha@feth.com>"
+  ],
+  "description": "MailFred browser extension",
+  "license": "MIT",
+  "homepage": "http://www.mailfred.de",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eventr": "0.2.8",
+    "gmailui": "0.2.5",
+    "gmailr": "0.0.9",
+    "lodash": "2.4.1",
+    "jquery": "1.11.1",
+    "pikaday": "1.2.0",
+    "moment": "2.8.4",
+    "trackjs": "2.1.7",
+    "q": "git://github.com/joscha/q.git#production",
+    "headjs": "1.0.3"
+  },
+  "resolutions": {
+    "jquery": "1.11.1"
+  }
+}
