@@ -39,6 +39,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build:all', [
     'clean:all',
+    'i18n',
     'build:sources',
     'copy',
     'env:ff',
@@ -95,5 +96,10 @@ module.exports = function(grunt) {
     'build:all',
     "protractor:firefox.remote",
     "protractor:chrome.remote"
-  ])
+  ]);
+
+  grunt.registerTask('i18n', [
+    'crowdin-request:download',
+    'copy-crowdin-files'
+  ]);
 };
