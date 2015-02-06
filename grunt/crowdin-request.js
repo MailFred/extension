@@ -17,15 +17,18 @@ module.exports = function(grunt) {
                 done(false);
                 return;
             }
+            var copied = 0;
             files
                 .filter(function(language) {
                     return grunt.file.isDir(path.join(dir, language));
                 })
                 .forEach(function(language) {
                     grunt.file.recurse(path.join(dir, language), function callback(abspath, rootdir, subdir, filename) {
-                        grunt.file.copy(abspath,path.join(base, subdir, filename));
+                        grunt.file.copy(abspath, path.join(base, subdir, filename));
+                        copied++;
                     })
                 });
+            grunt.log.ok(copied + ' ' + grunt.util.pluralize(copied, 'file/files') + ' copied.');
             done(true);
         });
     });
