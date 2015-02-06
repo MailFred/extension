@@ -1,4 +1,4 @@
-# [![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension) MailFred
+# [![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mailfred/localized.png)](https://crowdin.com/project/mailfred) MailFred
 
 ## What is MailFred?
 MailFred let's you temporarily archive and set reminders for GMail. Mails will come back to your inbox when you need them.
