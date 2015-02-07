@@ -1,3 +1,4 @@
+/* global module, process */
 module.exports = function(grunt) {
     'use strict';
 
@@ -8,13 +9,14 @@ module.exports = function(grunt) {
             auth: {
                 host: 'ftp.mailfred.de',
                 port: 21,
-                authKey: 'firefox'
+                authKey: 'firefox',
+                authPath: process.env.FTP_DEPLOY_AUTH_PATH // may be undefined, uses the .ftppass file instead
             },
             src: ff.path,
             dest: '/firefox',
             forceVerbose: true,
             exclusions: [
-                '**/*.xpi!' + ff.file
+                '**/*.xpi!' + ff.file // upload only the current xpi file
             ]
         }
     };
