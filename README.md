@@ -1,4 +1,8 @@
-# [![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mailfred/localized.png)](https://crowdin.com/project/mailfred) [![devDependency Status](https://david-dm.org/mailfred/extension/dev-status.svg)](https://david-dm.org/mailfred/extension#info=devDependencies) MailFred
+# MailFred
+[![GitHub version](https://badge.fury.io/gh/MailFred%2Fextension.svg)](http://badge.fury.io/gh/MailFred%2Fextension)
+[![Build Status](https://travis-ci.org/MailFred/extension.svg?branch=master)](https://travis-ci.org/MailFred/extension)
+[![devDependency Status](https://david-dm.org/mailfred/extension/dev-status.svg)](https://david-dm.org/mailfred/extension#info=devDependencies)
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/mailfred/localized.png)](https://crowdin.com/project/mailfred)
 
 ## Compatibility
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/mailfred.svg)](https://saucelabs.com/u/mailfred)
