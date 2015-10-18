@@ -38,8 +38,20 @@ exports.onPrepare = function() {
     browser.driver.get('https://mail.google.com');
 
     browser.driver.findElement(by.id('Email')).sendKeys(process.env.GOOGLE_USER_EMAIL);
-    browser.driver.findElement(by.id('Passwd')).sendKeys(process.env.GOOGLE_USER_PASSWORD);
-    browser.driver.findElement(by.id('signIn')).click();
+    browser.driver.findElement(by.name('signIn')).click();
+
+    var passwdField = by.id('Passwd');
+    browser.driver.wait(function() {
+        return browser.driver.isElementPresent(passwdField);
+    }).then(function() {
+        return browser.driver.wait(function() {
+            return browser.driver.findElement(passwdField).isDisplayed();
+        });
+    }).then(function() {
+        return browser.driver.findElement(passwdField).sendKeys(process.env.GOOGLE_USER_PASSWORD);
+    }).then(function() {
+        browser.driver.findElement(by.id('signIn')).click();
+    });
 
 
     // security updates?
@@ -57,7 +69,7 @@ exports.onPrepare = function() {
         });
     });
 
-    browser.driver.wait(function() {
+    return browser.driver.wait(function() {
         return browser.driver.isElementPresent(by.partialLinkText('Inbox'));
     });
 };

@@ -71,8 +71,9 @@ var myStepDefinitionsWrapper = function() {
         var locator = by.css('.mailfred-welcome-dialog');
         browser.wait(function() {
             return browser.isElementPresent(locator);
+        }).then(function() {
+            expect(element(locator)).to.eventually.notify(callback);
         });
-        expect(element(locator)).to.eventually.notify(callback);
     });
 
     this.When(/^I click the auth dialog OK button$/, function(callback) {

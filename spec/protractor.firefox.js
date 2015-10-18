@@ -3,7 +3,7 @@
 var helper = require('./helper.js');
 
 var config = {
-    capabilities: (function() {
+    getMultiCapabilities: (function() {
         var q = require('q');
         var FirefoxProfile = require('firefox-profile');
         var deferred = q.defer();
@@ -21,7 +21,7 @@ var config = {
                     helper.enhanceCapabilitiesWithSauceLabsData(capabilities);
                 }
 
-                deferred.resolve(capabilities);
+                deferred.resolve([capabilities]);
             });
         });
 
