@@ -31,7 +31,7 @@
     "grunt-crowdin-request": "1.0.2",
     "grunt-crx": "1.0.2",
     "grunt-curl": "^2.1.0",
-    "grunt-env": "^0.4.2",
+    "grunt-env": "^0.4.4",
     "grunt-ftp-deploy": "^0.1.10",
     "grunt-mozilla-addon-sdk": "^0.4.0",
     "grunt-notify": "^0.4.1",
