@@ -17,7 +17,8 @@ function fileToBase64String(path) {
 
 var chromeOptions = {
     args: [
-        '--lang=en'
+        '--lang=en',
+        '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36 Protractor"'
     ]
 };
 

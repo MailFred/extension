@@ -21,13 +21,20 @@
           items:   items
         @sendMessage args, callback
         return
+      clear = (callback) =>
+        args =
+          action: 'storage.clear'
+        @sendMessage args, callback
+        return
       @storage =
         local:
           set: set
           get: get
+          clear: clear
         sync:
           set: set
           get: get
+          clear: clear
       return
 
     getURL: (path) => @options.baseUrl + path
@@ -116,6 +123,8 @@
         set: (items, callback) ->
           chrome.storage.local.set.apply chrome.storage.local, arguments
           return
+        clear: (callback) ->
+          chrome.storage.local.clear(callback)
       sync:
         get: (keys, callback) ->
           chrome.storage.sync.get.apply chrome.storage.sync, arguments
@@ -123,6 +132,8 @@
         set: (items, callback) ->
           chrome.storage.sync.set.apply chrome.storage.sync, arguments
           return
+        clear: (callback) ->
+          chrome.storage.sync.clear(callback)
 
   if /Chrome/.test navigator.userAgent
     global.ExtensionFacade = new Chrome()
