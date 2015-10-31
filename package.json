@@ -39,7 +39,7 @@
     "grunt-protractor-webdriver": "0.2.0",
     "grunt-shell": "^1.1.1",
     "grunt-webstore-upload": "^0.8.2",
-    "load-grunt-config": "^0.16.0",
+    "load-grunt-config": "^0.18.0",
     "load-grunt-tasks": "^3.1.0",
     "protractor": "1.5.0",
     "q": "^1.1.2",
