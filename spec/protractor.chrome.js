@@ -2,6 +2,7 @@
 "use strict";
 
 var helper = require('./helper.js');
+var path = require('path');
 
 /**
  * Reads a given file path into a base64 encoded string
@@ -16,7 +17,8 @@ function fileToBase64String(path) {
 
 var chromeOptions = {
     args: [
-        '--lang=en'
+        '--lang=en',
+        '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36 Protractor"'
     ]
 };
 
@@ -32,11 +34,13 @@ if (helper.isSauceLabsRun()) {
     helper.enhanceConfigWithSauceLabsData(config);
     helper.enhanceCapabilitiesWithSauceLabsData(config.capabilities);
 
+    var pathToCrx = 'build/mailfred-extension-' + helper.readPkg().version + '.crx';
     chromeOptions.extensions = [
-        fileToBase64String('build/mailfred-extension-' + helper.readPkg().version + '.crx')
+        fileToBase64String(pathToCrx)
     ];
 } else {
-    chromeOptions.args.push("--load-extension=chrome");
+    var pathToChromeDir = path.join(__dirname, '..', 'chrome');
+    chromeOptions.args.push('--load-extension=' + pathToChromeDir);
 }
 
 exports.config = config;

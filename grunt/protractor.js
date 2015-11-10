@@ -12,12 +12,13 @@ module.exports = function() {
         "cucumberOpts": {
             "require": "cucumber/step_definitions/my_steps.js",
             "tags": "@dev",
-            "format": "summary"
+            "format": "pretty"
         }
     };
 
     var config = {
         "options": {
+            "getPageTimeout": 30000,
             "args": args,
             "keepAlive": true,
             "noColor": false

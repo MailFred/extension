@@ -101,6 +101,13 @@
                         }
                     }
                     break;
+                case 'storage.clear':
+                    for (key in simpleStorage.storage) {
+                        if (simpleStorage.storage.hasOwnProperty(key)) {
+                            delete simpleStorage.storage[key];
+                        }
+                    }
+                    break;
             }
             if (args.callback) {
                 worker.port.emit(args.callback, ret);

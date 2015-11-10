@@ -88,8 +88,8 @@ module.exports = function(grunt) {
   grunt.registerTask("e2e:local", [
       'build:all',
       "protractor_webdriver:general",
-      "protractor:firefox",
-      "protractor:chrome"
+      "protractor:chrome",
+      "protractor:firefox"
   ]);
 
   grunt.registerTask("e2e:remote", [
