@@ -7,7 +7,7 @@ before_install:
   #- 'curl -L https://cpanmin.us | perl - App::cpanminus'
   - 'curl -L http://cpanmin.us | perl - --sudo App::cpanminus'
 before_script:
-  - './node_modules/crx/bin/crx.js keygen ./certs/chrome'
+  - 'PATH="`npm bin`:$PATH" crx keygen ./certs/chrome'
 #after_success:
 #  - '[[ $TRAVIS_BRANCH == \"master\" ]] && { grunt beta };'
 addons:
