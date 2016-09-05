@@ -23,7 +23,7 @@
     "chai-as-promised": "^5.2.0",
     "crx": "^3.0.3",
     "cucumber": "^0.7.0",
-    "firefox-profile": "^0.3.11",
+    "firefox-profile": "^0.4.1",
     "grunt": "^0.4.5",
     "grunt-bump": "0.7.0",
     "grunt-contrib-clean": "^0.6.0",
