@@ -13,7 +13,7 @@
     "test": "grunt travis"
   },
   "engines": {
-    "node": ">=0.10.3 <0.12",
+    "node": ">= 4",
     "npm": ">=2.13.0"
   },
   "author": "Joscha Feth <joscha@feth.com>",
