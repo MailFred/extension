@@ -19,7 +19,7 @@
   "author": "Joscha Feth <joscha@feth.com>",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.4.1",
+    "chai": "^4.0.1",
     "chai-as-promised": "^5.2.0",
     "crx": "^3.0.3",
     "cucumber": "^0.7.0",
